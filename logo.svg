@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 180" width="640" height="180" role="img" aria-label="XJSON — JSON/XCFE object-server runtime">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1e29"/><stop offset="1" stop-color="#07131b"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="180" rx="16" fill="url(#bg)"/>
+  <rect x="0.5" y="0.5" width="639" height="179" rx="16" fill="none" stroke="#123244"/>
+  <g transform="translate(58,90)" fill="#f5b642">
+    <path d="M -20 -30 q -9 0 -9 9 v 13 q 0 7 -7 8 q 7 1 7 8 v 13 q 0 9 9 9" fill="none" stroke="#f5b642" stroke-width="3"/>
+    <path d="M 20 -30 q 9 0 9 9 v 13 q 0 7 7 8 q -7 1 -7 8 v 13 q 0 9 -9 9" fill="none" stroke="#f5b642" stroke-width="3"/>
+    <rect x="-15" y="-15" width="30" height="6" rx="2"/>
+    <rect x="-15" y="-3" width="21" height="6" rx="2" opacity="0.75"/>
+    <rect x="-15" y="9" width="26" height="6" rx="2" opacity="0.5"/>
+  </g>
+  <text x="146" y="80" font-family="Cascadia Code, JetBrains Mono, Consolas, monospace" font-size="46" font-weight="700" fill="#e8fff4">XJSON</text>
+  <rect x="148" y="94" width="128" height="3" fill="#f5b642"/>
+  <text x="150" y="122" font-family="Cascadia Code, Consolas, monospace" font-size="15" fill="#7fa8a0">manifest-driven JSON / XCFE object-server runtime</text>
+</svg>
