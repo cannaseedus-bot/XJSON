@@ -1,0 +1,17 @@
+{
+  "class": "AdminActions",
+  "extends": "UserActions",
+  "methods": {
+    "deleteUser": {
+      "params": ["id"],
+      "body": [
+        { "op": "load", "from": "data/users.json", "into": "users" },
+        { "op": "removeWhere", "array": "$users", "where": { "id": "$id" } },
+        { "op": "save", "to": "data/users.json", "value": "$users" },
+        { "op": "json", "value": { "deleted": "$id" } },
+        { "op": "return", "value": { "deleted": "$id" } }
+      ]
+    }
+  }
+}
+

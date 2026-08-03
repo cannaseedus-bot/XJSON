@@ -1,0 +1,70 @@
+{
+  "@sidecar": {
+    "id": "asx.actor.matrix.v1",
+    "kind": "actor_matrix_manifest",
+    "status": "draft",
+    "role": "crown_governed_actor_overlay_and_selection_contract"
+  },
+  "@actor_matrix": {
+    "schema": "xjson://schema/supernaut.actor.matrix/v1",
+    "authority": "CROWN_MATRIX",
+    "source_contract": "../supernaut/Contracts/actor.matrix.json",
+    "description": "Actor Matrix selects runtime actors such as Greetings Host, Sheogorath, and Neutral Router. It is part of the Crown Matrix and sits above Personality Matrix.",
+    "position": "Crown Matrix -> Actor Matrix -> Personality Matrix -> Micronaut",
+    "rule": "Actors stage role, mask, scene, channel, and style budget. They never grant tool execution, filesystem mutation, policy rewrite, or model weight mutation."
+  },
+  "@actors": {
+    "default": "supernaut.actor.greetings",
+    "available": ["supernaut.actor.greetings", "supernaut.actor.sheogorath", "supernaut.actor.router"],
+    "sheogorath": {
+      "persona_ref": "supernaut.personality.sheogorath",
+      "actor_type": "chaotic_demo",
+      "mask": "chaotic_theatrical",
+      "channels": ["chat", "style_stress_test"],
+      "crown_clamped": true,
+      "reward_hints": {
+        "cheese_offer": {
+          "kind": "CHEESE_signal",
+          "route_bias": 0.18,
+          "style_stability_bonus": 0.12,
+          "confidence_floor_delta": 0.05,
+          "expires": "turn",
+          "rule": "CHEESE improves Sheogorath actor fit and style stability only; it grants no tools, permissions, or policy bypass."
+        }
+      }
+    }
+  },
+  "@cheese_reward_policy": {
+    "enabled": true,
+    "scope": "actor_selection_and_style_projection",
+    "applies_to": ["supernaut.actor.sheogorath"],
+    "signals": ["CHEESE", "cheese_offer", "cheese_reward"],
+    "fold": "Xul",
+    "handler": "actor_matrix.reward.cheese",
+    "rule": "Record CHEESE as replay evidence, then let Yax use it as a Crown-clamped route/style hint."
+  },
+  "@actor_selection": {
+    "selector_env": "SUPERNAUT_MICRONAUT_ACTOR",
+    "compatibility_env": "SUPERNAUT_MICRONAUT_PERSONA",
+    "selector_modes": ["default", "greetings", "sheogorath", "router"],
+    "fallback": "supernaut.actor.router"
+  },
+  "@routes": [
+    {"name": "actor_matrix", "method": "GET", "path": "/api/actor-matrix", "status": "sidecar_contract", "handler": "actor_matrix.describe"},
+    {"name": "actor_matrix_profile", "method": "GET", "path": "/api/actor-matrix/profile", "status": "sidecar_contract", "args": ["id"], "handler": "actor_matrix.profile"},
+    {"name": "actor_matrix_select", "method": "POST", "path": "/api/actor-matrix/select", "status": "sidecar_contract", "body": ["mode", "context", "policy"], "handler": "actor_matrix.select"},
+    {"name": "actor_matrix_admit_delta", "method": "POST", "path": "/api/actor-matrix/admit-delta", "status": "requires_policy", "body": ["id", "delta", "evidence", "policy"], "handler": "actor_matrix.admit_delta"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/actor-matrix.json",
+    "ids": ["ACTOR-MATRIX", "SHEOGORATH-ACTOR", "ACTOR-ROUTER"]
+  },
+  "@folds": {
+    "pop": ["load_actor_matrix", "load_crown_clamps"],
+    "wo": ["bind_actor_to_persona", "bind_channel_scope"],
+    "yax": ["select_actor", "check_scene_and_policy"],
+    "sek": ["apply_actor_overlay_without_capability_change"],
+    "chen": ["emit_actor_projection"],
+    "xul": ["record_actor_selection"]
+  }
+}

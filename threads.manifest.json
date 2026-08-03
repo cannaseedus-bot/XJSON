@@ -1,0 +1,54 @@
+{
+  "@sidecar": {
+    "id": "asx.runtime.threads.v1",
+    "kind": "thread_manifest",
+    "status": "draft",
+    "role": "thread_topology_and_execution_units"
+  },
+  "@threads": {
+    "definition": "Threads are manifest-declared execution lanes for XCFE/KUHUL work units. They schedule runnable nodes but do not bypass phase admission.",
+    "authority": "JSON declares thread topology; XCFE/KUHUL executes admitted steps.",
+    "default_policy": {
+      "max_threads": 16,
+      "join": "all",
+      "store_shared": false,
+      "determinism": "source_order_round_robin"
+    }
+  },
+  "@thread": {
+    "schema": {
+      "id": "string",
+      "phase": "Pop|Wo|Yax|Sek|Ch'en|Xul",
+      "mode": "serial|parallel|event",
+      "target": "xcfe_program|sidecar_op|sco_alias|model_route",
+      "inputs": "object",
+      "outputs": "object",
+      "guards": "array",
+      "timeout_ms": "integer"
+    }
+  },
+  "@scheduling": {
+    "fold_mapping": {
+      "pop": "read thread declarations and input bindings",
+      "wo": "bind thread ids, targets, and dependency edges",
+      "yax": "rank legal runnable threads and join policy",
+      "sek": "execute admitted thread work units",
+      "chen": "emit per-thread result objects",
+      "xul": "record replay/provenance and close joined threads"
+    },
+    "rules": [
+      "Thread ids must be unique within a manifest.",
+      "Threads may share inputs by reference only when store_shared is true.",
+      "Thread execution order is deterministic for equal priority lanes.",
+      "A thread cannot invoke filesystem, network, process, GPU, or model routes unless the mounted policy admits that capability."
+    ]
+  },
+  "@routes": [
+    {
+      "name": "thread_manifest_describe",
+      "method": "GET",
+      "path": "/api/sidecars/threads",
+      "returns": "thread manifest capability and scheduling law"
+    }
+  ]
+}

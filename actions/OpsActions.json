@@ -1,0 +1,39 @@
+{
+  "class": "OpsActions",
+  "methods": {
+    "handle": {
+      "params": [],
+      "body": [
+        { "op": "return", "value": { "ok": true } }
+      ]
+    },
+    "readStatus": {
+      "params": [],
+      "body": [
+        { "op": "load", "from": "data/status.json", "into": "status" },
+        { "op": "json", "value": "$status" },
+        { "op": "return", "value": "$status" }
+      ]
+    },
+    "emitReport": {
+      "params": ["message"],
+      "body": [
+        { "op": "status", "value": 200 },
+        { "op": "json", "value": { "report": "$message", "agent": "$agent", "intent": "$intent" } },
+        { "op": "return", "value": { "report": "$message" } }
+      ]
+    },
+    "createTicket": {
+      "params": ["id", "title"],
+      "body": [
+        { "op": "load", "from": "data/tickets.json", "into": "tickets" },
+        { "op": "push", "array": "$tickets", "value": { "id": "$id", "title": "$title" } },
+        { "op": "save", "to": "data/tickets.json", "value": "$tickets" },
+        { "op": "status", "value": 201 },
+        { "op": "json", "value": { "created": "$id" } },
+        { "op": "return", "value": { "created": "$id" } }
+      ]
+    }
+  }
+}
+

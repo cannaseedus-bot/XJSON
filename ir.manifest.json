@@ -1,0 +1,304 @@
+{
+  "@sidecar": {
+    "id": "asx.unified-ir.vector-surface.v1",
+    "kind": "unified_ir_vector_surface_manifest",
+    "status": "frozen",
+    "role": "kimd_kuhul_svg_d3d11_1_ir_contract"
+  },
+  "@ir": {
+    "name": "Unified IR Spec: KIMD x K'UHUL x SVG",
+    "version": "IR-1.0",
+    "status": "frozen",
+    "authority": "K'UHUL semantic control, KIMD tensor compute, SVG screen vector surface, D3D11_1 projection backend",
+    "rule": "The IR is declarative and replayable. Opcodes are pure contracts until admitted by XCFE/KUHUL execution and projected to a backend."
+  },
+  "@screen_vector_graphics": {
+    "definition": "GPU-executable geometry surfaces where tensors, glyphs, pi-phase transforms, and render kernels become visible, manipulable, and composable.",
+    "not": "passive SVG markup",
+    "is": "a resolution-independent GPU-backed vector execution surface",
+    "runtime_loop": [
+      "SIMD -> JSON -> GPU columns",
+      "GPU columns -> KIMD ops -> tensors",
+      "tensors -> K'UHUL glyphs -> transforms",
+      "transforms -> SVG paths -> screen vector graphics"
+    ],
+    "folders": {
+      "screen/vector/svg_nodes": "SVG path and node declarations",
+      "screen/vector/tensor_surfaces": "tensor-backed surfaces",
+      "screen/vector/glyph_ops": "glyph-to-transform bindings",
+      "screen/gpu/kernels": "backend kernel declarations",
+      "screen/gpu/linalg": "matrix/vector linalg declarations",
+      "screen/api/json_columns": "SIMD/GPU columnar data inputs",
+      "screen/api/tensor_io": "tensor import/export contracts"
+    }
+  },
+  "@vector_screen": {
+    "definition": "The live UI-facing projection of the active tensor/geometry graph.",
+    "role": "visual_execution_surface",
+    "ties_into": [
+      "SVG tensor lowering",
+      "screen vector graphics",
+      "viewer SVG3D parser",
+      "SVG-to-ISA bridge",
+      "D3D11_1/WebGPU render projection",
+      "DebugOverlay metrics",
+      "Wave VM operation trace",
+      "deterministic replay logs"
+    ],
+    "rule": "The vector screen is not decoration. It renders declared IR/SVG tensor state and exposes the geometric GPU engine as a manipulable screen surface."
+  },
+  "@core_types": {
+    "scalar": ["f32", "f64", "pif32"],
+    "vector": "vNf32",
+    "matrix": "mRxC",
+    "tensor": {
+      "fields": {
+        "data": "float[]",
+        "shape": "int[]",
+        "phase": "pif32"
+      }
+    },
+    "geometry": {
+      "SvgPath": { "fields": ["id", "d"] },
+      "Surface": { "fields": ["id", "tensors", "paths"] },
+      "Cluster": { "fields": ["id", "tensors", "center", "plane"] }
+    },
+    "program": {
+      "fields": {
+        "streams": ["JsonStream", "SvgStream"],
+        "ops": ["Op"]
+      }
+    }
+  },
+  "@kimd": {
+    "role": "vector_tensor_compute_substrate",
+    "inputs": ["json_columns", "gpu_columns", "vectors", "matrices", "tensors"],
+    "outputs": ["vectors", "matrices", "tensors", "surfaces"],
+    "law": "Same inputs produce same outputs. KIMD ops must be replayable through IR log entries."
+  },
+  "@native_projection_roots": {
+    "rule": "These local roots are implementation surfaces for the frozen IR. They may parse, compile, render, train, or verify projections, but they do not redefine the IR grammar.",
+    "roots": {
+      "kuhul_cpp": {
+        "path": "C:/Users/canna/.ASX.cpp/Kuhul-c++",
+        "role": "native glyph engine and K'UHUL C++ projection",
+        "observed_files": ["CMakeLists.txt", "glyph.h", "native_glyph_engine.cpp", "README_glyph_core.md"]
+      },
+      "optical_processor": {
+        "path": "C:/Users/canna/.ASX.cpp/optical_processor",
+        "role": "optical, SVG compiler, geodesic, projection, collapse, and wave VM projection surface",
+        "observed_files": ["svg_compiler.cpp", "geodesic.cpp", "projection.cpp", "collapse.cpp", "wave_vm.cpp", "vm_instruction.h"]
+      },
+      "pi_kuhul": {
+        "path": "C:/Users/canna/.ASX.cpp/pi_kuhul",
+        "role": "pi geometry, spherical geometry, DirectXMath/AVX2, and physics bridge surface",
+        "observed_files": ["KuhulPhysics.h", "pi_kuhul_bridge.h", "SphericalGeometryAVX2.h", "Fold2DCompiler.h"]
+      },
+      "sh_wave_lattice": {
+        "path": "C:/Users/canna/.ASX.cpp/sh-wave-lattice",
+        "role": "wave lattice, atomic, GPU, viewer, trainer, WebView2 runtime, and demo projection surface",
+        "observed_dirs": ["atomic", "gpu", "src", "trainer", "viewer", "webview2_runtime"]
+      }
+    }
+  },
+  "@opcodes": {
+    "json_data": [
+      "OP_JSON_SIMD_PARSE(src -> columns)",
+      "OP_JSON_GPU_LOAD(columns -> gpu_columns)"
+    ],
+    "linalg": [
+      "OP_MUL_MAT_VEC(mRxC, vC -> vR)",
+      "OP_MUL_MAT_MAT(mRxC, mCxK -> mRxK)",
+      "OP_ADD_VEC(vN, vN -> vN)",
+      "OP_GEOM_PRODUCT(vN, phase -> vN)"
+    ],
+    "kuhul_geometry": [
+      "OP_ROTATE(tensor, angle_pi -> tensor')",
+      "OP_SCALE(tensor, factor -> tensor')",
+      "OP_SHEAR(tensor, dir, amt -> tensor')",
+      "OP_RELATE(tA, tB, rel -> score)"
+    ],
+    "svg_screen": [
+      "OP_PATH_FROM_TENSOR(tensor -> SvgPath)",
+      "OP_SURFACE_COMPOSE(surface, tensors -> surface')",
+      "OP_RENDER(surface -> backbuffer)"
+    ],
+    "purity": "all_opcodes_are_pure"
+  },
+  "@ir_grammar": {
+    "status": "frozen",
+    "ebnf": [
+      "Program        ::= Streams Ops",
+      "Streams        ::= \"streams\" \":\" \"[\" Stream (\",\" Stream)* \"]\"",
+      "Stream         ::= JsonStream | SvgStream",
+      "JsonStream     ::= \"json(\" String \")\"",
+      "SvgStream      ::= \"svg(\" String \")\"",
+      "Ops            ::= \"ops\" \":\" \"[\" Op (\",\" Op)* \"]\"",
+      "Op             ::= JsonOp | LinalgOp | GeomOp | SvgOp | RenderOp",
+      "JsonOp         ::= \"json_simd_parse(\" Id \"->\" Id \")\" | \"json_gpu_load(\" Id \"->\" Id \")\"",
+      "LinalgOp       ::= \"mul_mat_vec(\" Id \",\" Id \"->\" Id \")\" | \"mul_mat_mat(\" Id \",\" Id \"->\" Id \")\" | \"add_vec(\" Id \",\" Id \"->\" Id \")\" | \"geom_product(\" Id \",\" Phase \"->\" Id \")\"",
+      "GeomOp         ::= \"rotate(\" Id \",\" Phase \"->\" Id \")\" | \"scale(\" Id \",\" Number \"->\" Id \")\" | \"shear(\" Id \",\" Direction \",\" Number \"->\" Id \")\" | \"relate(\" Id \",\" Id \",\" Relation \"->\" Number \")\"",
+      "SvgOp          ::= \"path_from_tensor(\" Id \"->\" Id \")\" | \"surface_compose(\" Id \",\" TensorList \"->\" Id \")\"",
+      "RenderOp       ::= \"render(\" Id \"->\" Id \")\"",
+      "TensorList     ::= \"[\" Id (\",\" Id)* \"]\"",
+      "Phase          ::= Number \"pi\"",
+      "Direction      ::= \"x\" | \"y\" | \"z\"",
+      "Relation       ::= \"congruent\" | \"similar\" | \"perpendicular\" | \"parallel\"",
+      "Number         ::= [\"-\"] Digit+ [\".\" Digit+]?",
+      "Id             ::= Letter (Letter | Digit | \"_\")*",
+      "String         ::= '\"' (Character - '\"')* '\"'"
+    ],
+    "unicode_surface": {
+      "arrow": "-> represents source glyph U+2192",
+      "phase": "pi represents source glyph π",
+      "relations": {
+        "congruent": "≅",
+        "similar": "∼",
+        "perpendicular": "⊥",
+        "parallel": "∥"
+      }
+    },
+    "determinism": "complete"
+  },
+  "@replay_log": {
+    "format": "newline-delimited-json",
+    "extension": ".irlog",
+    "entry_schema": {
+      "seq": "integer_strictly_monotonic",
+      "op": "string",
+      "inputs": "object",
+      "outputs": "object",
+      "state": {
+        "hash_in": "sha256(serialized_inputs)",
+        "hash_out": "sha256(serialized_outputs)"
+      },
+      "kernel": "D3D11_1|WebGPU|DXIL|CPU",
+      "timestamp": "utc_iso8601",
+      "version": "IR-1.0"
+    },
+    "rules": [
+      "seq strictly increases",
+      "hash_in/hash_out computed over canonical serialized inputs and outputs",
+      "no implicit state",
+      "replay re-executes ops in log order"
+    ]
+  },
+  "@d3d11_1": {
+    "role": "deterministic rendering projection",
+    "kernel_rule": "No dynamic shader changes; shaders are fixed. Only buffers, matrices, and phase constants vary.",
+    "constant_buffer": {
+      "name": "SceneCB",
+      "register": "b0",
+      "fields": {
+        "ViewProj": "matrix<float,4,4>",
+        "PhaseParams": "float4"
+      }
+    },
+    "fixed_vertex_shader": "float4 p=float4(input.pos.xy,0.0,1.0); o.pos=mul(ViewProj,p); o.uv=input.uv;",
+    "fixed_pixel_shader": "float phase=PhaseParams.x; float3 base=float3(sin(phase),cos(phase),1.0-sin(phase)); return float4(base,1.0);"
+  },
+  "@d3d11_submission": {
+    "per_frame_steps": [
+      "UpdateSubresource(SceneCB)",
+      "VSSetConstantBuffers(0, SceneCB)",
+      "PSSetConstantBuffers(0, SceneCB)",
+      "IASetVertexBuffers(surface.vb)",
+      "IASetIndexBuffer(surface.ib, DXGI_FORMAT_R32_UINT)",
+      "IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)",
+      "DrawIndexed(indexCount, 0, 0)",
+      "Present(1, 0)"
+    ],
+    "resource_mapping": {
+      "matrix": "ID3D11Buffer constant buffer",
+      "tensor_path": "ID3D11Buffer vertex buffer float2 positions",
+      "triangulation": "ID3D11Buffer index buffer uint32",
+      "surface": "set of vertex/index buffers plus draw ranges"
+    }
+  },
+  "@svg_tessellation": {
+    "inputs": ["SVG path d strings", "optional transform=matrix(...)"],
+    "steps": [
+      "parse M/L/C/Q/Z path commands into a polyline",
+      "flatten curves to line segments at fixed tolerance",
+      "triangulate polyline into triangles",
+      "emit Tensor { data:[x0,y0,...], shape:[N,2], phase:0pi }",
+      "emit path_from_tensor(t_path -> p_id)",
+      "build VB=float2 positions and IB=uint32 triangulation indices"
+    ],
+    "transform_mapping": {
+      "matrix(a,b,c,d,e,f)": "mul_mat_vec(m3x3, v2)",
+      "rotate(theta)": "rotate(tensor, theta_pi)",
+      "scale(s)": "scale(tensor, s)"
+    },
+    "rule": "SVG is a pure geometric IR front-end. Tessellation is deterministic for a fixed tolerance."
+  },
+  "@tiny_character_loop": {
+    "program": {
+      "streams": ["svg(\"char.svg\")"],
+      "ops": [
+        "path_from_tensor(t_char -> p_char)",
+        "surface_compose(s_char, [t_char] -> s_char)",
+        "rotate(t_char, 0.01pi -> t_char_rot)",
+        "path_from_tensor(t_char_rot -> p_char_rot)",
+        "surface_compose(s_char, [t_char_rot] -> s_char)",
+        "render(s_char -> backbuffer)"
+      ]
+    },
+    "host_loop": [
+      "advance phase by fixed delta",
+      "append rotate op to .irlog",
+      "rotate tensor",
+      "build or update buffers from tensor",
+      "update constant buffer",
+      "bind buffers",
+      "draw indexed",
+      "present"
+    ],
+    "minimal_character": "one tensor, one path, one surface, one matrix, one draw call"
+  },
+  "@animated_characters": {
+    "definition": "Animated cartoon characters are live geometric tensors rendered through the unified KIMD x K'UHUL x SVG x D3D11_1 substrate.",
+    "law": "Animate geometry, not pixels. Frames are phase-driven tensor transforms plus deterministic vector-screen rendering.",
+    "types": ["vector_outline_character", "multi_part_rigged_character", "procedural_glyph_character", "json_driven_character"],
+    "demo": {
+      "manifest": "demos/steamboat-willie-vector-character.manifest.json",
+      "www_surface": "C:/Users/canna/.ASX.cpp/www/steamboat-willie-vector-demo.html"
+    }
+  },
+  "@cartoon_character": {
+    "core_shape": [
+      "Tensor t_char { data:[x0,y0,...], shape:[N,2], phase:pif32 }",
+      "path_from_tensor(t_char -> p_char)",
+      "surface_compose(s_char, [t_char] -> s_char)",
+      "render(s_char -> backbuffer)"
+    ],
+    "motion_shape": [
+      "rotate(t_char, anglepi -> t_char_rot)",
+      "scale(t_char_rot, factor -> t_char_scaled)",
+      "shear(t_char_scaled, x, amt -> t_char_sheared)"
+    ]
+  },
+  "@character_rigging": {
+    "rig_unit": "SVGTensorCluster",
+    "parts": ["head", "body", "arm_l", "arm_r", "leg_l", "leg_r"],
+    "relationship": "similarity",
+    "rule": "Each rig part is its own tensor with a parent, pivot, phase, and legal local transform. Compose transformed parts into one Surface before render."
+  },
+  "@procedural_animation": {
+    "phase_driven_motion": "phase = frame_index * fixed_delta_pi",
+    "morphing": "add_vec(t_char, t_char2 -> t_char_morph)",
+    "glyph_examples": {
+      "rotational_compression": "rotate/geom_product",
+      "activation_morph": "scale/shear/add_vec",
+      "hierarchical_compression": "surface_compose over rig clusters"
+    }
+  },
+  "@folds": {
+    "pop": "load JSON/SVG streams and declared resources",
+    "wo": "bind identifiers, tensor refs, paths, surfaces, kernels, and output refs",
+    "yax": "validate grammar, type refs, replay determinism, and backend admission",
+    "sek": "execute admitted pure IR ops or project them to backend commands",
+    "chen": "emit buffers, backbuffer state, replay log entries, and artifacts",
+    "xul": "hash outputs, verify replay, record provenance, and close or re-enter"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "@sidecar": {
+    "id": "asx.kuhul.character_engine.v1",
+    "kind": "kuhul_character_engine_manifest",
+    "status": "draft",
+    "role": "autonomous_character_cluster_ecosystem_contract"
+  },
+  "@kuhul_character_engine": {
+    "schema": "xjson://schema/kuhul.character_engine/v1",
+    "authority": "KUHUL_XCFE",
+    "description": "JSON contract for the K'UHUL pi Autonomous Character Cluster Ecosystem: character archetypes, virtual pi runtimes, cognitive cycles, cluster spawning, emergent connections, ASX component rendering, API commands, and ecosystem export.",
+    "runtime": "browser",
+    "relationship": {
+      "exports_to": "kuhul-cluster-analytics.manifest.json",
+      "shares_actor_axis_with": "actor-matrix.manifest.json",
+      "shares_personality_axis_with": "personality-matrix.manifest.json"
+    }
+  },
+  "@character_archetypes": {
+    "ANALYST": {"name": "Analyst", "symbol": "pi", "color": "#16f2aa", "traits": ["logical", "precise", "calculating"], "cognitivePattern": "sequential", "piConstants": ["pi", "tau"], "behavior": "analyzes patterns and optimizes systems"},
+    "CREATOR": {"name": "Creator", "symbol": "phi", "color": "#a78bfa", "traits": ["imaginative", "synthetic", "expressive"], "cognitivePattern": "divergent", "piConstants": ["phi", "e"], "behavior": "generates novel combinations"},
+    "GUARDIAN": {"name": "Guardian", "symbol": "sigma", "color": "#fbbf24", "traits": ["protective", "stable", "reliable"], "cognitivePattern": "conservative", "piConstants": ["pi", "sqrt2"], "behavior": "maintains stability and prevents crashes"},
+    "EXPLORER": {"name": "Explorer", "symbol": "infinity", "color": "#22d3ee", "traits": ["curious", "adaptive", "risk-taking"], "cognitivePattern": "exploratory", "piConstants": ["e", "infinity"], "behavior": "searches solution space"},
+    "SYNTHESIZER": {"name": "Synthesizer", "symbol": "oplus", "color": "#ff3366", "traits": ["integrative", "holistic", "connective"], "cognitivePattern": "convergent", "piConstants": ["pi", "phi", "e"], "behavior": "connects disparate ideas"}
+  },
+  "@virtual_pi_runtime": {
+    "state": ["idle", "processing", "folding", "error"],
+    "metrics": ["cpuLoad", "memoryUsage", "cognitiveCycles", "connections", "messageQueue"],
+    "personality_matrix_rule": "Runtime personality matrices are derived state and must not overwrite the Crown-governed Personality Matrix without candidate admission.",
+    "methods": ["generatePersonalityMatrix", "processInput", "applyPersonalityFilter", "connectTo"]
+  },
+  "@ecosystem": {
+    "entities": ["characters", "runtimes", "clusters", "apiLog", "cognitiveCycle"],
+    "commands": ["spawn", "fold", "cycle", "connect", "status"],
+    "exports": {
+      "characters": ["id", "archetype", "position", "traits", "connections", "memory"],
+      "clusters": ["id", "characterCount", "cognitivePattern"],
+      "metrics": ["totalCharacters", "totalRuntimes", "cognitiveCycles", "totalConnections"]
+    }
+  },
+  "@asx_components": ["CharacterNode", "RuntimeStatus", "CharacterCluster", "PiRuntimeMonitor"],
+  "@routes": [
+    {"name": "kuhul_character_engine", "method": "GET", "path": "/api/kuhul/character-engine", "status": "sidecar_contract", "handler": "kuhul_character_engine.describe"},
+    {"name": "kuhul_character_spawn", "method": "POST", "path": "/api/kuhul/character-engine/spawn", "status": "requires_policy", "body": ["count", "archetype", "policy"], "handler": "kuhul_character_engine.spawn"},
+    {"name": "kuhul_character_fold", "method": "POST", "path": "/api/kuhul/character-engine/pi-fold", "status": "requires_policy", "body": ["cluster", "policy"], "handler": "kuhul_character_engine.pi_fold"},
+    {"name": "kuhul_character_cycle", "method": "POST", "path": "/api/kuhul/character-engine/cycle", "status": "requires_policy", "body": ["input", "policy"], "handler": "kuhul_character_engine.cycle"},
+    {"name": "kuhul_character_command", "method": "POST", "path": "/api/kuhul/character-engine/command", "status": "requires_policy", "body": ["command", "policy"], "handler": "kuhul_character_engine.command"},
+    {"name": "kuhul_character_export", "method": "POST", "path": "/api/kuhul/character-engine/export", "status": "requires_policy", "body": ["target", "policy"], "handler": "kuhul_character_engine.export"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/kuhul-character-engine.json",
+    "ids": ["KUHUL-CHARACTER-ENGINE", "CHARACTER-ARCHETYPE-ROUTER", "PI-RUNTIME-MONITOR"]
+  },
+  "@policy": {
+    "spawn_requires": ["count_limit", "archetype_allowlist", "policy"],
+    "cycle_requires": ["runtime_health", "policy"],
+    "export_requires": ["target_scope", "policy"],
+    "forbidden": ["unbounded_autocycle", "implicit_personality_promotion", "silent_download", "browser_prompt_as_authority"]
+  }
+}

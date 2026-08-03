@@ -1,0 +1,43 @@
+{
+  "@sidecar": {
+    "id": "asx.kuhul.pi_virtual_cluster.v1",
+    "kind": "kuhul_pi_virtual_cluster_manifest",
+    "status": "draft",
+    "role": "browser_runtime_svg_model_distribution_contract"
+  },
+  "@kuhul_pi_virtual_cluster": {
+    "schema": "xjson://schema/kuhul.pi_virtual_cluster/v1",
+    "authority": "KUHUL_XCFE",
+    "description": "JSON contract for the K'UHUL pi Virtual Cluster HTML surface: SVG-encoded model metadata, browser virtual nodes, pi-addressed memory, model chunking, distributed inference simulation, ASX component integration, and cluster state persistence.",
+    "runtime": "browser",
+    "node_count": 4,
+    "node_types": ["gpu", "cpu", "cpu", "cpu"],
+    "constants": ["pi", "e", "phi", "tau"]
+  },
+  "@svg_model_distribution": {
+    "metadata_layers": ["weights", "vocab", "tokenizer", "clusterState"],
+    "decode_stages": ["read_svg_metadata", "decompress_weights", "split_chunks", "write_virtual_memory"],
+    "rule": "SVG metadata declares portable model data surfaces. Real model artifacts still require checksum, size limits, and policy admission before runtime use."
+  },
+  "@cluster_nodes": {
+    "memory_layout": ["weights_ptr", "vocab_ptr", "cache_ptr"],
+    "metrics": ["state", "throughput", "memory_used"],
+    "states": ["idle", "loaded", "processing", "saved", "error"]
+  },
+  "@routes": [
+    {"name": "kuhul_pi_cluster", "method": "GET", "path": "/api/kuhul/pi-cluster", "status": "sidecar_contract", "handler": "kuhul_pi_cluster.describe"},
+    {"name": "kuhul_pi_cluster_init", "method": "POST", "path": "/api/kuhul/pi-cluster/init", "status": "sidecar_contract", "body": ["nodes", "policy"], "handler": "kuhul_pi_cluster.init"},
+    {"name": "kuhul_pi_cluster_distribute", "method": "POST", "path": "/api/kuhul/pi-cluster/distribute", "status": "requires_policy", "body": ["svg_model", "policy"], "handler": "kuhul_pi_cluster.distribute"},
+    {"name": "kuhul_pi_cluster_infer", "method": "POST", "path": "/api/kuhul/pi-cluster/infer", "status": "requires_policy", "body": ["input", "policy"], "handler": "kuhul_pi_cluster.infer"},
+    {"name": "kuhul_pi_cluster_save", "method": "POST", "path": "/api/kuhul/pi-cluster/save", "status": "requires_policy", "body": ["state", "target", "policy"], "handler": "kuhul_pi_cluster.save"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/kuhul-pi-virtual-cluster.json",
+    "ids": ["KUHUL-PI-CLUSTER", "SVG-MODEL-DISTRIBUTOR", "BROWSER-NODE-SCHEDULER"]
+  },
+  "@policy": {
+    "model_distribution_requires": ["svg_metadata_validation", "size_limit", "checksum_or_declared_hash", "policy"],
+    "inference_requires": ["loaded_model_state", "node_health", "policy"],
+    "forbidden": ["silent_remote_model_load", "unbounded_localStorage_persistence", "direct_cross_stack_file_links"]
+  }
+}

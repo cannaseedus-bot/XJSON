@@ -1,0 +1,122 @@
+{
+  "@sidecar": {
+    "id": "kuhul.xsd.grammar.v3",
+    "kind": "kuhul_xsd_grammar_manifest",
+    "status": "draft",
+    "role": "fold_node_micronaut_xsd_grammar_contract"
+  },
+  "@kuhul_xsd_grammar": {
+    "name": "K'UHUL XSD GRAMMAR",
+    "version": "3.0",
+    "description": "Complete Fold -> Node -> Micronaut grammar surface expressed as JSON sidecar notation instead of HTML/JavaScript.",
+    "final_lock": "The grammar defines the system. The system executes the grammar.",
+    "laws": [
+      "Fold owns hierarchical containment.",
+      "Node locates addressable state and capability.",
+      "Micronaut acts as the active runtime actor.",
+      "XCFE decides orchestration logic.",
+      "KUHUL executes admitted runtime processing.",
+      "KNUMATICS stores layered memory.",
+      "SCX persists storage fabric."
+    ]
+  },
+  "@hierarchy": {
+    "Fold": {
+      "role": "Hierarchical Domain",
+      "attributes": {
+        "id": {"type": "Identifier", "required": true},
+        "parent": {"type": "Identifier", "required": false},
+        "namespace": {"type": "string", "required": false},
+        "bootOrder": {"type": "integer", "default": 0},
+        "persistence": {"type": "boolean", "default": true},
+        "entropyBudget": {"type": "float", "default": 1.0}
+      },
+      "contains": ["Metadata", "Permissions", "Node", "Fold"]
+    },
+    "Node": {
+      "role": "Addressable State",
+      "attributes": {
+        "id": {"type": "Identifier", "required": true},
+        "type": {"type": "string", "required": true},
+        "phase": {"type": "PhaseType", "default": "Pop"},
+        "device": {"type": "DeviceType", "default": "Auto"},
+        "lipschitz": {"type": "float", "default": 1.0},
+        "persistent": {"type": "boolean", "default": true}
+      },
+      "contains": ["State", "Resources", "MathML", "GradientRoutes", "Micronaut"]
+    },
+    "Micronaut": {
+      "role": "Active Runtime Actor",
+      "attributes": {
+        "id": {"type": "Identifier", "required": true},
+        "node": {"type": "Identifier", "required": true},
+        "role": {"type": "string", "required": true},
+        "parallelism": {"type": "integer", "default": 1},
+        "timeout": {"type": "integer", "default": 30000},
+        "entropyCost": {"type": "float", "default": 0.1}
+      },
+      "contains": ["Skills", "Opcodes", "PhaseBindings", "Persona"]
+    }
+  },
+  "@phase_machine": {
+    "default": "Pop",
+    "phases": [
+      {"id": "Pop", "meaning": "Initialize", "description": "Boot sequence begins"},
+      {"id": "Wo", "meaning": "Assign", "description": "Resources allocated"},
+      {"id": "Yax", "meaning": "Map", "description": "Structure defined"},
+      {"id": "Sek", "meaning": "Execute", "description": "Operations run"},
+      {"id": "Ch'en", "meaning": "Evaluate", "description": "Results assessed"},
+      {"id": "Xul", "meaning": "Terminate", "description": "Clean shutdown"}
+    ],
+    "transitions": [["Pop", "Wo"], ["Wo", "Yax"], ["Yax", "Sek"], ["Sek", "Ch'en"], ["Ch'en", "Xul"], ["Xul", "Pop"]]
+  },
+  "@knumatics": {
+    "layers": [
+      {"level": 1, "name": "L1_Cache", "size": "64KB"},
+      {"level": 2, "name": "n_grams", "size": "1MB"},
+      {"level": 3, "name": "Vectors", "size": "16MB"},
+      {"level": 4, "name": "Folds", "size": "256MB"},
+      {"level": 5, "name": "WorkingMemory", "size": "4GB"},
+      {"level": 6, "name": "Brains", "size": "64GB"},
+      {"level": 7, "name": "Swapping", "size": "1TB"}
+    ]
+  },
+  "@entropy_economy": {
+    "global_budget_range": [0.0, 1.0],
+    "default_budget": 1.0,
+    "regeneration_mode": "hybrid",
+    "regeneration_sources": ["clock", "reward"],
+    "bailout_mode": "hybrid",
+    "bailout_sources": ["strict", "loan"],
+    "consume_step": 0.15,
+    "regenerate_step": 0.10,
+    "bailout_threshold": 0.3,
+    "bailout_loan": 0.4
+  },
+  "@xsd_schema": {
+    "namespace": "http://kuhul.io/schema/v3",
+    "types": ["Identifier", "PhaseType", "DeviceType", "TensorDType"],
+    "elements": ["Fold", "Node", "Micronaut", "PhaseMachine", "KNumatics"],
+    "phase_type_values": ["Pop", "Wo", "Yax", "Sek", "Ch'en", "Xul"],
+    "device_type_values": ["CPU", "GPU", "TPU", "Quantum", "FPGA", "Auto"],
+    "rule": "This JSON contract is the machine-readable sidecar. XSD text can be emitted from this structure by an admitted generator route."
+  },
+  "@routes": [
+    {"name": "kuhul_xsd_grammar", "method": "GET", "path": "/api/kuhul/xsd-grammar", "handler": "kuhul.xsd_grammar.describe", "status": "sidecar_contract"},
+    {"name": "kuhul_xsd_hierarchy", "method": "GET", "path": "/api/kuhul/xsd-grammar/hierarchy", "handler": "kuhul.xsd_grammar.hierarchy", "status": "sidecar_contract"},
+    {"name": "kuhul_xsd_emit", "method": "POST", "path": "/api/kuhul/xsd-grammar/emit-xsd", "body": ["format", "policy"], "handler": "kuhul.xsd_grammar.emit", "status": "sidecar_contract"},
+    {"name": "kuhul_xsd_validate", "method": "POST", "path": "/api/kuhul/xsd-grammar/validate", "body": ["document", "policy"], "handler": "kuhul.xsd_grammar.validate", "status": "sidecar_contract"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/kuhul-xsd-grammar.json",
+    "ids": ["KUHUL-XSD-GRAMMAR", "FOLD-NODE-MICRONAUT-SCHEMA"]
+  },
+  "@folds": {
+    "pop": ["read_schema_request", "load_hierarchy"],
+    "wo": ["bind_types", "bind_phase_machine"],
+    "yax": ["map_fold_node_micronaut_tree", "check_entropy_budget"],
+    "sek": ["emit_xsd_when_requested", "validate_when_requested"],
+    "chen": ["project_schema", "emit_report"],
+    "xul": ["record_schema_hash", "close"]
+  }
+}

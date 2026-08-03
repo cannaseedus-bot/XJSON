@@ -1,0 +1,52 @@
+{
+  "@sidecar": {
+    "id": "asx.mx2lm.runtime.boot.v1",
+    "kind": "mx2lm_runtime_boot_manifest",
+    "status": "draft",
+    "role": "contract_first_runtime_boot_surface"
+  },
+  "@mx2lm_runtime_boot": {
+    "schema": "xjson://schema/mx2lm.runtime.boot/v1",
+    "authority": "CROWN_XCFE",
+    "description": "MX2LM Runtime Boot contract. The HTML splash stack is a projection of atomic boot stages, glyph stream policy, asset bindings, XCFE tags, and runtime handoff.",
+    "role_reversal": "Boot contract owns stage order and handoff semantics. HTML/CSS/JS implements the visible boot projection.",
+    "hierarchy": ["Fold", "Node", "Micronaut", "Surface", "Projection"],
+    "projection": {
+      "language": "html",
+      "entry": "mx2lm-runtime-boot.html",
+      "role": "boot_screen_projection"
+    }
+  },
+  "@boot_stack": {
+    "grid": {"columns": 3, "cards": 6},
+    "handoff": "runtime_control",
+    "stages": [
+      {"id": "atomic_blocks", "phase": "Pop", "lane": "parse", "asset": "https://mx2lm.app/mx2lm-atomic.svg", "xcfe": ["@perception", "@representation"], "produces": ["atomic_block_context"]},
+      {"id": "core_identity", "phase": "Wo", "lane": "model", "asset": "https://mx2lm.app/mx2lm.svg", "xcfe": ["@reasoning"], "produces": ["runtime_identity"]},
+      {"id": "spatial_svg_3d", "phase": "Yax", "lane": "geometry", "asset": "https://mx2lm.app/mx2lm-3d.svg", "xcfe": ["@action", "geometry"], "produces": ["spatial_projection"]},
+      {"id": "api_dom_surface", "phase": "Sek", "lane": "api", "asset": "https://mx2lm.app/mx2lm-web.svg", "xcfe": ["@flow", "execution"], "produces": ["api_dom_binding"]},
+      {"id": "control_cockpit", "phase": "Ch'en", "lane": "validate", "asset": "https://mx2lm.app/mx2lm-dashboard.svg", "xcfe": ["@monitor", "@reflect"], "produces": ["control_status"]},
+      {"id": "entropy_hazard", "phase": "Xul", "lane": "validate", "asset": "https://mx2lm.app/mx2lm-hazard.svg", "xcfe": ["@interrupt", "@stabilize"], "produces": ["stability_report"]}
+    ]
+  },
+  "@glyph_stream": {
+    "symbols": ["⟁", "Ω", "Ψ", "λ", "⊗", "∆", "∇", "φ", "χ", "ξ", "σ"],
+    "count": 48,
+    "role": "boot_entropy_visualization",
+    "rule": "Glyph drift is a non-authoritative projection. Runtime symbols bind only through declared K'UHUL opcodes."
+  },
+  "@routes": [
+    {"name": "mx2lm_runtime_boot", "method": "GET", "path": "/api/mx2lm/runtime-boot", "status": "sidecar_contract", "handler": "mx2lm.runtime_boot.describe"},
+    {"name": "mx2lm_runtime_boot_plan", "method": "POST", "path": "/api/mx2lm/runtime-boot/plan", "status": "sidecar_contract", "body": ["stage", "context", "policy"], "handler": "mx2lm.runtime_boot.plan"},
+    {"name": "mx2lm_runtime_boot_handoff", "method": "POST", "path": "/api/mx2lm/runtime-boot/handoff", "status": "requires_policy", "body": ["boot_state", "target_runtime", "policy"], "handler": "mx2lm.runtime_boot.handoff"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/mx2lm-runtime-boot.json",
+    "ids": ["MX2LM-RUNTIME-BOOT", "ATOMIC-BOOT-STAGE-ROUTER", "BOOT-HANDOFF-GATE"]
+  },
+  "@policy": {
+    "assets_are_projection_only": true,
+    "handoff_requires_policy": true,
+    "forbidden": ["implicit_runtime_start", "network_fetch_without_asset_policy", "symbol_exec_from_glyph_stream"]
+  }
+}

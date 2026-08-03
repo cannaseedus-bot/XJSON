@@ -1,0 +1,54 @@
+{
+  "@sidecar": {
+    "id": "asx.xjson.grammar.v1",
+    "kind": "grammar_manifest",
+    "status": "frozen",
+    "role": "notation_and_lowering_contract"
+  },
+  "@grammar": {
+    "language": "XJSON executable minimal grammar v1",
+    "authority": "notation_only",
+    "core_law": ["[] declarative", "{{ }} expression", "@ XCFE vector", "source order is flow"],
+    "strict": true
+  },
+  "@surface_syntax": {
+    "document": "sequence of lines",
+    "exec": "@verb",
+    "label": "then|else|do|case|default|on_error|on_complete",
+    "param": "key: value under exec",
+    "array_item": "- value under multiline array"
+  },
+  "@declarative_blocks": {
+    "tokens": ["[", "]"],
+    "purpose": "declaration and literal structure",
+    "exec": false
+  },
+  "@expr_blocks": {
+    "tokens": ["{{", "}}"],
+    "purpose": "pure expression boundary",
+    "exec": false,
+    "forbidden": ["@verb tokens", "IO side effects", "mutation"]
+  },
+  "@flow_operator": {
+    "token": "->",
+    "source_glyph": "→",
+    "v1_status": "reserved",
+    "lowering": "use @seq ordered children in v1"
+  },
+  "@lowering": {
+    "spec": "xcfe://spec/lowering/surface-to-ast/v1",
+    "stages": ["normalize", "comment_filter", "surface_lexer", "indent_tree", "ast_lowering", "path_assignment", "canonical_hash"],
+    "path_examples": ["root/0/@log", "root/0/@log/param:message", "root/0/@log/param:message/v"]
+  },
+  "@parser": {
+    "reference_targets": ["js", "python", "java", "khl", "actionscript"],
+    "parser_generator": false,
+    "indentation": "spaces_only",
+    "tabs": "E_PARSE_TAB"
+  },
+  "@test_vectors": {
+    "pack": "xcfe://tests/v1",
+    "required": true,
+    "hash_basis": "sha256(canonical_ast_json)"
+  }
+}

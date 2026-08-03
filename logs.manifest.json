@@ -1,0 +1,6 @@
+{
+  "@sidecar": {"id":"asx.runtime.logs.v1","kind":"log_manifest","status":"draft","role":"log_trace_contracts"},
+  "@logs": {"definition":"Logs capture runtime observations, command results, errors, replay notes, and route traces.","rule":"Logs are append-only evidence unless an explicit retention policy prunes them."},
+  "@trace": {"fields":["time","phase","route","op","status","duration_ms","hash"]},
+  "@audit": {"rule":"Audit entries must identify actor, action, target, policy, and result."}
+}

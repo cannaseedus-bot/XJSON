@@ -1,0 +1,79 @@
+{
+  "@sidecar": {
+    "id": "asx.runtime.coder.v1",
+    "kind": "coder_manifest",
+    "status": "draft",
+    "role": "micronaut_coder_code_review_generation_contract"
+  },
+  "@code_generation": {
+    "definition": "Coder routes bridge ASX Manager code-generation, review, refactor, optimize, document, test, and explain requests to the local micronaut_coder helper or an admitted model/code backend.",
+    "scope_note": "micronaut_coder.exe is a narrow helper for review/explain/refactor/optimize/document/test style actions. Full compiler, agent, Roslyn, CodeWASM, MX2LM, and Supernaut routing work is declared by separate sidecars.",
+    "primary_helper": "bin/micronaut_coder.exe",
+    "fallback_helper": "tools/micronaut_coder.exe",
+    "binary_compare": {
+      "bin/micronaut_coder.exe": {
+        "sha256": "63AD30757FEB3AFBC7064FCC47D3CB838B99B3D2BC59704879DD56AC0D31062B",
+        "bytes": 396288,
+        "observed": "2026-07-19"
+      },
+      "tools/micronaut_coder.exe": {
+        "sha256": "E3970146F297B88D5F0CEF0697C03BE4D10D75A9941D003B5C83E84C15A743B4",
+        "bytes": 155136,
+        "matches": "C:/Users/canna/.codex/skills/coder/Release/micronaut_coder.exe",
+        "observed": "2026-07-19"
+      }
+    },
+    "data_rule": "Data path must be local to the helper binary. Cross-micronaut communication uses HTTP protocols, not direct paths. Files needed from other micronauts must be copied into data/code-micronaut at build/deploy time.",
+    "env_override": "MICRONAUT_CODER_DATA",
+    "default_data_path": "./data/code-micronaut",
+    "local_data_subdirs": {
+      "github_codereview": "github-codereview",
+      "dolphin_coder": "dolphin-coder"
+    }
+  },
+  "@commands": {
+    "review": {"argv":["review","<file>"],"phase":"Sek","description":"Review a single code file."},
+    "review_dir": {"argv":["review-dir","<directory>"],"phase":"Sek","description":"Review all files in a directory."},
+    "diff": {"argv":["diff","<old>","<new>"],"phase":"Sek","description":"Review a diff between two versions."},
+    "refactor": {"argv":["refactor","<file>","<goal>"],"phase":"Sek","description":"Suggest refactoring improvements."},
+    "optimize": {"argv":["optimize","<file>","<metric>"],"phase":"Sek","description":"Suggest speed or memory optimizations."},
+    "document": {"argv":["document","<file>"],"phase":"Ch'en","description":"Generate documentation."},
+    "test": {"argv":["test","<file>"],"phase":"Ch'en","description":"Generate test cases."},
+    "explain": {"argv":["explain","<file>"],"phase":"Ch'en","description":"Explain code functionality."},
+    "github_review": {"argv":["github-review","<file>"],"phase":"Ch'en","description":"Format review output for a GitHub PR."}
+  },
+  "@routes": [
+    {"name":"code_generation","method":"POST","path":"/api/code-generation","command":"refactor|document|test|explain","status":"proxy_contract"},
+    {"name":"code_review","method":"POST","path":"/api/code/review","command":"review","status":"proxy_contract"},
+    {"name":"code_review_dir","method":"POST","path":"/api/code/review-dir","command":"review-dir","status":"proxy_contract"},
+    {"name":"code_diff","method":"POST","path":"/api/code/diff","command":"diff","status":"proxy_contract"},
+    {"name":"code_refactor","method":"POST","path":"/api/code/refactor","command":"refactor","status":"proxy_contract"},
+    {"name":"code_optimize","method":"POST","path":"/api/code/optimize","command":"optimize","status":"proxy_contract"},
+    {"name":"code_document","method":"POST","path":"/api/code/document","command":"document","status":"proxy_contract"},
+    {"name":"code_test","method":"POST","path":"/api/code/test","command":"test","status":"proxy_contract"},
+    {"name":"code_explain","method":"POST","path":"/api/code/explain","command":"explain","status":"proxy_contract"},
+    {"name":"code_github_review","method":"POST","path":"/api/code/github-review","command":"github-review","status":"proxy_contract"}
+  ],
+  "@tools": {
+    "CodeReviewEngine": {
+      "methods": ["review_file", "review_diff", "review_directory", "format_github_comment", "detect_language"],
+      "role": "static code review and GitHub comment formatting"
+    },
+    "DolphinCoderAssistant": {
+      "methods": ["refactor_code", "optimize_code", "document_code", "generate_tests", "explain_code"],
+      "role": "coding assistance and pattern suggestions"
+    },
+    "GitHubCodeReviewIntegrator": {
+      "methods": ["review_pull_request", "format_pr_comment", "post_review_comment", "batch_review_changes"],
+      "role": "GitHub PR review integration"
+    }
+  },
+  "@folds": {
+    "pop": "read file/project context and helper availability",
+    "wo": "bind command, file path, goal, metric, and local data root",
+    "yax": "validate path, command, policy, and helper data isolation",
+    "sek": "invoke admitted helper command or code backend",
+    "chen": "emit review, explanation, generated tests, documentation, or patch proposal",
+    "xul": "record result, confidence, command, and replay metadata"
+  }
+}

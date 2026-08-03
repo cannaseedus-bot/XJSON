@@ -1,0 +1,79 @@
+{
+  "@sidecar": {
+    "id": "asx.micronaut.brains.v1",
+    "kind": "micronaut_brain_manifest",
+    "status": "draft",
+    "role": "ngram_intent_to_micronaut_brain_contract"
+  },
+  "@micronaut_brains": {
+    "schema": "xjson://schema/micronaut.brains/v1",
+    "authority": "KUHUL_PI",
+    "mutation": "forbidden",
+    "description": "Compact profile registry for Control, Perception, Temporal, Host, Storage, Model, Extrapolation, Visualization, and Verification micronauts.",
+    "crown_matrix": "crown-matrix.manifest.json",
+    "actor_matrix": "actor-matrix.manifest.json",
+    "personality_matrix": "personality-matrix.manifest.json",
+    "hierarchy": "Crown Matrix -> Actor Matrix -> Personality Matrix -> Micronaut Brain"
+  },
+  "@matrix_refs": {
+    "crown": "crown-matrix.manifest.json",
+    "actor": "actor-matrix.manifest.json",
+    "personality": "personality-matrix.manifest.json",
+    "rule": "Micronaut profiles can consume actor/personality routing posture, but tool execution remains gated by XCFE and Crown policy."
+  },
+  "@profiles": {
+    "CM-1": {"name": "ControlMicronaut", "role": "phase_geometry", "fold": "CONTROL_FOLD", "tools": ["mark_boundary", "signal_phase_shift", "segment_stream", "gate_scope", "annotate_zone"], "response": {"accept": "ACCEPT", "reject": "REJECT"}},
+    "PM-1": {"name": "PerceptionMicronaut", "role": "field_selection", "fold": "DATA_FOLD", "tools": ["select_field", "filter_noise", "route_curvature", "measure_salience", "focus_attention"], "response": {"accept": "FIELD_ACCEPT", "reject": "FIELD_REJECT"}},
+    "TM-1": {"name": "TemporalMicronaut", "role": "collapse_timing", "fold": "TIME_FOLD", "tools": ["schedule_collapse", "gate_replay", "align_transition", "tick_clock", "decay_window"], "response": {"accept": "TIME_ACCEPT", "reject": "TIME_REJECT"}},
+    "HM-1": {"name": "HostMicronaut", "role": "host_abstraction", "fold": "STATE_FOLD", "tools": ["detect_capabilities", "normalize_io", "expose_reality", "probe_platform", "flatten_interface"], "response": {"accept": "HOST_ACCEPT", "reject": "HOST_REJECT"}},
+    "SM-1": {"name": "StorageMicronaut", "role": "inert_persistence", "fold": "STORAGE_FOLD", "tools": ["store_object", "retrieve_object", "seal_snapshot", "verify_identity", "compute_delta"], "response": {"accept": "STORE_OK", "reject": "STORE_DENY"}},
+    "MM-1": {"name": "ModelMicronaut", "role": "token_signal_generator", "fold": "COMPUTE_FOLD", "tools": ["emit_token", "stream_tokens", "voice_model", "score_logits", "sample_distribution"], "response": {"accept": "MODEL_ON", "reject": "MODEL_OFF"}},
+    "XM-1": {"name": "ExtrapolationMicronaut", "role": "narrative_expansion", "fold": "PATTERN_FOLD", "tools": ["expand_explanation", "generate_metaphor", "provide_analogy", "continue_narrative", "cluster_patterns"], "response": {"accept": "EXPAND", "reject": "HALT"}},
+    "VM-1": {"name": "VisualizationMicronaut", "role": "rendering_projection", "fold": "UI_FOLD", "tools": ["render_svg", "render_css", "render_dom", "render_terminal", "emit_frame"], "response": {"accept": "RENDER_ON", "reject": "RENDER_OFF"}},
+    "VM-2": {"name": "VerificationMicronaut", "role": "proof_generation", "fold": "META_FOLD", "tools": ["verify_replay", "verify_projection", "verify_boundary", "attest_hash", "audit_trace"], "response": {"accept": "PROOF_OK", "reject": "PROOF_FAIL"}}
+  },
+  "@intents": {
+    "schema": "xjson://schema/micronaut.brains.intents/v1",
+    "routing": {
+      "strategy": "ngram_match_score",
+      "fallback": "XM-1",
+      "fallback_reason": "ExtrapolationMicronaut handles unclassified input via narrative expansion.",
+      "conflict_resolution": "priority_order",
+      "minimum_confidence": 0.3
+    },
+    "items": {
+      "control": {"target": "CM-1", "fold": "CONTROL_FOLD", "priority": 1, "triggers": ["phase boundary", "scope gate", "control signal", "mark phase boundary", "signal phase shift"]},
+      "perceive": {"target": "PM-1", "fold": "DATA_FOLD", "priority": 2, "triggers": ["input field", "noise filter", "select input field", "focus attention"]},
+      "schedule": {"target": "TM-1", "fold": "TIME_FOLD", "priority": 3, "triggers": ["collapse schedule", "replay gate", "phase align", "clock tick"]},
+      "detect_host": {"target": "HM-1", "fold": "STATE_FOLD", "priority": 4, "triggers": ["host capability", "io normalize", "probe host platform", "flatten interface"]},
+      "store": {"target": "SM-1", "fold": "STORAGE_FOLD", "priority": 5, "triggers": ["store object", "retrieve object", "byte identity", "seal snapshot"]},
+      "infer": {"target": "MM-1", "fold": "COMPUTE_FOLD", "priority": 6, "triggers": ["token signal", "model voice", "emit token", "score logits"]},
+      "expand": {"target": "XM-1", "fold": "PATTERN_FOLD", "priority": 7, "triggers": ["expand narrative", "generate metaphor", "provide analogy", "continue narrative"]},
+      "render": {"target": "VM-1", "fold": "UI_FOLD", "priority": 8, "triggers": ["render projection", "render svg", "render css", "emit render frame"]},
+      "verify": {"target": "VM-2", "fold": "META_FOLD", "priority": 9, "triggers": ["proof check", "verify replay", "verify boundary", "attest hash"]}
+    }
+  },
+  "@ngram_routing": {
+    "bigram_weight": 1.0,
+    "trigram_weight": 1.7,
+    "minimum_confidence": 0.3,
+    "route_output": ["intent", "target", "fold", "tools", "confidence", "matched_ngrams"],
+    "rule": "Profile routing emits a micronaut target and fold. It does not execute tool effects without XCFE admission."
+  },
+  "@agents": {
+    "normal_agent_file": "../agents/micronaut-brains.json",
+    "ids": ["CM-1", "PM-1", "TM-1", "HM-1", "SM-1", "MM-1", "XM-1", "VM-1", "VM-2"]
+  },
+  "@routes": [
+    {"name": "micronaut_brains", "method": "GET", "path": "/api/micronaut/brains", "handler": "micronaut.brains.list", "status": "sidecar_contract"},
+    {"name": "micronaut_brain_profile", "method": "GET", "path": "/api/micronaut/brains/profile", "args": ["id"], "handler": "micronaut.brains.profile", "status": "sidecar_contract"},
+    {"name": "micronaut_brain_route", "method": "POST", "path": "/api/micronaut/brains/route", "body": ["text", "context", "policy"], "handler": "micronaut.brains.route", "status": "sidecar_contract"},
+    {"name": "micronaut_brain_tools", "method": "GET", "path": "/api/micronaut/brains/tools", "handler": "micronaut.brains.tools", "status": "sidecar_contract"}
+  ],
+  "@examples": [
+    {"input": "mark phase boundary and open scope gate", "intent": "control", "target": "CM-1"},
+    {"input": "filter observable noise and select input field", "intent": "perceive", "target": "PM-1"},
+    {"input": "render svg projection and emit render frame", "intent": "render", "target": "VM-1"},
+    {"input": "verify replay identity and attest hash", "intent": "verify", "target": "VM-2"}
+  ]
+}

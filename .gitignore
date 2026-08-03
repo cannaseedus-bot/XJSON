@@ -1,0 +1,34 @@
+# ============================================================================
+# XJSON / json-runtime  --  manifest-driven JSON/XCFE object-server runtime
+# ============================================================================
+# Track source: C++ runtime (src/), vendored build headers (lib/), the XJSON
+# contract manifests (*.manifest.json), action implementations (*Actions.js,
+# actions/), programs/, sco/, CMake, docs. Exclude build output and artifacts.
+# ============================================================================
+
+# --- build output (407 MB, regenerated via runtime.bat build / cmake) ---
+/build/
+/build-asx/
+/build-local/
+**/build/
+*.obj
+*.o
+*.exe
+*.dll
+*.pdb
+*.ilk
+*.lib
+*.exp
+
+# --- runtime / test artifacts ---
+err.txt
+out.txt
+*.log
+test.sqlite
+*.bson
+node_modules/
+node-manifest-output.txt
+
+# --- os ---
+.DS_Store
+Thumbs.db

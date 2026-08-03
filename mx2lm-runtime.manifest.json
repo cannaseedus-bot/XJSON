@@ -1,0 +1,110 @@
+{
+  "@sidecar": {
+    "id": "asx.mx2lm.runtime.v1",
+    "kind": "mx2lm_runtime_manifest",
+    "status": "draft",
+    "role": "mx2lm_ngram_learning_sidecar_contract"
+  },
+  "@mx2lm_runtime": {
+    "root": "../mx2lm",
+    "role": "optional ngram, field, agent-loop, and learning-system substrate for MX2LM.",
+    "boundary": "Discovery, ngram hint lookup, planning, and dry-run admission are allowed contracts. train/evolve/merge/purge/mutate/router backend calls/weight writes require explicit policy admission.",
+    "auto": {
+      "supported": true,
+      "default_mode": "plan",
+      "trigger": "json_runtime.exe may trigger the entire MX2LM learning system only through an admitted auto route.",
+      "allowed_modes": ["status", "plan", "admit_dry_run", "run_when_approved"],
+      "guarded_modes": ["train", "evolve", "merge", "purge", "mutate", "write_weights", "load_native_adapter"]
+    }
+  },
+  "@llm": {
+    "agent_loop": "../mx2lm/llm/agent_loop.py",
+    "config": "../mx2lm/llm/config.py",
+    "supernaut_bridge": "../mx2lm/llm/supernaut_bridge.py",
+    "bots": "../mx2lm/llm/bots.py",
+    "router": "../mx2lm/llm/router.py",
+    "role": "Python-side agent loop and Supernaut bridge surfaces."
+  },
+  "@field_system": {
+    "root": "../mx2lm/llm/field_system",
+    "composition": "../mx2lm/llm/field_system/field_composition.py",
+    "composition_enhanced": "../mx2lm/llm/field_system/field_composition_enhanced.py",
+    "tests": "../mx2lm/llm/field_system/test_field_loading.py",
+    "specs": [
+      "../mx2lm/llm/field_system/specs/attraction_well_spec.json",
+      "../mx2lm/llm/field_system/specs/navigation_force_spec.json",
+      "../mx2lm/llm/field_system/specs/scroll_inertia_field_spec.json",
+      "../mx2lm/llm/field_system/specs/wind_field_spec.json"
+    ],
+    "maps_to": ["fold.gravity_wells", "ngram_route_scoring", "navigation_pressure", "field_composition"]
+  },
+  "@ngrams": {
+    "root": "../mx2lm/ngrams",
+    "reference": "../references/mx2lm-ngram-runtime.md",
+    "canonical_roots": [
+      "../mx2lm",
+      "../mx2lm/ngrams/brain/lib",
+      "../mx2lm/weights"
+    ],
+    "entry_classes": ["ngram.py", "ngram_idb.py", "router.py", "scxq2_lane.py", "skills.py", "gzip_hybrid.py", "kv_delta.py", "merkle.py"],
+    "artifact_classes": ["ramble.scx2", "ramble.attn.scx2", "ramble.lanes.scx2", "peft_adapters", "peft_adapters_native"]
+  },
+  "@io": {
+    "stream": "../mx2lm/io/stream.txt",
+    "chat": "../mx2lm/io/chat.txt",
+    "rule": "IO files are declared endpoints for admitted adapters; sidecar loading must not mutate them."
+  },
+  "@coordinator": {
+    "coordinator_js": "../mx2lm/coordinator.js",
+    "micronaut_js": "../mx2lm/micronaut.js",
+    "micronaut_server": "../mx2lm/micronaut_server.mjs",
+    "orchestrator_sandbox": "../mx2lm/orchestrator-sandbox.mjs",
+    "bridge": "../mx2lm/bridge.js",
+    "cli": "../mx2lm/mx2.bat",
+    "powershell": "../mx2lm/micronaut.ps1"
+  },
+  "@contracts": {
+    "agents": "../mx2lm/AGENTS.md",
+    "crown": "../mx2lm/MX2_CROWN.md",
+    "mx2lm": "../mx2lm/MX2LM.md",
+    "registry_schema": "../mx2lm/micronaut.registry.schema.xjson",
+    "registry": "../mx2lm/micronaut.registry.xjson",
+    "mx2": "../mx2lm/MX2.xjson",
+    "grammar": "../mx2lm/kuhul_pi_grammar.ebnf",
+    "registry_backup": "../mx2lm/micronaut.registry.xjson.bak",
+    "model_api_registry_backup": "../mx2lm/model_api_registry.json.bak"
+  },
+  "@brain_js": {
+    "path": "../brain.js/asx-manager-brain.js",
+    "role": "adaptive policy/control layer for chart selection, semantic pressure, fold/node generation, CHEESE reward, and graph command envelopes.",
+    "not_role": "primary LLM or silent training authority"
+  },
+  "@agents": {
+    "normal_agent_files": [
+      "../agents/mx2lm-ngram-agent.json",
+      "../agents/micronaut-brains.json"
+    ],
+    "ids": ["MX2LM-NGRAM-RUNTIME", "MX2LM-AUTO-ADMIT", "ASX-BRAINJS-POLICY"]
+  },
+  "@routes": [
+    {"name": "mx2lm_ngram_status", "method": "GET", "path": "/api/mx2lm/ngram/status", "handler": "mx2lm.ngram.status", "status": "sidecar_contract"},
+    {"name": "mx2lm_ngram_weights", "method": "GET", "path": "/api/mx2lm/ngram/weights", "handler": "mx2lm.ngram.weights", "status": "sidecar_contract"},
+    {"name": "mx2lm_ngram_plan", "method": "POST", "path": "/api/mx2lm/ngram/plan", "body": ["input", "folds", "policy"], "handler": "mx2lm.ngram.plan", "status": "sidecar_contract"},
+    {"name": "mx2lm_ngram_admit", "method": "POST", "path": "/api/mx2lm/ngram/admit", "body": ["plan", "mode", "policy"], "handler": "mx2lm.ngram.admit", "status": "sidecar_contract"},
+    {"name": "mx2lm_runtime", "method": "GET", "path": "/api/mx2lm/runtime", "handler": "mx2lm.runtime.describe", "status": "sidecar_contract"},
+    {"name": "mx2lm_field_system", "method": "GET", "path": "/api/mx2lm/field-system", "handler": "mx2lm.field_system.describe", "status": "sidecar_contract"},
+    {"name": "mx2lm_io_stream", "method": "POST", "path": "/api/mx2lm/io/stream", "body": ["mode", "content"], "handler": "mx2lm.io.stream", "status": "requires_policy"},
+    {"name": "mx2lm_io_chat", "method": "POST", "path": "/api/mx2lm/io/chat", "body": ["mode", "content"], "handler": "mx2lm.io.chat", "status": "requires_policy"},
+    {"name": "mx2lm_agent_loop", "method": "POST", "path": "/api/mx2lm/agent-loop", "body": ["input", "mode", "policy"], "handler": "mx2lm.agent_loop.run", "status": "requires_policy"},
+    {"name": "mx2lm_supernaut_bridge", "method": "POST", "path": "/api/mx2lm/supernaut-bridge", "body": ["turn", "runstate", "policy"], "handler": "mx2lm.supernaut_bridge.route", "status": "sidecar_contract"},
+    {"name": "mx2lm_auto_trigger", "method": "POST", "path": "/api/mx2lm/auto/trigger", "body": ["goal", "input", "mode", "policy", "approval"], "handler": "mx2lm.auto.trigger", "status": "requires_policy"}
+  ],
+  "@folds": {
+    "pop": ["load_input", "inspect_ngram_state", "read_agent_context"],
+    "wo": ["compose_fields", "score_ngrams", "bind_registry"],
+    "yax": ["build_learning_plan", "admit_or_defer", "select_agent_loop"],
+    "sek": ["run_agent_loop_when_approved", "route_supernaut_bridge", "apply_admitted_updates"],
+    "chen": ["emit_route_result", "project_chat_or_stream"],
+    "xul": ["record_replay", "hash_state", "close_or_reenter"]
+  }
+}

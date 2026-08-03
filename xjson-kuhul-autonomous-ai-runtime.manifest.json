@@ -1,0 +1,276 @@
+{
+  "@sidecar": {
+    "id": "xjson.kuhul.autonomous_ai_runtime.v1",
+    "kind": "xjson_kuhul_autonomous_ai_runtime_manifest",
+    "status": "draft",
+    "role": "autonomous_ai_development_contract"
+  },
+  "@xjson_kuhul_merge": {
+    "name": "AUTONOMOUS_AI_DEVELOPMENT_RUNTIME",
+    "version": "XJSON-KUHUL.v1.0",
+    "description": "Merge K'UHUL symbolic execution with XJSON grammar for an autonomous, plan-driven AI development pipeline.",
+    "law": "K'UHUL symbols are XJSON operations. PLAN.md drives development. File effects require declared routes and policy admission.",
+    "compression": "SCX2_GEOMETRIC_TOKENIZATION",
+    "glyph_mode": "UNICODE_GEOMETRIC_ONLY",
+    "authority": "JSON/XJSON declares; K'UHUL executes; Crown/Prime admit effects."
+  },
+  "@core_merge_architecture": {
+    "kuhul_symbols_as_xjson_operations": {
+      "->": "@flow",
+      "→": "@flow",
+      "⟁": "@begin",
+      "⟂": "@end",
+      "◻": "@element",
+      "◼": "@component",
+      "△": "@conditional",
+      "▽": "@alternative",
+      "◯": "@loop",
+      "⬤": "@state",
+      "↻": "@compress",
+      "↺": "@decompress",
+      "⊕": "@merge",
+      "⊗": "@transform",
+      "∈": "@in",
+      "∉": "@not_in"
+    },
+    "xjson_extended_with_kuhul": {
+      "@kuhul": "KUHUL_GLYPH_EXECUTION_BLOCK",
+      "@glyph": "SINGLE_GLYPH_OPERATION",
+      "@symbol": "GEOMETRIC_SYMBOL_REFERENCE",
+      "@compress.scx2": "GEOMETRIC_COMPRESSION",
+      "@decompress.scx2": "GEOMETRIC_DECOMPRESSION",
+      "@plan": "REFERENCE_TO_PLAN_MD",
+      "@ai.chain": "AI_MODEL_CHAINING",
+      "@autonomous": "AUTONOMOUS_EXECUTION_FLAG"
+    }
+  },
+  "@autonomous_ai_pipeline_xjson": {
+    "project": "nextjs_saas_app",
+    "workspace_template": "/tmp/project_{{timestamp}}",
+    "autonomous": true,
+    "init": {
+      "clone_template": {
+        "source": "github:vercel/nextjs-template",
+        "destination": "{{workspace}}",
+        "requires_policy": ["network", "write_files"]
+      },
+      "plan_create": {
+        "file": "{{workspace}}/PLAN.md",
+        "sections": ["project", "requirements", "todo", "progress", "ai_agent_status"],
+        "rule": "PLAN.md is the task ledger and must be updated before and after file effects."
+      }
+    },
+    "ai_development": {
+      "planning": {
+        "phase": "Yax",
+        "lane": "workflow",
+        "task": "Break requirements into actionable tasks",
+        "output": "PLAN.md TODO update"
+      },
+      "architecture": {
+        "phase": "Wo",
+        "lane": "contract",
+        "kuhul": "⟁ generate_architecture ⟁",
+        "outputs": ["structure.json", "architecture.mermaid"]
+      },
+      "implementation": {
+        "phase": "Sek",
+        "lane": "code",
+        "parallel": true,
+        "tasks": ["frontend", "backend"],
+        "repair_loop": "◯ repair_loop ◯"
+      }
+    }
+  },
+  "@direct_file_ops_no_chat": {
+    "rule": "Direct file operations are allowed only through file-manager/project admission. No chat-only shadow writes.",
+    "ops": {
+      "create": {
+        "phase": "Sek",
+        "lane": "file",
+        "requires": ["PLAN.md reference", "write_policy", "validation"]
+      },
+      "edit": {
+        "phase": "Sek",
+        "lane": "file",
+        "requires": ["target_pattern", "backup_or_patch", "validation"]
+      },
+      "delete": {
+        "phase": "Sek",
+        "lane": "file",
+        "requires": ["unused_reference_check", "explicit_policy", "plan_update"]
+      }
+    },
+    "idb_workflow": {
+      "stores": {
+        "files": "path",
+        "plan": "section",
+        "history": "auto"
+      },
+      "development_loop": "while tasks_remaining -> ai.execute -> idb.update(files, plan, history)"
+    }
+  },
+  "@geometric_execution_engine": {
+    "engine": "kuhul_xjson_runtime",
+    "symbols": {
+      "control": {
+        "⟁": "@begin_block",
+        "⟂": "@end_block",
+        "⟃": "@curve_right",
+        "⟄": "@curve_left"
+      },
+      "flow": {
+        "→": "@pipe",
+        "←": "@reverse_pipe",
+        "↔": "@bidirectional",
+        "↕": "@vertical_flow",
+        "↻": "@compress_flow",
+        "↺": "@decompress_flow"
+      },
+      "data": {
+        "◻": "@data_box",
+        "◼": "@filled_box",
+        "◯": "@data_circle",
+        "⬤": "@filled_circle"
+      },
+      "logic": {
+        "△": "@if",
+        "▽": "@else",
+        "∧": "@and",
+        "∨": "@or",
+        "¬": "@not"
+      }
+    },
+    "execution": {
+      "example_flow": "◻ → △ → ▽ → ◯ → ◼",
+      "translation": "@element -> @if -> @else -> @loop -> @state",
+      "compressed_scx2": "↻(◻△▽◯◼)"
+    }
+  },
+  "@autonomous_agent_xjson": {
+    "agent": "ai_developer",
+    "persistent": true,
+    "monitor": {
+      "watch": ["PLAN.md", "requirements.json", "feedback/"],
+      "on_change": {
+        "PLAN.md": "development_cycle",
+        "bug_report": "immediate_fix"
+      }
+    },
+    "schedule": {
+      "daily": [
+        {"task": "run_tests", "glyph": "◯ test_loop ◯"},
+        {"task": "update_dependencies", "glyph": "↻ compress_deps ↻"},
+        {"task": "optimize_performance", "glyph": "△ analyze_if △"}
+      ]
+    }
+  },
+  "@continuous_improvement_cycle": {
+    "phase_angle_lane": "Xul[evidence:replay]",
+    "analyze": ["tests", "coverage", "feedback", "logs"],
+    "improve": ["plan_next_iteration", "sort_by_impact_effort_user_requested"],
+    "execute": ["refactor_with_backup", "validate_build", "compare_regression"],
+    "rule": "Improvement may bias future routes and generate proposed patches; promotion requires validation evidence."
+  },
+  "@performance_optimizations": {
+    "geometric_only": "no icon requests; native unicode; instant rendering",
+    "scx2_compression": {
+      "algorithm": "geometric_tokenization",
+      "phases": [
+        "tokenize -> geometric_symbols",
+        "entangle -> contextual_encoding",
+        "superpose -> frequency_transform",
+        "collapse -> arithmetic_coding"
+      ]
+    },
+    "direct_execution": {
+      "no_chat": "file_ops_direct",
+      "persistent": "idb_storage",
+      "autonomous": "governed_development_loop"
+    }
+  },
+  "@deployment_ready": {
+    "three_files": {
+      "index.html": "geometric_ui",
+      "sw.js": "kuhul_xjson_runtime_carrier",
+      "manifest.json": "scx2_compressed_authority"
+    },
+    "rule": "Deployment artifacts are generated outputs. Authority remains in manifests, Crown/Prime policy, and validation logs."
+  },
+  "@ops": {
+    "DESCRIBE_XJSON_KUHUL_MERGE": {
+      "@type": "composed",
+      "@out": "xjson_kuhul_merge_contract",
+      "@exec": {
+        "@op": "SET",
+        "@key": "xjson_kuhul_merge_contract",
+        "@value": {
+          "kind": "xjson_kuhul_autonomous_ai_runtime_manifest",
+          "law": "JSON/XJSON declares; K'UHUL executes; PLAN.md drives task order; policy admits effects.",
+          "capabilities": [
+            "geometric_glyph_execution",
+            "scx2_compression_calculus",
+            "direct_file_management",
+            "ai_development_pipeline",
+            "autonomous_improvement",
+            "plan_driven_workflow"
+          ]
+        }
+      }
+    },
+    "RESOLVE_GLYPH_OPERATION": {
+      "@type": "composed",
+      "@in": ["glyph"],
+      "@out": "glyph_operation_resolution",
+      "@exec": {
+        "@op": "SET",
+        "@key": "glyph_operation_resolution",
+        "@value": {
+          "kind": "glyph_operation_resolution",
+          "glyph": "$glyph",
+          "rule": "Glyph resolution is semantic until admitted by XCFE/K'UHUL phase and lane policy."
+        }
+      }
+    }
+  },
+  "@routes": [
+    {
+      "name": "xjson_kuhul_merge",
+      "method": "GET",
+      "path": "/api/xjson-kuhul/merge",
+      "status": "sidecar_contract",
+      "handler": "xjson_kuhul.merge.describe",
+      "sidecar": "xjson_kuhul_autonomous_ai_runtime",
+      "op": "DESCRIBE_XJSON_KUHUL_MERGE"
+    },
+    {
+      "name": "xjson_kuhul_glyph_resolve",
+      "method": "POST",
+      "path": "/api/xjson-kuhul/glyph",
+      "status": "sidecar_contract",
+      "body": ["glyph", "phase", "lane", "policy"],
+      "handler": "xjson_kuhul.glyph.resolve",
+      "sidecar": "xjson_kuhul_autonomous_ai_runtime",
+      "op": "RESOLVE_GLYPH_OPERATION"
+    }
+  ],
+  "@schema": {
+    "glyph_operation": {
+      "glyph": "string",
+      "operation": "string",
+      "phase": "string",
+      "lane": "string",
+      "policy": "object"
+    },
+    "autonomous_development_task": {
+      "plan_ref": "string",
+      "files": "array",
+      "validation": "array",
+      "policy": "object"
+    }
+  },
+  "@signature": {
+    "authority": "XJSON-KUHUL_AUTONOMOUS_AI_v1.0",
+    "manifesto": "Merge K'UHUL symbols with XJSON grammar for governed autonomous development: no icon dependencies, no chat-only writes, geometric execution, SCX2 compression, and continuous improvement through PLAN.md."
+  }
+}

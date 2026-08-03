@@ -1,0 +1,6 @@
+{
+  "@sidecar": {"id":"asx.runtime.dotnet.v1","kind":"dotnet_manifest","status":"draft","role":"dotnet_toolchain_contracts"},
+  "@dotnet": {"dotnet_cli":"C:/Program Files/dotnet/dotnet.exe","sdk_version":"10.x","rule":".NET tools are declared capabilities, not automatic dependencies."},
+  "@workloads": ["emscripten","mono_toolchain","android","ios","maccatalyst","macos","maui","tvos"],
+  "@sdk_manifests": {"root":"C:/Program Files/dotnet/sdk-manifests"}
+}

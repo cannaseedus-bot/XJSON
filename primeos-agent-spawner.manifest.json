@@ -1,0 +1,107 @@
+{
+  "@sidecar": {
+    "id": "asx.primeos.agent_spawner.v2",
+    "kind": "primeos_agent_spawner_manifest",
+    "status": "draft",
+    "role": "kuhul_micronaut_factory_agent_spawning_contract"
+  },
+  "@primeos_agent_spawner": {
+    "name": "PRIMEOS AGENT SPAWNING SYSTEM",
+    "version": "2.0",
+    "authority": "KUHUL_MICRONAUT_FACTORY",
+    "description": "Spawns topic-specific micronaut agents, declares MiniOS templates, static tunnel browser routes, batch ingest, and guarded training sessions.",
+    "rule": "Spawner routes create plans and declared process envelopes. Long-lived process spawn, remote fetch, batch scrape, model training, and model writes require policy admission."
+  },
+  "@micronaut_factory": {
+    "spawn_shape": {
+      "agent_id": "micronaut_<topic>_<timestamp>",
+      "phase_program": "Pop.spawn -> Wo.agent_id -> Sek.agent_init -> Chen.runtime -> Xul",
+      "outputs": ["agentId", "topic", "miniOS", "runtime", "processId", "endpoints", "status"]
+    },
+    "mini_os": {
+      "omega_version": "2.0",
+      "type": "specialized_agent",
+      "capability_sources": ["topic", "user_requirements", "agent_specialization_template"],
+      "kproc": ["data_ingest", "analysis", "output"],
+      "optional_blocks": ["endpoints", "ui_components", "data_schema", "training_config"]
+    }
+  },
+  "@model_types": {
+    "baseball": "STATS + ANALYTICS + FINANCE + CRYPTO + INVESTMENT",
+    "cooking": "FORMULAS + GEOMETRY + MATH + SCIENCE + SCHEMATICS",
+    "finance": "MARKETS + ALGORITHMS + RISK + PATTERNS + PREDICTION",
+    "research": "KNOWLEDGE + SYNTHESIS + ANALYSIS + CORRELATION",
+    "gamedev": "LOGIC + PHYSICS + RENDERING + UX + PERFORMANCE",
+    "webdev": "FRONTEND + BACKEND + DATABASE + SECURITY + SCALING",
+    "design": "AESTHETICS + USABILITY + COMPOSITION + PSYCHOLOGY",
+    "writing": "NARRATIVE + STRUCTURE + STYLE + ENGAGEMENT + CLARITY",
+    "music": "HARMONY + RHYTHM + THEORY + PRODUCTION + EMOTION",
+    "health": "BIOLOGY + NUTRITION + EXERCISE + PREVENTION + DATA",
+    "default": "ANALYSIS + PROCESSING + OUTPUT"
+  },
+  "@agent_specializations": {
+    "WebDevAgent": {"capabilities": ["frontend_development", "backend_development", "database_design", "api_creation", "deployment"], "frameworks": ["react", "vue", "angular", "node", "express", "mongodb"], "output_types": ["websites", "web_apps", "apis", "mobile_apps"]},
+    "GameDevAgent": {"capabilities": ["game_design", "physics_engine", "3d_rendering", "ai_behavior", "multiplayer"], "engines": ["threejs", "unreal", "unity", "phaser", "babylon"], "output_types": ["3d_games", "2d_games", "vr_experiences", "interactive_simulations"]},
+    "DataScienceAgent": {"capabilities": ["data_analysis", "machine_learning", "statistical_modeling", "visualization", "prediction"], "tools": ["python", "tensorflow", "pandas", "matplotlib", "scikit"], "output_types": ["models", "dashboards", "reports", "predictions"]},
+    "CreativeAgent": {"capabilities": ["content_creation", "design_generation", "video_editing", "audio_production", "creative_writing"], "tools": ["ai_design", "video_processing", "audio_synthesis", "narrative_generation"], "output_types": ["designs", "videos", "music", "stories", "art"]},
+    "BusinessAgent": {"capabilities": ["market_analysis", "financial_modeling", "strategy_development", "automation", "optimization"], "tools": ["analytics", "forecasting", "process_mining", "kpi_tracking"], "output_types": ["business_plans", "financial_reports", "strategies", "automations"]},
+    "ThreeJSAgent": {"capabilities": ["3d_modeling", "webgl_rendering", "animation_systems", "interaction_design", "performance_optimization"], "features": ["real_time_rendering", "physics_simulation", "shader_programming", "vr_ar_support"], "output_types": ["3d_websites", "interactive_experiences", "product_visualizations", "educational_simulations"]},
+    "UnrealAgent": {"capabilities": ["blueprint_scripting", "high_fidelity_rendering", "cinematic_creation", "world_building", "performance_optimization"], "features": ["nanite_geometry", "lumen_lighting", "metahuman_characters", "physics_simulation"], "output_types": ["aaa_games", "architectural_visualization", "film_quality_animation", "training_simulations"]},
+    "BlockchainAgent": {"capabilities": ["smart_contracts", "token_creation", "defi_protocols", "nft_minting", "web3_integration"], "platforms": ["ethereum", "solana", "polygon", "web3js", "hardhat"], "output_types": ["dapps", "defi_protocols", "nft_marketplaces", "blockchain_games"]},
+    "AIResearchAgent": {"capabilities": ["model_training", "paper_analysis", "experiment_design", "performance_evaluation", "research_synthesis"], "domains": ["nlp", "computer_vision", "reinforcement_learning", "generative_models"], "output_types": ["research_papers", "trained_models", "experiment_results", "literature_reviews"]}
+  },
+  "@static_tunnel_browser": {
+    "fetch_shape": {
+      "tunnel_id": "tunnel_<agentId>_<url_hash>",
+      "phase_program": "Pop.tunnel -> Wo.url -> Sek.fetch -> Chen.data -> Xul",
+      "headers": ["User-Agent: PrimeOS-Agent/<agentId>", "X-Tunnel-Origin: primeos-static", "Accept: application/json, text/html, application/xml"]
+    },
+    "batch_shape": {
+      "default_concurrency": 3,
+      "rate_limit_ms_between_batches": 500,
+      "result_statuses": ["fulfilled", "rejected"]
+    },
+    "rule": "Remote fetch and scraping are network actions and require policy admission plus allowlisted sources."
+  },
+  "@training_system": {
+    "training_bot_shape": {
+      "training_id": "training_<agentId>_<timestamp>",
+      "phase_program": "Pop.train -> Wo.model -> Sek.initialize -> Chen.training -> Xul",
+      "default_epochs": 10,
+      "default_validation_split": 0.2
+    },
+    "monitoring_metrics": ["progress", "currentEpoch", "accuracy", "loss", "precision", "recall", "f1", "model_size", "inference_speed"],
+    "rule": "Training metrics may be simulated in UI previews. Real training must emit replay/proof records and requires explicit approval."
+  },
+  "@message_channel": {
+    "messages": [
+      {"type": "OS:spawn_agent", "payload": ["topic", "requirements"], "status": "requires_policy"},
+      {"type": "OS:agent_tunnel", "payload": ["agentId", "url", "options"], "status": "requires_network_policy"},
+      {"type": "OS:batch_tunnel", "payload": ["agentId", "urls", "schema", "concurrency"], "status": "requires_network_policy"},
+      {"type": "OS:start_training", "payload": ["dataset", "modelConfig", "agentId"], "status": "requires_training_policy"}
+    ],
+    "note": "Unicode omega message names are normalized to ASCII OS:* route names in this contract."
+  },
+  "@routes": [
+    {"name": "agents_spawn", "method": "POST", "path": "/api/agents/spawn", "body": ["topic", "requirements", "policy"], "handler": "primeos.agents.spawn", "status": "requires_policy"},
+    {"name": "agents_control", "method": "POST", "path": "/api/agents/control/<agentId>", "args": ["agentId"], "body": ["action", "data", "policy"], "handler": "primeos.agents.control", "status": "requires_policy"},
+    {"name": "agents_training_monitor", "method": "GET", "path": "/api/agents/training/<trainingId>/monitor", "args": ["trainingId"], "handler": "primeos.training.monitor", "status": "sidecar_contract"},
+    {"name": "agents_list", "method": "GET", "path": "/api/agents/list", "args": ["filter"], "handler": "primeos.agents.list", "status": "sidecar_contract"},
+    {"name": "agents_templates", "method": "GET", "path": "/api/agents/templates", "handler": "primeos.agents.templates", "status": "sidecar_contract"},
+    {"name": "agents_ingest", "method": "POST", "path": "/api/agents/<agentId>/ingest", "args": ["agentId"], "body": ["url", "options", "policy"], "handler": "primeos.tunnel.fetch", "status": "requires_network_policy"},
+    {"name": "agents_batch_ingest", "method": "POST", "path": "/api/agents/<agentId>/batch-ingest", "args": ["agentId"], "body": ["urls", "schema", "concurrency", "policy"], "handler": "primeos.tunnel.batch", "status": "requires_network_policy"},
+    {"name": "agents_train", "method": "POST", "path": "/api/agents/<agentId>/train", "args": ["agentId"], "body": ["dataset", "modelConfig", "policy", "approval"], "handler": "primeos.training.spawn", "status": "requires_training_policy"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/primeos-agent-spawner.json",
+    "ids": ["PRIMEOS-AGENT-SPAWNER", "PRIMEOS-STATIC-TUNNEL", "PRIMEOS-TRAINING-BOT"]
+  },
+  "@folds": {
+    "pop": ["receive_spawn_request", "inspect_topic", "read_requirements"],
+    "wo": ["derive_capabilities", "bind_model_type", "select_specialization"],
+    "yax": ["generate_mini_os", "generate_endpoints", "schedule_process"],
+    "sek": ["spawn_when_admitted", "fetch_when_admitted", "train_when_admitted"],
+    "chen": ["emit_agent_record", "emit_training_status", "emit_tunnel_result"],
+    "xul": ["record_process_replay", "hash_agent_contract", "close_or_reenter"]
+  }
+}

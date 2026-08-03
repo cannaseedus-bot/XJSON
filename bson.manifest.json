@@ -1,0 +1,64 @@
+{
+  "@sidecar": {
+    "id": "asx.bson.runtime.v1",
+    "kind": "bson_manifest",
+    "status": "draft",
+    "role": "bson_binary_runtime_array_contract"
+  },
+  "@bson": {
+    "schema": "xjson://schema/bson.runtime/v1",
+    "authority": "CROWN_XCFE",
+    "source_contract": "supernaut/Contracts/bson.micronaut.json",
+    "description": "BSON runtime contract for semantic keys composed from K'UHUL glyph, lane, and typed binary runtime array.",
+    "key_formula": "semantic_key = glyph + lane + binary_runtime_array",
+    "rule": "BSON stores and transports binary projections. It cannot create authority, grant tools, select lanes implicitly, or execute raw bytes."
+  },
+  "@binary_runtime_array": {
+    "container": "BSON",
+    "compatible_formats": ["BSON", "SCXQ2", "DDS", "GGUF-metadata"],
+    "fields": ["glyph", "lane", "phase", "runtime", "bytes", "shape", "dtype", "checksum"],
+    "typed_arrays": ["uint8", "int8", "uint16", "int16", "uint32", "int32", "float16", "float32", "float64"],
+    "checksum": "sha256",
+    "endianness": "little"
+  },
+  "@glyph_lane_keys": {
+    "parse": "glyph.parse + lane.parse + bson.bytes",
+    "storage": "glyph.store + lane.storage + bson.bytes",
+    "tensor": "glyph.tensor + lane.tensor + bson.bytes",
+    "model": "glyph.model + lane.model + bson.bytes",
+    "api": "glyph.api + lane.api + bson.bytes",
+    "replay": "glyph.replay + lane.replay + bson.bytes"
+  },
+  "@documents": {
+    "micronaut_demo": "micronaut_demo.bson",
+    "bundle_examples": [
+      "bundles/ChatMicronaut.bson",
+      "bundles/CoderMicronaut.bson",
+      "bundles/CoderMicronaut_v2.bson",
+      "bundles/DebugMicronaut.bson"
+    ]
+  },
+  "@codec": {
+    "native_reader": "src/bson_loader.cpp",
+    "native_header": "src/bson_loader.h",
+    "decode_policy": "validate_key_then_decode",
+    "encode_policy": "seal_checksum_before_emit"
+  },
+  "@routes": [
+    {"name": "bson_micronaut", "method": "GET", "path": "/api/bson-micronaut", "status": "sidecar_contract", "handler": "bson_micronaut.describe"},
+    {"name": "bson_micronaut_admit", "method": "POST", "path": "/api/bson-micronaut/admit", "status": "requires_policy", "body": ["glyph", "lane", "binary_runtime_array", "policy"], "handler": "bson_micronaut.admit"},
+    {"name": "bson_micronaut_decode", "method": "POST", "path": "/api/bson-micronaut/decode", "status": "requires_policy", "body": ["semantic_key", "bytes", "shape", "dtype", "checksum", "policy"], "handler": "bson_micronaut.decode"},
+    {"name": "bson_micronaut_seal", "method": "POST", "path": "/api/bson-micronaut/seal", "status": "requires_policy", "body": ["document", "glyph", "lane", "policy"], "handler": "bson_micronaut.seal"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/bson-micronaut.json",
+    "ids": ["BSON-MICRONAUT", "BINARY-RUNTIME-ARRAY-VALIDATOR", "GLYPH-LANE-KEY-BINDER"]
+  },
+  "@policy": {
+    "raw_bytes_are_never_authority": true,
+    "checksum_required": true,
+    "lane_required": true,
+    "glyph_required": true,
+    "forbidden": ["execute_raw_bytes", "unchecked_deserialize", "implicit_lane_selection", "policy_from_bson", "tool_grant_from_bytes"]
+  }
+}

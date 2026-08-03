@@ -1,0 +1,88 @@
+{
+  "@sidecar": {
+    "id": "asx.manager.evolution.v1",
+    "kind": "evolution_manifest",
+    "status": "draft",
+    "role": "xul_adaptation_mutation_reward_contract"
+  },
+  "@evolution": {
+    "definition": "Evolution is the governed Xul adaptation layer for mutation, reward, selection, replay, and visual observation fitness. It may score and bias future routes; it must not mutate sealed model weights or bypass Crown policy.",
+    "root": "../evolution",
+    "phase_fold": "Xul",
+    "phase_angle_lane": "Xul[evidence:replay]",
+    "rule": "Mutation and reward are replayable adaptation records. Promotion requires Crown/Prime admission and validation evidence."
+  },
+  "@native_sources": {
+    "core_header": "../evolution/evolution_core.h",
+    "mutator": "../evolution/mutator.cpp",
+    "reward": "../evolution/reward.cpp",
+    "log": "../evolution/evolution.log.jsonl"
+  },
+  "@opcode_surface": {
+    "OP_SNAP_SCREEN": {
+      "value_hex": "0x42",
+      "value_decimal": 66,
+      "purpose": "Agent requests one generation-level visual observation.",
+      "handler": "visual_obs.cpp",
+      "fitness_bonus_max": 0.1,
+      "policy": "screen capture is visual observation evidence and must remain bounded, deduped, and replay logged"
+    }
+  },
+  "@genome_contract": {
+    "instruction": {
+      "op": "uint16",
+      "flags": "uint16",
+      "a": "uint32",
+      "b": "uint32",
+      "c": "uint32"
+    },
+    "program": "array<EvolInst>",
+    "validation": {
+      "max_opcode_default": "0x42",
+      "jump_bounds": ["0x20", "0x21"],
+      "safe_mutate": "backup -> mutate_program -> validate_program -> rollback_on_invalid"
+    }
+  },
+  "@reward": {
+    "world_score": "sum(node.energy)",
+    "complexity_penalty": "0.001 * program.size",
+    "visual_bonus": "generation-level snap entropy bonus",
+    "agent_fitness": "world_score - complexity_penalty + visual_bonus",
+    "rule": "Reward scores route candidates and evolution agents; it is not factual authority."
+  },
+  "@mutation": {
+    "operators": ["crossover_single_point", "crossover_multi_point", "mutate_program", "safe_mutate"],
+    "selection": "selection_step(bestProgram, bestScore, candidate, score)",
+    "population": "evolve_population(population, targetSize, topK, maxOpcode)",
+    "rule": "Mutation is admitted only inside Xul adaptation or an explicit evolution route."
+  },
+  "@log_contract": {
+    "path": "../evolution/evolution.log.jsonl",
+    "format": "jsonl",
+    "fields": ["version", "mutation", "gen_best", "gen_avg", "best_score"],
+    "latest_observed_version": 199,
+    "latest_observed_best_score": 2.93795,
+    "retention": "append_only_replay"
+  },
+  "@routes": [
+    {"name":"evolution_manifest","method":"GET","path":"/api/evolution","status":"sidecar_contract","handler":"evolution.describe"},
+    {"name":"evolution_log_tail","method":"GET","path":"/api/evolution/log","status":"sidecar_contract","args":["tail"],"handler":"evolution.log.tail"},
+    {"name":"evolution_mutate","method":"POST","path":"/api/evolution/mutate","status":"requires_policy","body":["genome","maxOpcode","policy"],"handler":"evolution.mutate.safe"},
+    {"name":"evolution_reward","method":"POST","path":"/api/evolution/reward","status":"requires_policy","body":["agent","world","visual_bonus","policy"],"handler":"evolution.reward.evaluate"},
+    {"name":"evolution_select","method":"POST","path":"/api/evolution/select","status":"requires_policy","body":["population","topK","targetSize","policy"],"handler":"evolution.population.select"}
+  ],
+  "@schema": {
+    "evolution_event": {
+      "version": "integer",
+      "mutation": "string",
+      "gen_best": "number",
+      "gen_avg": "number",
+      "best_score": "number"
+    },
+    "mutation_request": {
+      "genome": "array",
+      "maxOpcode": "integer",
+      "policy": "object"
+    }
+  }
+}

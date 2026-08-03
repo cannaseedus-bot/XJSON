@@ -1,0 +1,86 @@
+{
+  "@sidecar": {
+    "id": "asx.nnc.kuhul_xsd.neural_grammar.v1",
+    "kind": "nnc_xsd_neural_grammar_manifest",
+    "status": "draft",
+    "role": "merged_neural_net_code_and_kuhul_xsd_grammar_contract"
+  },
+  "@nnc_xsd_neural_grammar": {
+    "name": "ASX NNC + K'UHUL XSD",
+    "version": "1.0",
+    "description": "Unified neural grammar where NNC programs are first-class elements inside the Fold -> Node -> Micronaut hierarchy.",
+    "final_lock": [
+      "JSON is JavaScript Semantic Notation.",
+      "NNC is Neural Net Code.",
+      "XSD is the complete grammar.",
+      "K'UHUL is the runtime.",
+      "ASX is the interface."
+    ],
+    "rule": "JSON semantic notation becomes executable neural grammar only through schema validation, fold admission, and policy-controlled runtime execution."
+  },
+  "@integration": {
+    "architecture": [
+      {"layer": "Grammar", "component": "XSD Schema", "role": "Defines complete system structure"},
+      {"layer": "Neural", "component": "NNC Runtime", "role": "Executes JSON as neural programs"},
+      {"layer": "Hierarchy", "component": "Fold -> Node -> Micronaut", "role": "Organizes ownership, location, and actors"},
+      {"layer": "Execution", "component": "Phase Machine", "role": "Pop -> Wo -> Yax -> Sek -> Ch'en -> Xul"},
+      {"layer": "Memory", "component": "KNUMATICS", "role": "7-layer memory hierarchy"},
+      {"layer": "Control", "component": "Entropy Economy", "role": "Complexity and chaos management"}
+    ],
+    "mappings": [
+      "Folds contain NNC programs",
+      "Nodes store NNC weights",
+      "Micronauts execute NNC functions",
+      "Phases drive NNC training and inference",
+      "Entropy controls NNC complexity",
+      "KNUMATICS stores NNC memory"
+    ]
+  },
+  "@schema_refs": {
+    "nnc_sidecar": "asx-nnc.manifest.json",
+    "xsd_grammar_sidecar": "kuhul-xsd-grammar.manifest.json",
+    "gravity_wells_sidecar": "gravity-semantic-wells.manifest.json"
+  },
+  "@neural_grammar": {
+    "NNC": {
+      "contains": ["Program", "Weights", "Layers"],
+      "attributes": {"schema": {"type": "string", "default": "asx-nnc-v1"}}
+    },
+    "Fold": {
+      "contains": ["Metadata", "Permissions", "Node", "Fold", "NNC"],
+      "nnc_relation": "Fold owns NNC programs as first-class grammar members."
+    },
+    "Node": {
+      "contains": ["State", "Resources", "MathML", "GradientRoutes", "Micronaut", "NNCWeights"],
+      "nnc_relation": "Node locates weight matrices, bias vectors, tensors, and backend resources."
+    },
+    "Micronaut": {
+      "contains": ["Skills", "Opcodes", "PhaseBindings", "Persona", "NNCFunctions"],
+      "nnc_relation": "Micronaut acts on admitted NNC functions."
+    }
+  },
+  "@examples": {
+    "neural_adder_ref": "asx-nnc.manifest.json#/examples/neural_adder",
+    "semantic_wells_ref": "asx-nnc.manifest.json#/examples/semantic_wells_minimal",
+    "gravity_codec_ref": "gravity-semantic-wells.manifest.json#/wells"
+  },
+  "@routes": [
+    {"name": "nnc_xsd_grammar", "method": "GET", "path": "/api/nnc-xsd", "handler": "nnc_xsd.describe", "status": "sidecar_contract"},
+    {"name": "nnc_xsd_compile", "method": "POST", "path": "/api/nnc-xsd/compile", "body": ["document", "policy"], "handler": "nnc_xsd.compile", "status": "sidecar_contract"},
+    {"name": "nnc_xsd_execute", "method": "POST", "path": "/api/nnc-xsd/execute", "body": ["document", "input", "policy"], "handler": "nnc_xsd.execute", "status": "requires_policy"},
+    {"name": "nnc_xsd_validate", "method": "POST", "path": "/api/nnc-xsd/validate", "body": ["document", "policy"], "handler": "nnc_xsd.validate", "status": "sidecar_contract"},
+    {"name": "nnc_xsd_examples", "method": "GET", "path": "/api/nnc-xsd/examples", "handler": "nnc_xsd.examples", "status": "sidecar_contract"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/nnc-xsd-neural-grammar.json",
+    "ids": ["NNC-XSD-NEURAL-GRAMMAR", "NNC-XSD-COMPILER"]
+  },
+  "@folds": {
+    "pop": ["load_nnc_json", "load_xsd_contract"],
+    "wo": ["bind_fold_node_micronaut", "bind_nnc_layers"],
+    "yax": ["map_neural_grammar", "select_execution_plan"],
+    "sek": ["execute_nnc_when_admitted", "train_when_admitted"],
+    "chen": ["emit_neural_projection", "emit_xsd_projection"],
+    "xul": ["hash_neural_grammar", "record_replay", "close"]
+  }
+}

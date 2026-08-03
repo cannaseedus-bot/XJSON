@@ -1,0 +1,22 @@
+{
+  "_comment": "SCO alias registry -- maps human-readable aliases to objects",
+  "aliases": {
+    "OLLAMA_API": {
+      "type":     "api",
+      "endpoint": "http://localhost:11434"
+    },
+    "OPENAI_API": {
+      "type":     "api",
+      "endpoint": "https://api.openai.com/v1"
+    },
+    "json-runtime": {
+      "type":     "api",
+      "endpoint": "http://localhost:8787"
+    },
+    "demo_agent": {
+      "type": "program",
+      "path": "sco/agents/demo_agent.json",
+      "sha256": ""
+    }
+  }
+}

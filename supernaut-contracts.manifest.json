@@ -1,0 +1,60 @@
+{
+  "@sidecar": {
+    "id": "asx.supernaut.contracts.v1",
+    "kind": "supernaut_contract_manifest",
+    "status": "draft",
+    "role": "Supernaut shared contract and micronaut routing pack"
+  },
+  "@supernaut": {
+    "root": "supernaut/Contracts",
+    "definition": "Supernaut contracts define shared RunState, runtime metadata, Crown/Actor Matrix links, policy, routing, semantic micronauts, persona packs, registry, and RAG response schema for CLI/WPF/rendering hosts.",
+    "crown_matrix": "crown-matrix.manifest.json",
+    "trigger_aliases": [
+      "$supernaut",
+      "supernaut",
+      "suopernaut"
+    ],
+    "standalone_skill": "C:\\Users\\canna\\.codex\\skills\\supernaut\\SKILL.md",
+    "trigger_bridge": "../assets/supernaut-system.bridge.json"
+  },
+  "@contracts": {
+    "readme": "supernaut/Contracts/README.md",
+    "runstate_schema": "supernaut/Contracts/supernaut.runstate.schema.json",
+    "runstate_fixture": "supernaut/Contracts/supernaut.runstate.fixture.json",
+    "runtime_schema": "supernaut/Contracts/supernaut.runtime.schema.json",
+    "runtime_fixture": "supernaut/Contracts/supernaut.runtime.fixture.json",
+    "policy": "supernaut/Contracts/policy.micronaut.json",
+    "semantic": "supernaut/Contracts/semantic.micronaut.json",
+    "routing": "supernaut/Contracts/routing.micronaut.json",
+    "actor_matrix": "supernaut/Contracts/actor.matrix.json",
+    "bson_micronaut": "supernaut/Contracts/bson.micronaut.json",
+    "registry": "supernaut/Contracts/micronaut.registry.json",
+    "personality_schema": "supernaut/Contracts/personality.schema.json",
+    "greetings": "supernaut/Contracts/greetings.micronaut.json",
+    "sheogorath": "supernaut/Contracts/sheogorath.micronaut.json",
+    "response_rag_schema": "supernaut/Contracts/response.rag.schema.json"
+  },
+  "@routes": [
+    {"name":"supernaut_contracts","method":"GET","path":"/api/supernaut/contracts","status":"proxy_contract","handler":"supernaut.contracts.manifest"},
+    {"name":"supernaut_validate_runstate","method":"POST","path":"/api/supernaut/runstate/validate","status":"proxy_contract","body":["runstate"],"handler":"supernaut.runstate.validate"},
+    {"name":"supernaut_route_turn","method":"POST","path":"/api/supernaut/route","status":"proxy_contract","body":["turn","runstate","policy"],"handler":"supernaut.routing.select"},
+    {"name":"supernaut_skill_trigger","method":"POST","path":"/api/supernaut/skill-trigger","status":"sidecar_contract","body":["alias","prompt","context","policy"],"handler":"supernaut.skill_trigger.route"},
+    {"name":"supernaut_registry","method":"GET","path":"/api/supernaut/micronauts","status":"proxy_contract","handler":"supernaut.registry.list"},
+    {"name":"supernaut_actor_matrix","method":"GET","path":"/api/supernaut/actor-matrix","status":"sidecar_contract","handler":"supernaut.actor_matrix.describe"},
+    {"name":"supernaut_bson_micronaut","method":"GET","path":"/api/supernaut/bson-micronaut","status":"sidecar_contract","handler":"supernaut.bson_micronaut.describe"}
+  ],
+  "@agents": [
+    {"id":"SUPERNAUT-ROUTER","role":"Select semantic, tool, and RAG paths from routing.micronaut.json","phase":"Yax"},
+    {"id":"SUPERNAUT-VALIDATOR","role":"Validate RunState/runtime fixtures and schema conformance","phase":"Chen"},
+    {"id":"SUPERNAUT-SEMANTIC","role":"Inject semantic capsule and graph edges into model context","phase":"Wo"},
+    {"id":"SUPERNAUT-POLICY","role":"Enforce replay-safe permissions and startup policy","phase":"Yax"}
+  ],
+  "@folds": {
+    "pop": "load runstate/runtime/policy/registry contracts",
+    "wo": "bind semantic capsule, persona pack, model targets, and routes",
+    "yax": "select per-turn semantic/tool/RAG route under policy",
+    "sek": "dispatch admitted agent/tool/model path",
+    "chen": "emit runstate, route decision, validation report, or UI event",
+    "xul": "record replay-safe route, model target, and contract hashes"
+  }
+}

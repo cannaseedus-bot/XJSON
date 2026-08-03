@@ -1,0 +1,5 @@
+{
+  "@sidecar": {"id":"asx.runtime.validate.v1","kind":"validate_manifest","status":"draft","role":"admission_validator_contracts"},
+  "@validate": {"definition":"Validation checks schema, phase legality, capability grants, route existence, and deterministic bounds.","rule":"Validation must pass before compile/generate/execute routes."},
+  "@rules": ["json_schema","phase_transition","capability_grant","path_guard","port_route","determinism"]
+}

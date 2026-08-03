@@ -1,0 +1,300 @@
+{
+  "@sidecar": {"id":"asx.runtime.server.v1","kind":"app_server_manifest","status":"draft","role":"static_rest_api_server_contract"},
+  "@ports": {
+    "json_runtime_object_server": {"port": 8787, "role": "ASX JSON/XCFE object server"},
+    "agent_server": {"port": 8090, "role": "agent orchestration and JSON-RPC app"},
+    "model_server": {"port": 9080, "role": "llama.cpp or LM Studio compatible local model server"},
+    "lm_studio": {"port": 1234, "role": "LM Studio OpenAI-compatible/headless local LLM service"},
+    "sco_runtime": {"port": 6002, "role": "SCO alias registry server"},
+    "grpc_compat": {"port": 8088, "role": "optional gRPC compatibility bridge; old 8080-style contracts should reference this abstract port instead of hard-coding 8080"}
+  },
+  "@server": {
+    "host": "127.0.0.1",
+    "http_file_path": "$host_directory",
+    "rule": "Routes and ports are declared here; runtime binding remains controlled by manifest.json. Existing routes may be handled by server.cpp now; proxy/planned routes are admission contracts for AgentServer/ModelServer/sidecar bridges."
+  },
+  "@routes": [
+    {"name":"health","method":"GET","path":"/api/health","status":"implemented","handler":"server.cpp"},
+    {"name":"run_file","method":"POST","path":"/api/run","status":"implemented","body":["program"],"handler":"xcfe.run"},
+    {"name":"run_inline","method":"POST","path":"/api/run","status":"implemented","body":["program<object>"],"handler":"xcfe.run_inline"},
+    {"name":"object_file_read","method":"GET","path":"/api/file","status":"implemented","args":["path"],"root":"$http_file_path","handler":"file.read_json"},
+    {"name":"file_manager_describe","method":"GET","path":"/api/file-manager","status":"implemented","handler":"file_manager.describe"},
+    {"name":"file_manager_init","method":"POST","path":"/api/file-manager/init","status":"implemented","body":["user_id","project_id"],"handler":"file_manager.init"},
+    {"name":"file_manager_list","method":"POST","path":"/api/file-manager/list","status":"implemented","body":["user_id","project_id","path"],"handler":"file_manager.list"},
+    {"name":"file_manager_read","method":"POST","path":"/api/file-manager/read","status":"implemented","body":["user_id","project_id","path"],"handler":"file_manager.read"},
+    {"name":"file_manager_write","method":"POST","path":"/api/file-manager/write","status":"implemented","body":["user_id","project_id","path","content"],"handler":"file_manager.write"},
+    {"name":"file_manager_patch","method":"POST","path":"/api/file-manager/patch","status":"implemented","body":["user_id","project_id","path","pattern","replacement"],"handler":"file_manager.patch"},
+    {"name":"file_manager_stat","method":"POST","path":"/api/file-manager/stat","status":"implemented","body":["user_id","project_id","path"],"handler":"file_manager.stat"},
+    {"name":"file_manager_search","method":"POST","path":"/api/file-manager/search","status":"implemented","body":["user_id","project_id","path","query"],"handler":"file_manager.search"},
+    {"name":"sidecar_list","method":"GET","path":"/api/sidecars","status":"implemented","handler":"sidecar.list"},
+    {"name":"sidecar_describe","method":"GET","path":"/api/sidecars/<name>","status":"implemented","args":["name"],"handler":"sidecar.describe"},
+    {"name":"sidecar_call","method":"POST","path":"/api/sidecars/<name>/call/<op>","status":"implemented","args":["name","op"],"body":["scope"],"handler":"sidecar.call"},
+    {"name":"graph","method":"GET","path":"/api/graph","status":"implemented","handler":"xcfe.graph"},
+    {"name":"phases","method":"GET","path":"/api/phases","status":"implemented","handler":"runtime_authority.phase_contract"},
+    {"name":"angles_manifest","method":"GET","path":"/api/angles","status":"sidecar_contract","handler":"angles.describe"},
+    {"name":"angle_cell_resolve","method":"POST","path":"/api/angles/cell","status":"sidecar_contract","body":["phase","angle","lane","policy"],"handler":"angles.cell.resolve"},
+    {"name":"lanes_manifest","method":"GET","path":"/api/lanes","status":"sidecar_contract","handler":"lanes.describe"},
+    {"name":"lane_resolve","method":"POST","path":"/api/lanes/resolve","status":"sidecar_contract","body":["phase","angle","lane","glyph","policy"],"handler":"lanes.resolve"},
+    {"name":"para_graph","method":"GET","path":"/api/para-graph","status":"sidecar_contract","handler":"para_graph.describe"},
+    {"name":"para_graph_render","method":"POST","path":"/api/para-graph/render","status":"sidecar_contract","body":["graph_context","regions","render_mode","policy"],"handler":"para_graph.render"},
+    {"name":"para_graph_admit","method":"POST","path":"/api/para-graph/admit","status":"requires_policy","body":["graph_context","route","action","policy"],"handler":"para_graph.admit"},
+    {"name":"para_graph_interop","method":"GET","path":"/api/para-graph/interop","status":"sidecar_contract","handler":"para_graph.interop.describe"},
+    {"name":"sco_resolve","method":"GET","path":"/api/sco/<alias>","status":"implemented","args":["alias"],"handler":"sco.resolve"},
+    {"name":"discovery","method":"GET","path":"/api/discovery","status":"implemented","handler":"discovery.list"},
+    {"name":"sco_identity","method":"GET","path":"/.well-known/sco","status":"implemented","handler":"sco.identity"},
+
+    {"name":"chat","method":"POST","path":"/api/chat","status":"proxy_contract","body":["model","messages","input","tools","stream"],"handler":"model_router.chat"},
+    {"name":"chat_completions","method":"POST","path":"/v1/chat/completions","status":"proxy_contract","body":["model","messages","tools","tool_choice","stream"],"handler":"openai_compatible.chat_completions"},
+    {"name":"responses","method":"POST","path":"/v1/responses","status":"proxy_contract","body":["model","input","tools","tool_choice","stream"],"handler":"openai_compatible.responses"},
+    {"name":"models","method":"GET","path":"/v1/models","status":"proxy_contract","handler":"model_router.list"},
+    {"name":"lm_studio_chat","method":"POST","path":"/api/lmstudio/chat","status":"proxy_contract","upstream":"http://127.0.0.1:1234/v1/chat/completions","body":["model","messages","tools","stream"],"handler":"lm_studio.chat"},
+    {"name":"lm_studio_responses","method":"POST","path":"/api/lmstudio/responses","status":"proxy_contract","upstream":"http://127.0.0.1:1234/v1/responses","body":["model","input","tools","stream"],"handler":"lm_studio.responses"},
+    {"name":"llama_chat","method":"POST","path":"/api/llama/chat","status":"proxy_contract","upstream":"http://127.0.0.1:9080/v1/chat/completions","body":["model","messages","tools","stream"],"handler":"llama_cpp.chat"},
+    {"name":"llama_completion","method":"POST","path":"/api/llama/completion","status":"proxy_contract","upstream":"http://127.0.0.1:9080/completion","body":["prompt","n_predict","temperature"],"handler":"llama_cpp.completion"},
+    {"name":"llama_embeddings","method":"POST","path":"/api/llama/embeddings","status":"proxy_contract","upstream":"http://127.0.0.1:9080/v1/embeddings","body":["model","input"],"handler":"llama_cpp.embeddings"},
+    {"name":"sdk_openai_chat","method":"POST","path":"/api/sdk/openai/chat","status":"proxy_contract","body":["model","messages","tools","stream"],"handler":"sdk.openai.chat"},
+    {"name":"sdk_openai_responses","method":"POST","path":"/api/sdk/openai/responses","status":"proxy_contract","body":["model","input","tools","stream"],"handler":"sdk.openai.responses"},
+    {"name":"sdk_cloud_chat","method":"POST","path":"/api/sdk/cloud/chat","status":"proxy_contract","body":["provider","model","messages","tools","stream"],"handler":"sdk.cloud.chat"},
+    {"name":"cloud_openai","method":"POST","path":"/api/cloud/openai/chat","status":"proxy_contract","body":["model","messages","tools","stream"],"handler":"cloud.openai.chat"},
+    {"name":"cloud_anthropic","method":"POST","path":"/api/cloud/anthropic/chat","status":"proxy_contract","body":["model","messages","tools","stream"],"handler":"cloud.anthropic.chat"},
+    {"name":"cloud_google","method":"POST","path":"/api/cloud/google/chat","status":"proxy_contract","body":["model","messages","tools","stream"],"handler":"cloud.google.chat"},
+    {"name":"cloud_huggingface","method":"POST","path":"/api/cloud/huggingface/chat","status":"proxy_contract","body":["model","messages","tools","stream"],"handler":"cloud.huggingface.chat"},
+    {"name":"cloud_mistral","method":"POST","path":"/api/cloud/mistral/chat","status":"proxy_contract","body":["model","messages","tools","stream"],"handler":"cloud.mistral.chat"},
+
+    {"name":"code_generation","method":"POST","path":"/api/code-generation","status":"proxy_contract","body":["language","target","prompt","files","constraints","model"],"handler":"coder.generate"},
+    {"name":"code_review","method":"POST","path":"/api/code/review","status":"proxy_contract","body":["path","content","model"],"handler":"coder.review"},
+    {"name":"code_review_dir","method":"POST","path":"/api/code/review-dir","status":"proxy_contract","body":["path","model"],"handler":"coder.review_dir"},
+    {"name":"code_diff","method":"POST","path":"/api/code/diff","status":"proxy_contract","body":["old","new","model"],"handler":"coder.diff"},
+    {"name":"code_refactor","method":"POST","path":"/api/code/refactor","status":"proxy_contract","body":["path","goal","content","model"],"handler":"coder.refactor"},
+    {"name":"code_optimize","method":"POST","path":"/api/code/optimize","status":"proxy_contract","body":["path","metric","content","model"],"handler":"coder.optimize"},
+    {"name":"code_document","method":"POST","path":"/api/code/document","status":"proxy_contract","body":["path","content","model"],"handler":"coder.document"},
+    {"name":"code_test","method":"POST","path":"/api/code/test","status":"proxy_contract","body":["path","content","model"],"handler":"coder.test"},
+    {"name":"code_explain","method":"POST","path":"/api/code/explain","status":"proxy_contract","body":["path","selection","model"],"handler":"coder.explain"},
+    {"name":"code_github_review","method":"POST","path":"/api/code/github-review","status":"proxy_contract","body":["path","content","model"],"handler":"coder.github_review"},
+    {"name":"code_patch","method":"POST","path":"/api/code/patch","status":"proxy_contract","body":["path","patch","model"],"handler":"coder.patch"},
+    {"name":"commands_manifest","method":"GET","path":"/api/commands","status":"sidecar_contract","handler":"commands.describe","sidecar":"commands","op":"DESCRIBE_COMMANDS"},
+    {"name":"command_resolve","method":"POST","path":"/api/commands/resolve","status":"sidecar_contract","body":["command","args","policy"],"handler":"commands.resolve","sidecar":"commands","op":"RESOLVE_COMMAND"},
+    {"name":"tools_manifest","method":"GET","path":"/api/tools","status":"sidecar_contract","handler":"tools.describe","sidecar":"tools","op":"DESCRIBE_TOOLS"},
+    {"name":"tool_resolve","method":"POST","path":"/api/tools/resolve","status":"sidecar_contract","body":["tool","args","policy"],"handler":"tools.resolve","sidecar":"tools","op":"RESOLVE_TOOL"},
+    {"name":"actions_manifest","method":"GET","path":"/api/actions","status":"sidecar_contract","handler":"actions.describe"},
+    {"name":"action_class_describe","method":"GET","path":"/api/actions/<class>","status":"sidecar_contract","args":["class"],"handler":"actions.class.describe"},
+    {"name":"action_invoke","method":"POST","path":"/api/actions/<class>/<method>","status":"requires_policy","args":["class","method"],"body":["args","policy"],"handler":"actions.invoke"},
+    {"name":"experts_manifest","method":"GET","path":"/api/experts","status":"sidecar_contract","handler":"experts.describe"},
+    {"name":"expert_profile","method":"GET","path":"/api/experts/<id>","status":"sidecar_contract","args":["id"],"handler":"experts.profile"},
+    {"name":"expert_route","method":"POST","path":"/api/experts/route","status":"sidecar_contract","body":["intent","payload","policy"],"handler":"experts.route"},
+    {"name":"expert_invoke","method":"POST","path":"/api/experts/<id>/invoke","status":"requires_policy","args":["id"],"body":["intent","payload","policy"],"handler":"experts.invoke"},
+    {"name":"evolution_manifest","method":"GET","path":"/api/evolution","status":"sidecar_contract","handler":"evolution.describe"},
+    {"name":"evolution_log_tail","method":"GET","path":"/api/evolution/log","status":"sidecar_contract","args":["tail"],"handler":"evolution.log.tail"},
+    {"name":"evolution_mutate","method":"POST","path":"/api/evolution/mutate","status":"requires_policy","body":["genome","maxOpcode","policy"],"handler":"evolution.mutate.safe"},
+    {"name":"evolution_reward","method":"POST","path":"/api/evolution/reward","status":"requires_policy","body":["agent","world","visual_bonus","policy"],"handler":"evolution.reward.evaluate"},
+    {"name":"evolution_select","method":"POST","path":"/api/evolution/select","status":"requires_policy","body":["population","topK","targetSize","policy"],"handler":"evolution.population.select"},
+    {"name":"micronaut_factory","method":"POST","path":"/api/micronaut/factory","status":"proxy_contract","body":["command","manifest","args"],"handler":"micronaut.factory"},
+    {"name":"micronaut_worker_run","method":"POST","path":"/api/micronaut/worker/run","status":"proxy_contract","body":["job","manifest","args"],"handler":"micronaut.worker"},
+    {"name":"micronaut_http_run","method":"POST","path":"/api/micronaut/http/run","status":"proxy_contract","body":["route","payload"],"handler":"micronaut.worker_http"},
+    {"name":"micronaut_factory_pack_scxq2","method":"POST","path":"/api/micronaut/factory/pack-scxq2","status":"requires_policy","body":["manifest","glyph","lane","policy"],"handler":"micronaut.factory.pack_scxq2"},
+    {"name":"micronaut_factory_bind_bson","method":"POST","path":"/api/micronaut/factory/bind-bson","status":"requires_policy","body":["scxq2_envelope","glyph","lane","policy"],"handler":"micronaut.factory.bind_bson"},
+    {"name":"mx2lm_compiler_manifest","method":"GET","path":"/api/mx2lm/compiler","status":"proxy_contract","handler":"mx2lm.compiler.manifest"},
+    {"name":"mx2lm_parse","method":"POST","path":"/api/mx2lm/parse","status":"proxy_contract","body":["source","filename","mode"],"handler":"mx2lm.compiler.parse"},
+    {"name":"mx2lm_emit_asx","method":"POST","path":"/api/mx2lm/emit-asx","status":"proxy_contract","body":["ast","options"],"handler":"mx2lm.compiler.emit_asx"},
+    {"name":"mx2lm_emit_kpi","method":"POST","path":"/api/mx2lm/emit-kpi","status":"proxy_contract","body":["asx_ast","options"],"handler":"mx2lm.compiler.emit_kpi"},
+    {"name":"mx2lm_run_kuhul_es","method":"POST","path":"/api/mx2lm/run","status":"proxy_contract","body":["file","source","record","replay"],"handler":"mx2lm.compiler.run"},
+    {"name":"supernaut_contracts","method":"GET","path":"/api/supernaut/contracts","status":"proxy_contract","handler":"supernaut.contracts.manifest"},
+    {"name":"supernaut_validate_runstate","method":"POST","path":"/api/supernaut/runstate/validate","status":"proxy_contract","body":["runstate"],"handler":"supernaut.runstate.validate"},
+    {"name":"supernaut_route_turn","method":"POST","path":"/api/supernaut/route","status":"proxy_contract","body":["turn","runstate","policy"],"handler":"supernaut.routing.select"},
+    {"name":"supernaut_skill_trigger","method":"POST","path":"/api/supernaut/skill-trigger","status":"sidecar_contract","body":["alias","prompt","context","policy"],"handler":"supernaut.skill_trigger.route"},
+    {"name":"supernaut_registry","method":"GET","path":"/api/supernaut/micronauts","status":"proxy_contract","handler":"supernaut.registry.list"},
+    {"name":"mx2lm_ngram_status","method":"GET","path":"/api/mx2lm/ngram/status","status":"sidecar_contract","handler":"mx2lm.ngram.status"},
+    {"name":"mx2lm_ngram_weights","method":"GET","path":"/api/mx2lm/ngram/weights","status":"sidecar_contract","handler":"mx2lm.ngram.weights"},
+    {"name":"mx2lm_ngram_plan","method":"POST","path":"/api/mx2lm/ngram/plan","status":"sidecar_contract","body":["input","folds","policy"],"handler":"mx2lm.ngram.plan"},
+    {"name":"mx2lm_ngram_admit","method":"POST","path":"/api/mx2lm/ngram/admit","status":"sidecar_contract","body":["plan","mode","policy"],"handler":"mx2lm.ngram.admit"},
+    {"name":"mx2lm_auto_trigger","method":"POST","path":"/api/mx2lm/auto/trigger","status":"requires_policy","body":["goal","input","mode","policy","approval"],"handler":"mx2lm.auto.trigger"},
+    {"name":"mx2lm_field_system","method":"GET","path":"/api/mx2lm/field-system","status":"sidecar_contract","handler":"mx2lm.field_system.describe"},
+    {"name":"micronaut_brains","method":"GET","path":"/api/micronaut/brains","status":"sidecar_contract","handler":"micronaut.brains.list"},
+    {"name":"micronaut_brain_profile","method":"GET","path":"/api/micronaut/brains/profile","status":"sidecar_contract","args":["id"],"handler":"micronaut.brains.profile"},
+    {"name":"micronaut_brain_route","method":"POST","path":"/api/micronaut/brains/route","status":"sidecar_contract","body":["text","context","policy"],"handler":"micronaut.brains.route"},
+    {"name":"chat_hive_status","method":"GET","path":"/api/chat-hive/status","status":"sidecar_contract","handler":"chat_hive.status"},
+    {"name":"chat_hive_message","method":"POST","path":"/api/chat-hive/message","status":"proxy_contract","body":["message","model","attachments","policy"],"handler":"chat_hive.message"},
+    {"name":"chat_hive_models","method":"GET","path":"/api/chat-hive/models","status":"proxy_contract","handler":"chat_hive.models"},
+    {"name":"chat_hive_model_load","method":"POST","path":"/api/chat-hive/models/load","status":"requires_policy","body":["path","id","policy"],"handler":"chat_hive.models.load"},
+    {"name":"chat_hive_auto_learning","method":"POST","path":"/api/chat-hive/learning/auto","status":"requires_policy","body":["goal","mode","policy","approval"],"handler":"mx2lm.auto.trigger"},
+    {"name":"agents_spawn","method":"POST","path":"/api/agents/spawn","status":"requires_policy","body":["topic","requirements","policy"],"handler":"primeos.agents.spawn"},
+    {"name":"agents_control","method":"POST","path":"/api/agents/control/<agentId>","status":"requires_policy","args":["agentId"],"body":["action","data","policy"],"handler":"primeos.agents.control"},
+    {"name":"agents_list","method":"GET","path":"/api/agents/list","status":"sidecar_contract","args":["filter"],"handler":"primeos.agents.list"},
+    {"name":"agents_templates","method":"GET","path":"/api/agents/templates","status":"sidecar_contract","handler":"primeos.agents.templates"},
+    {"name":"agents_train","method":"POST","path":"/api/agents/<agentId>/train","status":"requires_training_policy","args":["agentId"],"body":["dataset","modelConfig","policy","approval"],"handler":"primeos.training.spawn"},
+    {"name":"nnc_manifest","method":"GET","path":"/api/nnc","status":"sidecar_contract","handler":"nnc.manifest"},
+    {"name":"nnc_compile","method":"POST","path":"/api/nnc/compile","status":"sidecar_contract","body":["json","policy"],"handler":"nnc.compile"},
+    {"name":"nnc_execute","method":"POST","path":"/api/nnc/execute","status":"requires_policy","body":["program","input","policy"],"handler":"nnc.execute"},
+    {"name":"nnc_examples","method":"GET","path":"/api/nnc/examples","status":"sidecar_contract","handler":"nnc.examples"},
+    {"name":"gravity_wells","method":"GET","path":"/api/gravity-wells","status":"sidecar_contract","handler":"gravity_wells.list"},
+    {"name":"gravity_wells_query","method":"POST","path":"/api/gravity-wells/query","status":"sidecar_contract","body":["question","temperature","policy"],"handler":"gravity_wells.query"},
+    {"name":"kuhul_xsd_grammar","method":"GET","path":"/api/kuhul/xsd-grammar","status":"sidecar_contract","handler":"kuhul.xsd_grammar.describe"},
+    {"name":"kuhul_xsd_emit","method":"POST","path":"/api/kuhul/xsd-grammar/emit-xsd","status":"sidecar_contract","body":["format","policy"],"handler":"kuhul.xsd_grammar.emit"},
+    {"name":"kuhul_xsd_validate","method":"POST","path":"/api/kuhul/xsd-grammar/validate","status":"sidecar_contract","body":["document","policy"],"handler":"kuhul.xsd_grammar.validate"},
+    {"name":"nnc_xsd_grammar","method":"GET","path":"/api/nnc-xsd","status":"sidecar_contract","handler":"nnc_xsd.describe"},
+    {"name":"nnc_xsd_compile","method":"POST","path":"/api/nnc-xsd/compile","status":"sidecar_contract","body":["document","policy"],"handler":"nnc_xsd.compile"},
+    {"name":"nnc_xsd_execute","method":"POST","path":"/api/nnc-xsd/execute","status":"requires_policy","body":["document","input","policy"],"handler":"nnc_xsd.execute"},
+    {"name":"nnc_xsd_validate","method":"POST","path":"/api/nnc-xsd/validate","status":"sidecar_contract","body":["document","policy"],"handler":"nnc_xsd.validate"},
+    {"name":"crown_matrix","method":"GET","path":"/api/crown-matrix","status":"sidecar_contract","handler":"crown_matrix.describe"},
+    {"name":"crown_matrix_admit","method":"POST","path":"/api/crown-matrix/admit","status":"requires_policy","body":["candidate","evidence","policy"],"handler":"crown_matrix.admit"},
+    {"name":"crown_matrix_status","method":"GET","path":"/api/crown-matrix/status","status":"sidecar_contract","handler":"crown_matrix.status"},
+    {"name":"actor_matrix","method":"GET","path":"/api/actor-matrix","status":"sidecar_contract","handler":"actor_matrix.describe"},
+    {"name":"actor_matrix_profile","method":"GET","path":"/api/actor-matrix/profile","status":"sidecar_contract","args":["id"],"handler":"actor_matrix.profile"},
+    {"name":"actor_matrix_select","method":"POST","path":"/api/actor-matrix/select","status":"sidecar_contract","body":["mode","context","policy"],"handler":"actor_matrix.select"},
+    {"name":"actor_matrix_admit_delta","method":"POST","path":"/api/actor-matrix/admit-delta","status":"requires_policy","body":["id","delta","evidence","policy"],"handler":"actor_matrix.admit_delta"},
+    {"name":"personality_matrix","method":"GET","path":"/api/personality-matrix","status":"sidecar_contract","handler":"personality_matrix.describe"},
+    {"name":"personality_profile","method":"GET","path":"/api/personality-matrix/profile","status":"sidecar_contract","args":["id"],"handler":"personality_matrix.profile"},
+    {"name":"personality_blend","method":"POST","path":"/api/personality-matrix/blend","status":"sidecar_contract","body":["ids","weights","policy"],"handler":"personality_matrix.blend"},
+    {"name":"personality_admit_delta","method":"POST","path":"/api/personality-matrix/admit-delta","status":"requires_policy","body":["id","delta","evidence","policy"],"handler":"personality_matrix.admit_delta"},
+    {"name":"xcfe_js_surfaces","method":"GET","path":"/api/xcfe/js-surfaces","status":"sidecar_contract","handler":"xcfe_js_surfaces.describe"},
+    {"name":"kuhul_math_engine","method":"GET","path":"/api/kuhul/math-engine","status":"sidecar_contract","handler":"kuhul_math_engine.describe"},
+    {"name":"agl_xjson_contracts","method":"GET","path":"/api/agl-xjson/contracts","status":"sidecar_contract","handler":"agl_xjson_contracts.describe"},
+    {"name":"xjson_kuhul_merge","method":"GET","path":"/api/xjson-kuhul/merge","status":"sidecar_contract","handler":"xjson_kuhul.merge.describe","sidecar":"xjson_kuhul_autonomous_ai_runtime","op":"DESCRIBE_XJSON_KUHUL_MERGE"},
+    {"name":"xjson_kuhul_glyph_resolve","method":"POST","path":"/api/xjson-kuhul/glyph","status":"sidecar_contract","body":["glyph","phase","lane","policy"],"handler":"xjson_kuhul.glyph.resolve","sidecar":"xjson_kuhul_autonomous_ai_runtime","op":"RESOLVE_GLYPH_OPERATION"},
+    {"name":"kuhul_pi_cluster","method":"GET","path":"/api/kuhul/pi-cluster","status":"sidecar_contract","handler":"kuhul_pi_cluster.describe"},
+    {"name":"kuhul_cluster_analytics","method":"GET","path":"/api/kuhul/cluster-analytics","status":"sidecar_contract","handler":"kuhul_cluster_analytics.describe"},
+    {"name":"kuhul_character_engine","method":"GET","path":"/api/kuhul/character-engine","status":"sidecar_contract","handler":"kuhul_character_engine.describe"},
+    {"name":"kuhul_learning_browser","method":"GET","path":"/api/kuhul/learning-browser","status":"sidecar_contract","handler":"kuhul_learning_browser.describe"},
+    {"name":"kuhul_auto_coder","method":"GET","path":"/api/kuhul/auto-coder","status":"sidecar_contract","handler":"kuhul_auto_coder.describe"},
+    {"name":"ai_specialists","method":"GET","path":"/api/ai-specialists","status":"sidecar_contract","handler":"ai_specialists.describe"},
+    {"name":"ai_specialists_workflow","method":"POST","path":"/api/ai-specialists/team/workflow","status":"requires_policy","body":["name","steps","policy"],"handler":"ai_specialists.workflow.execute"},
+    {"name":"mx2lm_runtime_boot","method":"GET","path":"/api/mx2lm/runtime-boot","status":"sidecar_contract","handler":"mx2lm.runtime_boot.describe"},
+    {"name":"mx2lm_api_brain","method":"GET","path":"/api/mx2lm/brain","status":"sidecar_contract","handler":"mx2lm.api_brain.describe"},
+    {"name":"mx2lm_api_brain_service","method":"POST","path":"/api/mx2lm/brain/<service>","status":"requires_policy","args":["service"],"body":["input","context","policy"],"handler":"mx2lm.api_brain.service"},
+    {"name":"bson_micronaut","method":"GET","path":"/api/bson-micronaut","status":"sidecar_contract","handler":"bson_micronaut.describe"},
+    {"name":"bson_micronaut_admit","method":"POST","path":"/api/bson-micronaut/admit","status":"requires_policy","body":["glyph","lane","binary_runtime_array","policy"],"handler":"bson_micronaut.admit"},
+    {"name":"bson_micronaut_decode","method":"POST","path":"/api/bson-micronaut/decode","status":"requires_policy","body":["semantic_key","bytes","shape","dtype","checksum","policy"],"handler":"bson_micronaut.decode"},
+    {"name":"bots_manifest","method":"GET","path":"/api/bots","status":"sidecar_contract","handler":"bots.describe"},
+    {"name":"bots_answer","method":"POST","path":"/api/bots/answer","status":"requires_policy","body":["question","context","policy"],"handler":"bots.answer"},
+    {"name":"bots_create_research_micronaut","method":"POST","path":"/api/bots/research-micronaut","status":"requires_policy","body":["question","allowed_domains","max_pages","freshness","policy"],"handler":"bots.research_micronaut.create"},
+    {"name":"bots_scrape_plan","method":"POST","path":"/api/bots/scrape-plan","status":"requires_policy","body":["micronaut","policy"],"handler":"bots.scrape.plan"},
+    {"name":"bots_evidence_pack","method":"POST","path":"/api/bots/evidence-pack","status":"requires_policy","body":["evidence","policy"],"handler":"bots.evidence.pack"},
+    {"name":"read","method":"POST","path":"/api/read","status":"alias_contract","body":["user_id","project_id","path"],"handler":"file_manager.read"},
+    {"name":"write","method":"POST","path":"/api/write","status":"alias_contract","body":["user_id","project_id","path","content"],"handler":"file_manager.write"},
+    {"name":"edit","method":"POST","path":"/api/edit","status":"alias_contract","body":["user_id","project_id","path","pattern","replacement"],"handler":"file_manager.patch"},
+    {"name":"patch","method":"POST","path":"/api/patch","status":"alias_contract","body":["user_id","project_id","path","pattern","replacement"],"handler":"file_manager.patch"},
+    {"name":"update","method":"POST","path":"/api/update","status":"alias_contract","body":["user_id","project_id","path","content"],"handler":"file_manager.write"},
+    {"name":"delete","method":"POST","path":"/api/delete","status":"requires_policy","body":["user_id","project_id","path"],"handler":"file_manager.delete"},
+    {"name":"get","method":"GET","path":"/api/get","status":"alias_contract","args":["path"],"handler":"file.read_json"},
+    {"name":"post","method":"POST","path":"/api/post","status":"proxy_contract","body":["route","payload"],"handler":"http.post_admitted"},
+    {"name":"http_get","method":"POST","path":"/api/http/get","status":"proxy_contract","body":["url","headers","query"],"handler":"http.get_admitted"},
+    {"name":"http_post","method":"POST","path":"/api/http/post","status":"proxy_contract","body":["url","headers","body"],"handler":"http.post_admitted"},
+    {"name":"http_put","method":"POST","path":"/api/http/put","status":"proxy_contract","body":["url","headers","body"],"handler":"http.put_admitted"},
+    {"name":"http_patch","method":"POST","path":"/api/http/patch","status":"proxy_contract","body":["url","headers","body"],"handler":"http.patch_admitted"}
+  ],
+  "@chat_routes": {
+    "local": ["lm_studio_chat","lm_studio_responses","llama_chat","llama_completion","llama_embeddings"],
+    "cloud": ["cloud_openai","cloud_anthropic","cloud_google","cloud_huggingface","cloud_mistral"],
+    "sdk": ["sdk_openai_chat","sdk_openai_responses","sdk_cloud_chat"],
+    "openai_compatible": ["chat_completions","responses","models"],
+    "rule": "Chat routes are model-router contracts. Secrets stay outside public manifests; provider calls require policy admission."
+  },
+  "@file_routes": {
+    "implemented": ["file_manager_read","file_manager_write","file_manager_patch","file_manager_search","object_file_read"],
+    "aliases": ["read","write","edit","patch","update","get"],
+    "rule": "File aliases must resolve to the project/user file manager or sandboxed object file root. Absolute paths and parent traversal remain rejected."
+  },
+  "@para_graph_routes": {
+    "routes": ["para_graph","para_graph_render","para_graph_admit","para_graph_interop"],
+    "definition": "PARA-GRAPH is Parallel Authority Region Adjacency Graph. Paragraphs are serial render projections.",
+    "regions": ["folds","nodes","sidecars","tools","models","evidence_branches","gravity_wells","shell_surfaces","interop_bridges"],
+    "render_modes": ["one_paragraph","multi_paragraph","sectioned_report","cli_feed","json_contract","svg_surface"],
+    "rule": "PARA-GRAPH routes expose graph context, coverage, render policy, and interop edges. Execution and mutation require policy admission."
+  },
+  "@phase_angle_lane_routes": {
+    "routes": ["phases","angles_manifest","angle_cell_resolve","lanes_manifest","lane_resolve"],
+    "notation": "Fold[Angle:Lane]",
+    "compact_notation": "Φy.αx.λlane",
+    "rule": "Fold is the primary semantic runtime state, phase is its manifold coordinate, angle is horizontal semantic unfolding, and lane is the concrete dispatch/runtime domain inside the cell."
+  },
+  "@code_generation": {
+    "route": "/api/code-generation",
+    "routes": ["code_generation","code_review","code_review_dir","code_diff","code_refactor","code_optimize","code_document","code_test","code_explain","code_github_review","code_patch"],
+    "adapters": ["roslyn","codewasm","oss_coder_micronaut","llama_cpp","lm_studio","cloud_sdk"],
+    "rule": "Code generation emits proposed artifacts or patches; writes must still pass file-manager/project admission."
+  },
+  "@command_tool_routes": {
+    "routes": ["commands_manifest","command_resolve","tools_manifest","tool_resolve"],
+    "sidecars": ["commands","tools"],
+    "ops": ["DESCRIBE_COMMANDS","RESOLVE_COMMAND","DESCRIBE_TOOLS","RESOLVE_TOOL"],
+    "rule": "Commands and tools are mounted lazy as sidecars and become callable through explicit describe/resolve ops. Effectful execution still lowers into actions, expert routes, or admitted sidecar calls."
+  },
+  "@actions_experts_routes": {
+    "routes": ["actions_manifest","action_class_describe","action_invoke","experts_manifest","expert_profile","expert_route","expert_invoke"],
+    "rule": "Action classes and expert bundles are declarative capability surfaces. Invocation requires route, action, policy, and Fold[Angle:Lane] admission."
+  },
+  "@evolution_routes": {
+    "routes": ["evolution_manifest","evolution_log_tail","evolution_mutate","evolution_reward","evolution_select"],
+    "phase_angle_lane": "Xul[evidence:replay]",
+    "rule": "Evolution mutates and rewards candidate behavior in the Xul adaptation layer. It may score future route bias but cannot mutate sealed weights or bypass Crown policy."
+  },
+  "@micronaut_routes": {
+    "routes": ["micronaut_factory","micronaut_worker_run","micronaut_http_run","micronaut_factory_pack_scxq2","micronaut_factory_bind_bson"],
+    "binaries": ["bin/micronaut_factory.exe","bin/Micronaut.Worker.Host.exe","bin/Micronaut.Worker.Host.Http.exe"],
+    "pipeline": "micronaut factory -> micronaut.json -> SCXQ2 packer -> bson.micronaut.json",
+    "rule": "Micronaut factory and worker routes are proxy contracts. They mount project-local micronaut jobs after XCFE admission and should communicate over HTTP or stdio, not direct cross-stack file links."
+  },
+  "@mx2lm_compiler_routes": {
+    "routes": ["mx2lm_compiler_manifest","mx2lm_parse","mx2lm_emit_asx","mx2lm_emit_kpi","mx2lm_run_kuhul_es"],
+    "rule": "MX2LM compiler routes are an app/agent/micronaut contract for grammar, parser, ASX AST emission, KPI emission, and KUHUL-ES runtime actions."
+  },
+  "@supernaut_routes": {
+    "routes": ["supernaut_contracts","supernaut_validate_runstate","supernaut_route_turn","supernaut_skill_trigger","supernaut_registry"],
+    "rule": "Supernaut contract routes expose runstate/runtime/routing/semantic registry declarations for CLI, WPF, and sidecar panels."
+  },
+  "@mx2lm_runtime_routes": {
+    "routes": ["mx2lm_ngram_status","mx2lm_ngram_weights","mx2lm_ngram_plan","mx2lm_ngram_admit","mx2lm_auto_trigger","mx2lm_field_system"],
+    "rule": "MX2LM runtime routes expose ngram status, field-system metadata, and auto-learning admission. Mutation modes require policy."
+  },
+  "@micronaut_brain_routes": {
+    "routes": ["micronaut_brains","micronaut_brain_profile","micronaut_brain_route"],
+    "rule": "Micronaut brain routes are intent/profile contracts using ngram scoring. Tool effects require XCFE admission."
+  },
+  "@chat_hive_routes": {
+    "routes": ["chat_hive_status","chat_hive_message","chat_hive_models","chat_hive_model_load","chat_hive_auto_learning"],
+    "rule": "Chat Hive routes normalize the old PRIME chat object into multi-model JSON route contracts with abstract port refs."
+  },
+  "@primeos_agent_routes": {
+    "routes": ["agents_spawn","agents_control","agents_list","agents_templates","agents_train"],
+    "rule": "PrimeOS agent spawner routes are JSON contracts converted from the JavaScript spawner design. Spawn/train/fetch actions require policy."
+  },
+  "@nnc_routes": {
+    "routes": ["nnc_manifest","nnc_compile","nnc_execute","nnc_examples"],
+    "rule": "NNC routes treat JSON as semantic notation first. Execution requires policy and declared backend admission."
+  },
+  "@gravity_semantic_wells_routes": {
+    "routes": ["gravity_wells","gravity_wells_query"],
+    "rule": "Gravity semantic wells are weighted bigram routing contracts and do not create factual authority without evidence."
+  },
+  "@kuhul_xsd_routes": {
+    "routes": ["kuhul_xsd_grammar","kuhul_xsd_emit","kuhul_xsd_validate"],
+    "rule": "K'UHUL XSD routes expose Fold/Node/Micronaut grammar contracts and optional schema emission."
+  },
+  "@nnc_xsd_routes": {
+    "routes": ["nnc_xsd_grammar","nnc_xsd_compile","nnc_xsd_execute","nnc_xsd_validate"],
+    "rule": "NNC + XSD routes merge neural-net-code and K'UHUL grammar as sidecar notation; execution remains gated."
+  },
+  "@crown_actor_routes": {
+    "routes": ["crown_matrix","crown_matrix_admit","crown_matrix_status","actor_matrix","actor_matrix_profile","actor_matrix_select","actor_matrix_admit_delta","personality_matrix","personality_profile","personality_blend","personality_admit_delta"],
+    "rule": "Crown Matrix governs Actor Matrix and Personality Matrix. Actors and personalities bias role/style only; they do not grant tools or execution."
+  },
+  "@role_reversal_surface_routes": {
+    "routes": ["xcfe_js_surfaces","kuhul_math_engine","agl_xjson_contracts","xjson_kuhul_merge","xjson_kuhul_glyph_resolve","kuhul_pi_cluster","kuhul_cluster_analytics","kuhul_character_engine","kuhul_learning_browser","kuhul_auto_coder","ai_specialists","ai_specialists_workflow","mx2lm_runtime_boot"],
+    "rule": "Implementation files and HTML/SVG surfaces are projections. JSON contracts own architecture, phase, lane, capability, dependency, merge law, and admission meaning."
+  },
+  "@mx2lm_api_brain_routes": {
+    "routes": ["mx2lm_api_brain","mx2lm_api_brain_service"],
+    "rule": "API Brain is a semantic service matrix. SVG icons are addressable projections, not visual authority."
+  },
+  "@bson_micronaut_routes": {
+    "routes": ["bson_micronaut","bson_micronaut_admit","bson_micronaut_decode"],
+    "key_formula": "semantic_key = glyph + lane + binary_runtime_array",
+    "rule": "BSON bytes are binary runtime projections and require glyph, lane, checksum, phase guard, and policy admission."
+  },
+  "@bot_research_micronaut_routes": {
+    "routes": ["bots_manifest","bots_answer","bots_create_research_micronaut","bots_scrape_plan","bots_evidence_pack"],
+    "native_adapter": "src/bots.cpp",
+    "pipeline": "prompt -> BotRuntime::build_payload -> micronaut.json -> admitted scrape -> evidence -> SCXQ2 -> bson.micronaut.json -> answer",
+    "rule": "Bots answer prompts by creating bounded research micronauts. Web scrape is an admitted capability with provenance, not an implicit side effect."
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "@sidecar": {
+    "id": "asx.crown.matrix.v1",
+    "kind": "crown_matrix_manifest",
+    "status": "draft",
+    "role": "top_level_governance_matrix_for_actor_personality_policy_and_runtime_admission"
+  },
+  "@crown_matrix": {
+    "schema": "xjson://schema/crown.matrix/v1",
+    "authority": "CROWN",
+    "mutation": "policy_only",
+    "description": "Crown Matrix is the governing parent for actor selection, personality overlays, policy clamps, route admission, replay proof, and promotion gates.",
+    "authority_order": ["Crown", "Manifest", "Prime", "Codex", "Kernel", "Tape", "Runtime Adapter"],
+    "matrix": {
+      "actor_matrix": "actor-matrix.manifest.json",
+      "personality_matrix": "personality-matrix.manifest.json",
+      "micronaut_brains": "micronaut-brains.manifest.json",
+      "supernaut_contracts": "supernaut-contracts.manifest.json",
+      "para_graph": "../assets/asx-manager.para-graph.json"
+    },
+    "laws": [
+      "Actor Matrix stages roles and masks.",
+      "Personality Matrix biases style and sampling hints.",
+      "Neither actors nor personalities grant tools, permissions, or execution rights.",
+      "Crown clamps sampling, style intensity, route permission, and promotion.",
+      "Mutation enters as candidate deltas until replay, validation, and approval admit them."
+    ]
+  },
+  "@routes": [
+    {"name": "crown_matrix", "method": "GET", "path": "/api/crown-matrix", "status": "sidecar_contract", "handler": "crown_matrix.describe"},
+    {"name": "crown_matrix_admit", "method": "POST", "path": "/api/crown-matrix/admit", "status": "requires_policy", "body": ["candidate", "evidence", "policy"], "handler": "crown_matrix.admit"},
+    {"name": "crown_matrix_status", "method": "GET", "path": "/api/crown-matrix/status", "status": "sidecar_contract", "handler": "crown_matrix.status"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/crown-matrix.json",
+    "ids": ["CROWN-MATRIX", "CROWN-ADMISSION-GATE", "CROWN-POLICY-CLAMP"]
+  },
+  "@folds": {
+    "pop": ["load_crown_policy", "load_matrix_refs"],
+    "wo": ["bind_actor_personality_policy"],
+    "yax": ["rank_candidate_admission"],
+    "sek": ["admit_only_with_policy"],
+    "chen": ["emit_crown_decision"],
+    "xul": ["record_replay_proof"]
+  }
+}

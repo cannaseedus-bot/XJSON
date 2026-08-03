@@ -1,0 +1,131 @@
+{
+  "@sidecar": {
+    "id": "asx.manager.experts.v1",
+    "kind": "expert_pool_manifest",
+    "status": "draft",
+    "role": "deterministic_expert_skill_pool_contract"
+  },
+  "@experts": {
+    "definition": "Experts are deterministic skill bundles mounted as ASX Manager capability lanes. They expose TOML routes, K'UHUL surfaces, action classes, and command-path compatible skill intents.",
+    "root": "../experts",
+    "rule": "Expert execution requires route, action, policy, and phase-angle-lane admission. Expert folders are projections; this manifest declares authority.",
+    "default_phase_angle_lane": "Yax[capability:agent]"
+  },
+  "@expert_pool": {
+    "powershell_agent": {
+      "id": "POWERSHELL-AGENT",
+      "root": "../experts/powershell-agent",
+      "skill": "../experts/powershell-agent/SKILL.md",
+      "toml": "../experts/powershell-agent/powershell-agent.toml",
+      "manifest": "../experts/powershell-agent/powershell-agent_manifest.json",
+      "kuhul": "../experts/powershell-agent/powershell-agent.kuhul",
+      "actions": ["../experts/powershell-agent/actions/PowerShellAgentActions.json"],
+      "routes": [
+        "/skill/powershell/health",
+        "/skill/powershell/layout",
+        "/skill/powershell/catalog",
+        "/skill/powershell/run"
+      ],
+      "lane": "tool",
+      "requires_policy": ["run_command"]
+    },
+    "sql_skill": {
+      "id": "SQL-SKILL",
+      "root": "../experts/sql-skill",
+      "skill": "../experts/sql-skill/SKILL.md",
+      "toml": "../experts/sql-skill/sql_skill.toml",
+      "manifest": "../experts/sql-skill/sql_manifest.json",
+      "kuhul": "../experts/sql-skill/sql-skill.kuhul",
+      "actions": ["../experts/sql-skill/actions/SqlActions.json"],
+      "routes": [
+        "/skill/sql/connect",
+        "/skill/sql/tables",
+        "/skill/sql/schema",
+        "/skill/sql/query",
+        "/skill/sql/upsert"
+      ],
+      "lane": "database",
+      "requires_policy": ["database_connect", "query"]
+    },
+    "workflow_orchestrator": {
+      "id": "WORKFLOW-ORCHESTRATOR",
+      "root": "../experts/workflow-orchestrator",
+      "toml": "../experts/workflow-orchestrator/workflow-orchestrator.toml",
+      "manifest": "../experts/workflow-orchestrator/workflow-orchestrator_manifest.json",
+      "kuhul": "../experts/workflow-orchestrator/workflow-orchestrator.kuhul",
+      "actions": [
+        "../experts/workflow-orchestrator/actions/WorkflowOrchestratorActions.json",
+        "../experts/workflow-orchestrator/actions/MicronautAddonActions.json"
+      ],
+      "routes": [
+        "/skill/workflow/plan",
+        "/skill/workflow/automate",
+        "/skill/workflow/scaffold",
+        "/skill/micronaut/init",
+        "/skill/micronaut/configure",
+        "/skill/micronaut/secure",
+        "/skill/micronaut/inject",
+        "/skill/micronaut/schedule",
+        "/skill/micronaut/event"
+      ],
+      "lane": "workflow",
+      "requires_policy": ["plan", "scaffold", "write_files"]
+    },
+    "agentic_micronaut": {
+      "id": "AGENTIC-MICRONAUT",
+      "root": "../experts/agentic-micronaut",
+      "skill": "../experts/agentic-micronaut/SKILL.md",
+      "kuhul": "../experts/agentic-micronaut/agentic-micronaut.kuhul",
+      "routes": [
+        "/skill/supernaut/agentic/arbitrate",
+        "/skill/supernaut/agentic/project",
+        "/skill/supernaut/agentic/resolve",
+        "/skill/supernaut/agentic/registry",
+        "/skill/supernaut/agentic/pack"
+      ],
+      "lane": "micronaut",
+      "requires_policy": ["project_skill", "pack_shard"]
+    },
+    "math_agent": {
+      "id": "MATH-AGENT",
+      "root": "../experts/math-agent",
+      "skill": "../experts/math-agent/SKILL.md",
+      "toml": "../experts/math-agent/math-agent.toml",
+      "manifest": "../experts/math-agent/math-agent_manifest.json",
+      "kuhul": "../experts/math-agent/math-agent.kuhul",
+      "actions": ["../experts/math-agent/actions/MathAgentActions.json"],
+      "routes": [
+        "/skill/math/health",
+        "/skill/math/add",
+        "/skill/math/mul",
+        "/skill/math/dot2",
+        "/skill/math/matrix2/mul",
+        "/skill/math/micronaut/bind"
+      ],
+      "lane": "math_engine",
+      "requires_policy": ["math_execute", "micronaut_bind"]
+    }
+  },
+  "@phase_angle_lane": {
+    "powershell_agent": "Yax[capability:tool]",
+    "sql_skill": "Sek[runtime:database]",
+    "workflow_orchestrator": "Yax[capability:workflow]",
+    "agentic_micronaut": "Wo[contract:micronaut]",
+    "math_agent": "Sek[runtime:math_engine]"
+  },
+  "@routes": [
+    {"name":"experts_manifest","method":"GET","path":"/api/experts","status":"sidecar_contract","handler":"experts.describe"},
+    {"name":"expert_profile","method":"GET","path":"/api/experts/<id>","status":"sidecar_contract","args":["id"],"handler":"experts.profile"},
+    {"name":"expert_route","method":"POST","path":"/api/experts/route","status":"sidecar_contract","body":["intent","payload","policy"],"handler":"experts.route"},
+    {"name":"expert_invoke","method":"POST","path":"/api/experts/<id>/invoke","status":"requires_policy","args":["id"],"body":["intent","payload","policy"],"handler":"experts.invoke"}
+  ],
+  "@schema": {
+    "expert": {
+      "id": "string",
+      "root": "string",
+      "routes": "array",
+      "lane": "string",
+      "requires_policy": "array"
+    }
+  }
+}

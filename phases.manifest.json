@@ -1,0 +1,41 @@
+{
+  "@sidecar": {"id":"asx.runtime.phases.v1","kind":"phase_manifest","status":"draft","role":"kuhul_phase_manifold"},
+  "@phases": {
+    "definition": "Phase is mathematical manifold metadata attached to a canonical fold. The fold is the primary language concept and runtime state.",
+    "primary_language_concept": "fold",
+    "fold_algebra_source": "folds.manifest.json",
+    "cycle": ["Pop","Wo","Yax","Sek","Ch'en","Xul"],
+    "instructions": ["PHASE","FOLD","TRANSITION","PHASE_MANIFOLD"],
+    "axis": "y",
+    "position_notation": {
+      "format": "Φy",
+      "base": {
+        "Φ0": "Pop",
+        "Φ1": "Wo",
+        "Φ2": "Yax",
+        "Φ3": "Sek",
+        "Φ4": "Ch'en",
+        "Φ5": "Xul"
+      },
+      "readable_cell_format": "Fold[Angle:Lane]",
+      "compact_cell_format": "Φy.αx.λlane"
+    },
+    "fold_phase_coordinates": {
+      "Pop": {"glyph":"◉","phase":0,"angle":"0","radians":0},
+      "Wo": {"glyph":"⬢","phase":1,"angle":"π/3","radians":1.0471975511965976},
+      "Yax": {"glyph":"△","phase":2,"angle":"2π/3","radians":2.0943951023931953},
+      "Sek": {"glyph":"✦","phase":3,"angle":"π","radians":3.141592653589793},
+      "Ch'en": {"glyph":"◇","phase":4,"angle":"4π/3","radians":4.1887902047863905},
+      "Xul": {"glyph":"⬡","phase":5,"angle":"5π/3","radians":5.235987755982989}
+    },
+    "angles_pi": {"Pop":0,"Wo":0.3333333333,"Yax":0.6666666667,"Sek":1,"Ch'en":1.3333333333,"Xul":1.6666666667},
+    "rule": "JSON declares the current fold and its phase metadata; XCFE/KUHUL admits only legal fold rotations across the phase manifold."
+  },
+  "@phase": {"schema":{"id":"string","inputs":"object","outputs":"object","legal_nodes":"array","guards":"array"}},
+  "@folds": {"mapping":{"Pop":"perceive/load","Wo":"represent/bind","Yax":"plan/schedule","Sek":"execute/compute","Ch'en":"project/output","Xul":"consolidate/replay"}},
+  "@gravity_wells": {
+    "rule": "Each K'UHUL phase owns one default gravity well. The well attracts context into the next legal fold without bypassing transition law.",
+    "collapse_order": ["Pop","Wo","Yax","Sek","Ch'en","Xul"],
+    "phase_mass": {"Pop":0.85,"Wo":0.9,"Yax":0.95,"Sek":1.0,"Ch'en":0.88,"Xul":0.92}
+  }
+}

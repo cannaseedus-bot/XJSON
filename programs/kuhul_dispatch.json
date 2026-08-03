@@ -1,0 +1,30 @@
+{
+  "@program": "kuhul_dispatch",
+  "@state": {
+    "input": null,
+    "result": null
+  },
+  "@control": [
+    {
+      "@op": "LOG",
+      "@fn": "log",
+      "@args": [
+        "Program start"
+      ]
+    },
+    {
+      "@op": "SET",
+      "@out": "result",
+      "@args": [
+        "$input"
+      ]
+    },
+    {
+      "@op": "LOG",
+      "@fn": "log",
+      "@args": [
+        "$result"
+      ]
+    }
+  ]
+}

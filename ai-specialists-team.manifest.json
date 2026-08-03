@@ -1,0 +1,76 @@
+{
+  "@sidecar": {
+    "id": "asx.ai.specialists.team.v1",
+    "kind": "ai_specialists_team_manifest",
+    "status": "draft",
+    "role": "frontend_backend_design_specialist_team_contract"
+  },
+  "@ai_specialists_team": {
+    "schema": "xjson://schema/ai.specialists.team/v1",
+    "authority": "CROWN_XCFE",
+    "description": "Contract-first AI Specialist Team for frontend, backend, and design generation. The HTML interface, production runtime, and PWA manifest are projections of this team contract.",
+    "role_reversal": "Specialist contracts own capability and workflow meaning. Runtime JavaScript implements those contracts.",
+    "projections": [
+      {"language": "html", "entry": "ai-specialists.html", "role": "interactive_interface"},
+      {"language": "javascript", "entry": "ai-specialists-runtime.js", "role": "production_runtime_projection"},
+      {"language": "json", "entry": "manifest-ai-specialists.json", "role": "pwa_projection"}
+    ]
+  },
+  "@specialists": {
+    "frontend": {
+      "kind": "surface",
+      "phase": "Sek",
+      "lane": "generate",
+      "domain": "UI/UX and K'UHUL DOM",
+      "endpoint": "/frontend/generate-ui",
+      "capabilities": ["generate_ui_ast", "compile_to_dom", "apply_responsive_design", "optimize_bundle"],
+      "requires": ["design_spec"],
+      "produces": ["ui_interface", "component_tree", "style_tokens"]
+    },
+    "backend": {
+      "kind": "surface",
+      "phase": "Sek",
+      "lane": "api",
+      "domain": "APIs, routes, data logic, and XJSON virtual servers",
+      "endpoint": "/backend/create-api",
+      "capabilities": ["generate_xjson_routes", "create_virtual_server", "setup_middleware", "configure_security"],
+      "requires": ["api_spec"],
+      "produces": ["xjson_api", "endpoint_contracts", "deployment_plan"]
+    },
+    "design": {
+      "kind": "surface",
+      "phase": "Sek",
+      "lane": "design",
+      "domain": "Visual design, design systems, 3D assets, and animation",
+      "endpoint": "/design/create-3d",
+      "capabilities": ["create_design_system", "generate_3d_assets", "apply_animations", "optimize_assets"],
+      "requires": ["design_brief"],
+      "produces": ["design_system", "asset_specs", "animation_specs"]
+    }
+  },
+  "@workflow": {
+    "orchestrator": "WorkflowOrchestrator",
+    "endpoint": "/team/workflow",
+    "step_shape": ["specialist", "spec"],
+    "rule": "Team workflows compose specialist outputs as candidate artifacts. Writes, deployment, server start, network, and model calls require admission."
+  },
+  "@routes": [
+    {"name": "ai_specialists", "method": "GET", "path": "/api/ai-specialists", "status": "sidecar_contract", "handler": "ai_specialists.describe"},
+    {"name": "ai_specialists_frontend", "method": "POST", "path": "/api/ai-specialists/frontend/generate-ui", "status": "requires_policy", "body": ["type", "style", "components", "policy"], "handler": "ai_specialists.frontend.generate"},
+    {"name": "ai_specialists_backend", "method": "POST", "path": "/api/ai-specialists/backend/create-api", "status": "requires_policy", "body": ["endpoints", "database", "auth", "policy"], "handler": "ai_specialists.backend.create_api"},
+    {"name": "ai_specialists_design", "method": "POST", "path": "/api/ai-specialists/design/create-3d", "status": "requires_policy", "body": ["type", "style", "elements", "policy"], "handler": "ai_specialists.design.create_3d"},
+    {"name": "ai_specialists_workflow", "method": "POST", "path": "/api/ai-specialists/team/workflow", "status": "requires_policy", "body": ["name", "steps", "policy"], "handler": "ai_specialists.workflow.execute"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/ai-specialists-team.json",
+    "ids": ["AI-SPECIALISTS-TEAM", "FRONTEND-AI-SPECIALIST", "BACKEND-AI-SPECIALIST", "DESIGN-AI-SPECIALIST", "SPECIALIST-WORKFLOW-ORCHESTRATOR"]
+  },
+  "@policy": {
+    "generation_outputs_are_candidates": true,
+    "frontend_generation_requires": ["spec_validation", "preview_sandbox", "policy"],
+    "backend_generation_requires": ["route_validation", "auth_policy", "secret_free_manifest", "policy"],
+    "design_generation_requires": ["asset_scope", "animation_budget", "policy"],
+    "workflow_requires": ["step_validation", "specialist_allowlist", "policy"],
+    "forbidden": ["silent_deploy", "secret_in_manifest", "unadmitted_server_start", "implicit_file_write"]
+  }
+}

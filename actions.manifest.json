@@ -1,0 +1,39 @@
+{
+  "@sidecar": {"id":"asx.runtime.actions.v1","kind":"action_command_tool_manifest","status":"draft","role":"action_contract_registry"},
+  "@actions": {
+    "definition": "Actions are named intent contracts mapped to commands, tools, sidecar ops, file-manager verbs, or XCFE programs.",
+    "root": "actions/",
+    "rule": "Actions declare args, guards, phase, and route before execution.",
+    "action_files": {
+      "admin": "actions/AdminActions.json",
+      "code_skill": "actions/CodeSkillActions.json",
+      "dolphin_coder": "actions/DolphinCoderActions.json",
+      "micronaut": "actions/MicronautActions.json",
+      "ops": "actions/OpsActions.json",
+      "skill": "actions/SkillActions.json",
+      "user": "actions/UserActions.json"
+    },
+    "external_expert_action_roots": {
+      "powershell_agent": "../experts/powershell-agent/actions/PowerShellAgentActions.json",
+      "sql_skill": "../experts/sql-skill/actions/SqlActions.json",
+      "workflow_orchestrator": "../experts/workflow-orchestrator/actions/WorkflowOrchestratorActions.json",
+      "micronaut_addon": "../experts/workflow-orchestrator/actions/MicronautAddonActions.json",
+      "math_agent": "../experts/math-agent/actions/MathAgentActions.json"
+    }
+  },
+  "@action_classes": {
+    "AdminActions": {"file":"actions/AdminActions.json","phase":"Sek","lane":"admin"},
+    "CodeSkillActions": {"file":"actions/CodeSkillActions.json","phase":"Sek","lane":"code"},
+    "DolphinCoderActions": {"file":"actions/DolphinCoderActions.json","phase":"Yax","lane":"coder"},
+    "MicronautActions": {"file":"actions/MicronautActions.json","phase":"Sek","lane":"micronaut"},
+    "OpsActions": {"file":"actions/OpsActions.json","phase":"Sek","lane":"ops"},
+    "SkillActions": {"file":"actions/SkillActions.json","phase":"Wo","lane":"skill"},
+    "UserActions": {"file":"actions/UserActions.json","phase":"Pop","lane":"user"}
+  },
+  "@routes": [
+    {"name":"actions_manifest","method":"GET","path":"/api/actions","status":"sidecar_contract","handler":"actions.describe"},
+    {"name":"action_class_describe","method":"GET","path":"/api/actions/<class>","status":"sidecar_contract","args":["class"],"handler":"actions.class.describe"},
+    {"name":"action_invoke","method":"POST","path":"/api/actions/<class>/<method>","status":"requires_policy","args":["class","method"],"body":["args","policy"],"handler":"actions.invoke"}
+  ],
+  "@schema": {"action":{"id":"string","phase":"string","route":"string","args":"object","guards":"array","returns":"object"}}
+}

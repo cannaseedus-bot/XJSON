@@ -1,0 +1,171 @@
+{
+  "@sidecar": {
+    "id": "asx.prime.chat_hive.v1",
+    "kind": "chat_hive_manifest",
+    "status": "draft",
+    "role": "multi_model_chat_interface_with_local_inference"
+  },
+  "@chat_hive": {
+    "name": "ASX-PRIME-CHAT-HIVE",
+    "version": "1.0.0",
+    "description": "Multi-model chat interface with local inference, MX2LM learning admission, model routing, local model storage, and hive RPC contracts.",
+    "default_mode": "multi_model",
+    "default_model": "local_clin",
+    "local_inference": true,
+    "rule": "The sidecar declares model/chat/process contracts. It does not load models, start servers, train, or fine tune until an admitted route explicitly requests it."
+  },
+  "@ports": {
+    "chat_hive": {"port_ref": "agent_server", "role": "chat hive UI and route planner"},
+    "json_runtime_object_server": {"port_ref": "json_runtime_object_server", "role": "object/file/runtime API"},
+    "model_server": {"port_ref": "model_server", "role": "llama.cpp-compatible local model backend"},
+    "lm_studio": {"port_ref": "lm_studio", "role": "LM Studio OpenAI-compatible local model backend"},
+    "grpc_compat": {"port_ref": "grpc_compat", "default_port": 8088, "role": "optional Workspace/Window/Chat/Model service bridge"}
+  },
+  "@kernel_processes": {
+    "file_system": {
+      "type": "virtual_fs",
+      "driver": "xjson_vfs",
+      "mounts": [
+        {"path": "/system", "type": "readonly", "source": "scxq2_system_files"},
+        {"path": "/user", "type": "readwrite", "source": "browser_storage"},
+        {"path": "/temp", "type": "volatile", "source": "memory_fs"},
+        {"path": "/ai_memory", "type": "readwrite", "source": "scx_compressed_chats"},
+        {"path": "/local_models", "type": "readwrite", "source": "model_storage"}
+      ],
+      "compression": "scxq2_auto",
+      "admission": "filesystem policy controls all read/write mounts"
+    },
+    "process_manager": {
+      "type": "kuhul_vm_scheduler",
+      "max_processes": 256,
+      "memory_quota": "16mb_per_process",
+      "isolation": "glyph_sandbox",
+      "ai_processes": ["chat_engine", "rlhf_learner", "model_manager"],
+      "admission": "process spawning and learner mutation require policy"
+    },
+    "network_stack": {
+      "type": "virtual_networking",
+      "protocols": ["http", "websocket", "hive_rpc", "model_inference"],
+      "intercept": ["fetch", "xhr", "ai_requests"],
+      "routing": "klh_mesh"
+    },
+    "ai_model_service": {
+      "type": "dynamic_model_manager",
+      "capabilities": ["model_loading", "inference_routing", "online_fine_tuning"],
+      "supported_models": ["mx2lm", "mx2qwen", "mx2php", "janus", "custom", "local_clin"],
+      "model_switching": "hot_swap",
+      "local_inference": true,
+      "guarded_capabilities": ["online_fine_tuning", "weight_write", "adapter_merge", "auto_learning_run"]
+    }
+  },
+  "@chat_config": {
+    "mode": "multi_model",
+    "input": ["text", "image", "audio"],
+    "sources": ["usa_public_urls", "local_files", "hive_storage", "local_models"],
+    "output": ["text", "image", "code", "data"],
+    "models": {
+      "default": "local_clin",
+      "available": ["local_clin", "mx2lm_core", "mx2qwen", "mx2php", "janus_vision", "custom_model"],
+      "roles": {
+        "local_clin": "priority local clinical/general model slot",
+        "mx2lm_core": "coordinator model",
+        "mx2qwen": "text specialist",
+        "mx2php": "code specialist",
+        "janus_vision": "image specialist",
+        "custom_model": "user-added model"
+      }
+    }
+  },
+  "@data_sources": {
+    "gov_data": ["https://api.data.gov/", "https://www.census.gov/data/developers/data-sets.html", "https://data.gov/", "https://api.weather.gov/"],
+    "local_models": ["file:///local_models/clin-model.bin", "file:///local_models/mx2lm-core.gguf", "file:///local_models/mx2qwen.gguf"],
+    "research_data": ["https://api.ncbi.nlm.nih.gov/", "https://arxiv.org/", "https://data.nasa.gov/"],
+    "rule": "Remote sources are route contracts only. Network fetches require provider policy and allowlist admission."
+  },
+  "@kuhul_chat_engine": {
+    "message_flow": [
+      "Pop.process_message",
+      "Wo.user_input -> Chen.input",
+      "Wo.current_model -> Chen.model",
+      "Yax.input -> Sek.detect_type -> Chen.input_type",
+      "Kayab.route_to_model",
+      "Yax.model -> Sek.load_model -> Chen.loaded_model",
+      "Yax.input + Yax.loaded_model -> Sek.inference -> Chen.raw_response",
+      "Yax.raw_response -> Sek.format_output -> Chen.final_response",
+      "Kumku.route_to_model",
+      "Yax.final_response -> Sek.display_chat",
+      "Xul"
+    ],
+    "model_ops": [
+      "Pop.load_local_model -> Wo.model_path -> Sek.load_from_fs -> Sek.register_model -> Chen.model_id -> Xul",
+      "Pop.switch_model -> Wo.model_id -> Sek.set_active -> Xul",
+      "Pop.chat_inference -> Wo.message + Wo.model_id -> Sek.local_inference -> Chen.response -> Xul"
+    ]
+  },
+  "@python_interface": {
+    "inference_api": {
+      "chat": "chat(message, model='local_clin', temperature=0.7)",
+      "vision": "analyze_image(image_url, model='janus_vision')",
+      "data": "process_data(data_url, analysis_type='summary')",
+      "code": "generate_code(prompt, language='auto')"
+    },
+    "examples": [
+      "chat('Hello, using local CLIN model')",
+      "load_local_model('/local_models/clin-model.bin', 'local_clin')",
+      "chat('Now using loaded local model', model='local_clin')"
+    ]
+  },
+  "@integration": {
+    "grpc_server": {
+      "port_ref": "grpc_compat",
+      "default_port": 8088,
+      "services": ["WorkspaceService", "WindowService", "ChatService", "ModelService"],
+      "status": "declared"
+    },
+    "model_protocols": {
+      "supported": ["grpc", "http", "websocket", "hive_rpc", "local_inference"],
+      "auto_detect": true,
+      "fallback": "local_inference"
+    }
+  },
+  "@boot_sequence": [
+    "load_chat_config",
+    "init_kuhul_engine",
+    "mount_local_models",
+    "load_local_clin_model_when_admitted",
+    "start_declared_bridge_when_admitted",
+    "render_chat_ui",
+    "ready_for_messages"
+  ],
+  "@performance": {
+    "targets": {
+      "boot_time": "<100ms",
+      "local_inference": "<200ms",
+      "model_loading": "<50ms"
+    },
+    "status": "target_contract_not_verified"
+  },
+  "@routes": [
+    {"name": "chat_hive_status", "method": "GET", "path": "/api/chat-hive/status", "handler": "chat_hive.status", "status": "sidecar_contract"},
+    {"name": "chat_hive_config", "method": "GET", "path": "/api/chat-hive/config", "handler": "chat_hive.config", "status": "sidecar_contract"},
+    {"name": "chat_hive_message", "method": "POST", "path": "/api/chat-hive/message", "body": ["message", "model", "attachments", "policy"], "handler": "chat_hive.message", "status": "proxy_contract"},
+    {"name": "chat_hive_models", "method": "GET", "path": "/api/chat-hive/models", "handler": "chat_hive.models", "status": "proxy_contract"},
+    {"name": "chat_hive_model_load", "method": "POST", "path": "/api/chat-hive/models/load", "body": ["path", "id", "policy"], "handler": "chat_hive.models.load", "status": "requires_policy"},
+    {"name": "chat_hive_model_switch", "method": "POST", "path": "/api/chat-hive/models/switch", "body": ["model_id"], "handler": "chat_hive.models.switch", "status": "proxy_contract"},
+    {"name": "chat_hive_auto_learning", "method": "POST", "path": "/api/chat-hive/learning/auto", "body": ["goal", "mode", "policy", "approval"], "handler": "mx2lm.auto.trigger", "status": "requires_policy"},
+    {"name": "chat_hive_rlhf_plan", "method": "POST", "path": "/api/chat-hive/rlhf/plan", "body": ["chat_id", "feedback", "policy"], "handler": "chat_hive.rlhf.plan", "status": "sidecar_contract"},
+    {"name": "chat_hive_data_query", "method": "POST", "path": "/api/chat-hive/data/query", "body": ["source", "query", "policy"], "handler": "chat_hive.data.query", "status": "requires_policy"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/chat-hive.json",
+    "ids": ["ASX-PRIME-CHAT-HIVE", "CHAT-HIVE-MODEL-MANAGER", "CHAT-HIVE-RLHF-PLANNER"]
+  },
+  "@folds": {
+    "pop": ["load_chat_config", "receive_message", "detect_sources"],
+    "wo": ["bind_user_input", "bind_current_model", "mount_local_model_refs"],
+    "yax": ["detect_input_type", "route_to_model", "plan_learning_admission"],
+    "sek": ["run_inference", "load_model_when_admitted", "run_auto_learning_when_admitted"],
+    "chen": ["format_output", "display_chat", "emit_code_or_data"],
+    "xul": ["store_chat_memory", "record_replay", "close_or_reenter"]
+  }
+}

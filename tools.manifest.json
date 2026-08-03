@@ -1,0 +1,68 @@
+{
+  "@sidecar": {"id":"asx.runtime.tools.v1","kind":"action_command_tool_manifest","status":"draft","role":"tool_contract_registry"},
+  "@tools": {
+    "definition": "Tools are reusable capabilities exposed to agents, models, or sidecars.",
+    "rule": "Tool calls must bind to declared schemas, permissions, and phase guards.",
+    "phase_angle_lane": "Wo[capability:tool]",
+    "codewasm": {
+      "path": "tools/CodeWASM.ps1",
+      "port": 8091,
+      "routes": ["GET /codewasm", "GET /codewasm/grammars", "GET /codewasm/assets/<wasm>"],
+      "boundary": "Fast fault-tolerant Tree-sitter WASM syntax/KAST parsing only; not semantic compilation."
+    },
+    "dotnet_agents": {
+      "path": "tools/DotNetAgents.ps1",
+      "port": 8092,
+      "routes": ["GET /dotnet/agents", "GET /dotnet/tools", "GET /dotnet/mcp", "GET /dotnet/mcp/samples", "POST /dotnet/mcp/plan-run", "POST /dotnet/mcp/pair", "POST /dotnet/mcp/validate", "POST /dotnet/mcp/bridge"],
+      "boundary": "Declares .NET/Roslyn/MSBuild/MCP sample agents; build, run, restore, format, and compile require approval."
+    },
+    "limited_coder": {
+      "path": "tools/micronaut_coder.exe",
+      "role": "limited helper surface for code review and small code-assistance tasks"
+    },
+    "web_scrape_micronaut": {
+      "category": "research",
+      "role": "Admitted web retrieval surface used by bot-created research micronauts.",
+      "routes": ["POST /api/bots/scrape-plan", "POST /api/bots/evidence-pack"],
+      "requires": ["allowed_domains", "max_pages", "citation_policy", "provenance", "policy"],
+      "boundary": "Bots request data through this tool contract. No unbounded crawling, login bypass, or secret collection."
+    }
+  },
+  "@ops": {
+    "DESCRIBE_TOOLS": {
+      "@type": "composed",
+      "@out": "tools_contract",
+      "@exec": {
+        "@op": "SET",
+        "@key": "tools_contract",
+        "@value": {
+          "kind": "tool_contract_registry",
+          "phase_angle_lane": "Wo[capability:tool]",
+          "tools": ["codewasm", "dotnet_agents", "limited_coder", "web_scrape_micronaut"],
+          "rule": "Tools are capability contracts. Invocation requires schema binding, permissions, and phase guards."
+        }
+      }
+    },
+    "RESOLVE_TOOL": {
+      "@type": "composed",
+      "@in": ["tool"],
+      "@out": "tool_resolution",
+      "@exec": {
+        "@op": "SET",
+        "@key": "tool_resolution",
+        "@value": {
+          "kind": "tool_resolution",
+          "input": "$tool",
+          "phase": "Wo",
+          "lane": "tool",
+          "rule": "Resolution is contract-only here; effectful execution must enter an admitted route or expert action."
+        }
+      }
+    }
+  },
+  "@routes": [
+    {"name":"tools_manifest","method":"GET","path":"/api/tools","status":"sidecar_contract","handler":"tools.describe","sidecar":"tools","op":"DESCRIBE_TOOLS"},
+    {"name":"tool_resolve","method":"POST","path":"/api/tools/resolve","status":"sidecar_contract","body":["tool","args","policy"],"handler":"tools.resolve","sidecar":"tools","op":"RESOLVE_TOOL"}
+  ],
+  "@schema": {"tool":{"id":"string","category":"string","input_schema":"object","output_schema":"object","capabilities":"array","route":"string"}}
+}

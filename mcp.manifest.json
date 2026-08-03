@@ -1,0 +1,6 @@
+{
+  "@sidecar": {"id":"asx.runtime.mcp.v1","kind":"mcp_manifest","status":"draft","role":"mcp_tool_resource_contracts"},
+  "@mcp": {"server_label":"asx-manager-json-runtime","transport":"http_or_stdio","rule":"MCP exposes tool/resource contracts and cannot bypass local route admission."},
+  "@resources": ["manifest","sidecars","phase_manifold","project_memory"],
+  "@prompts": ["describe_sidecar","run_phase_program","inspect_model_route"]
+}

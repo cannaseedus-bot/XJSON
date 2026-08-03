@@ -1,0 +1,271 @@
+{
+  "@app": "json-runtime",
+  "@version": "2.0.0",
+
+  "@entry": "programs/main.json",
+
+  "@paths": {
+    "root":     "./",
+    "host_directory": "./",
+    "programs": "./programs/",
+    "models":   "./models/",
+    "assets":   "./assets/",
+    "lib":      "./lib/"
+  },
+
+  "@sco": {
+    "registry": "sco/registry.json"
+  },
+
+  "@ports": {
+    "agent_server": {
+      "port": 8090,
+      "role": "ASX Manager route planning, cache, and JSON-RPC app"
+    },
+    "json_runtime_object_server": {
+      "port": 8787,
+      "role": "JSON/XCFE object server and project-user file manager"
+    },
+    "sco_runtime": {
+      "port": 6002,
+      "role": "SCO alias registry server"
+    },
+    "model_server": {
+      "port": 9080,
+      "role": "local model server or llama.cpp-compatible model surface"
+    },
+    "grpc_compat": {
+      "port": 8088,
+      "role": "optional gRPC compatibility bridge for Workspace/Window/Chat/Model services; not the default JSON runtime port"
+    }
+  },
+
+  "@api": {
+    "base_url": "http://127.0.0.1:8787",
+    "routes": [
+      { "name": "run", "method": "POST", "path": "/api/run", "args": ["program"], "body": ["program"] },
+      { "name": "file_read_legacy", "method": "GET", "path": "/api/file", "args": ["path"], "root": "$http_file_path", "rule": "path is relative to @server.http_file_path; default $http_file_path=$host_directory" },
+      { "name": "graph", "method": "GET", "path": "/api/graph", "args": [] },
+      { "name": "phases", "method": "GET", "path": "/api/phases", "args": [] },
+      { "name": "sco_resolve", "method": "GET", "path": "/api/sco/<alias>", "args": ["alias"] },
+      { "name": "discovery", "method": "GET", "path": "/api/discovery", "args": [] },
+      { "name": "health", "method": "GET", "path": "/api/health", "args": [] },
+      { "name": "sco_identity", "method": "GET", "path": "/.well-known/sco", "args": [] },
+      { "name": "file_manager_describe", "method": "GET", "path": "/api/file-manager", "args": [] },
+      { "name": "file_manager_init", "method": "POST", "path": "/api/file-manager/init", "body": ["user_id", "project_id"] },
+      { "name": "file_manager_list", "method": "POST", "path": "/api/file-manager/list", "body": ["user_id", "project_id", "path"] },
+      { "name": "file_manager_read", "method": "POST", "path": "/api/file-manager/read", "body": ["user_id", "project_id", "path"] },
+      { "name": "file_manager_write", "method": "POST", "path": "/api/file-manager/write", "body": ["user_id", "project_id", "path", "content"] },
+      { "name": "file_manager_patch", "method": "POST", "path": "/api/file-manager/patch", "body": ["user_id", "project_id", "path", "pattern", "replacement"] },
+      { "name": "file_manager_stat", "method": "POST", "path": "/api/file-manager/stat", "body": ["user_id", "project_id", "path"] },
+      { "name": "file_manager_search", "method": "POST", "path": "/api/file-manager/search", "body": ["user_id", "project_id", "path", "query"] },
+      { "name": "sidecar_list", "method": "GET", "path": "/api/sidecars", "args": [] },
+      { "name": "sidecar_describe", "method": "GET", "path": "/api/sidecars/<name>", "args": ["name"] },
+      { "name": "sidecar_call", "method": "POST", "path": "/api/sidecars/<name>/call/<op>", "args": ["name", "op"], "body": ["scope"] }
+    ]
+  },
+
+  "@file_manager": {
+    "enabled": true,
+    "scope": "project_user_session",
+    "session_root": "user_sessions",
+    "max_file_size": 1048576,
+    "required_context": ["user_id", "project_id"],
+    "verbs": ["init", "list", "read", "write", "patch", "stat", "search"],
+    "rule": "Paths are relative to session_root/user_id/project_id. Absolute paths and parent traversal are rejected."
+  },
+
+  "@folds": {
+    "rule": "Folds are the primary semantic runtime states. Phase is mathematical manifold metadata attached to each fold. Nodes/ops perform work; XCFE rotates legal movement between folds.",
+    "phase_order": ["pop", "wo", "yax", "sek", "chen", "xul"],
+    "gravity_wells": {
+      "rule": "Fold gravity wells bias routing before execution. They score context, nodes, tools, models, batches, and threads against phase attraction/repulsion fields, then collapse to the highest legal fold.",
+      "score": "mass * affinity - repulsion - saturation_penalty",
+      "tie_break": "phase_order",
+      "wells": {
+        "pop": {"mass":0.85,"attracts":["input","manifest","sidecar","file","sco","session"],"repels":["write","model_infer","process_spawn"]},
+        "wo": {"mass":0.9,"attracts":["symbols","routes","schemas","tools","models","threads"],"repels":["unbound_execute"]},
+        "yax": {"mass":0.95,"attracts":["schedule","rank","guard","batch","dependencies"],"repels":["unbounded_loop"]},
+        "sek": {"mass":1.0,"attracts":["compute","sidecar_call","model_infer","compile","generate","gpu_dispatch"],"repels":["missing_policy"]},
+        "chen": {"mass":0.88,"attracts":["response","artifact","ui_emit","vector_screen","event"],"repels":["raw_unverified_state"]},
+        "xul": {"mass":0.92,"attracts":["hash","replay","cache","memory","proof","close"],"repels":["dangling_thread","unreduced_batch"]}
+      }
+    },
+    "contracts": {
+      "pop": {
+        "purpose": "Acquire request context, user/project scope, sidecar declarations, and file/object references.",
+        "activates": ["file_manager.stat", "file_manager.read", "sco.resolve", "discovery"]
+      },
+      "wo": {
+        "purpose": "Bind symbols, route names, API verbs, object aliases, and sidecar capabilities.",
+        "activates": ["sco.resolve", "graph", "file_manager.search"]
+      },
+      "yax": {
+        "purpose": "Build the XCFE chart: selected nodes, legal route order, guards, and re-entry plan.",
+        "activates": ["graph", "sidecar.describe", "file_manager.list"]
+      },
+      "sek": {
+        "purpose": "Execute admitted deterministic nodes and sidecar operations.",
+        "activates": ["run", "sidecar.call", "file_manager.write", "file_manager.patch"]
+      },
+      "chen": {
+        "purpose": "Emit artifacts, route results, sidecar panel events, and serialized object state.",
+        "activates": ["file_manager.write", "cache.set", "response.emit"]
+      },
+      "xul": {
+        "purpose": "Validate, record provenance, update memory/replay, and close or re-enter the chart.",
+        "activates": ["hash", "stat", "replay.record", "cheese.score"]
+      }
+    }
+  },
+
+  "@sidecars": {
+    "_comment": "Each key = sidecar name; path = JSON sidecar file",
+    "_load_policy": "lazy",
+    "_rule": "Sidecar JSON is a bootstrap executable contract for apps, games, programs, websites, schemas, and tools. It is treated as executable notation when backed by @ops, @dispatch_schema, @routes, @entry, or @schema.",
+    "_builder": {
+      "role": "semantic builder",
+      "stages": ["parse_json", "bind_schema", "build_xcfe_nodes", "apply_fold_contract", "dispatch_runtime", "emit_artifact"],
+      "ast_bridges": ["json_ast", "kxml_kast", "roslyn_ast", "tree_sitter_ast", "codewasm_module"],
+      "folds": ["pop", "wo", "yax", "sek", "chen", "xul"]
+    },
+    "_app_contract": {
+      "file_pattern": "*.manifest.json",
+      "examples": ["server.manifest.json", "server2.manifest.json", "rpc.manifest.json", "mcp.manifest.json", "network.manifest.json", "http.manifest.json", "api-client.manifest.json", "gpu.manifest.json", "dotnet.manifest.json", "roslyn.manifest.json", "windows-desktop.manifest.json", "windows-script-host.manifest.json", "scripts.manifest.json", "cmake.manifest.json", "visual-studio-tools.manifest.json", "native-build.manifest.json", "user.manifest.json", "session.manifest.json", "database.manifest.json", "projects.manifest.json", "actions.manifest.json", "commands.manifest.json", "tools.manifest.json", "coder.manifest.json", "mx2lm-compiler.manifest.json", "mx2lm-runtime.manifest.json", "micronaut-brains.manifest.json", "chat-hive.manifest.json", "primeos-agent-spawner.manifest.json", "asx-nnc.manifest.json", "gravity-semantic-wells.manifest.json", "kuhul-xsd-grammar.manifest.json", "nnc-xsd-neural-grammar.manifest.json", "supernaut-contracts.manifest.json", "asx-manager.para-graph.json", "bots.manifest.json", "bot.manifest.json", "micronaut.manifest.json", "models.manifest.json", "bson.manifest.json", "agents.manifest.json", "batches.manifest.json", "threads.manifest.json", "processes.manifest.json", "skills.manifest.json", "logs.manifest.json", "events.manifest.json", "parse.manifest.json", "validate.manifest.json", "compile.manifest.json", "generate.manifest.json", "glyphs.manifest.json", "folds.manifest.json", "nodes.manifest.json", "pop.manifest.json", "wo.manifest.json", "yax.manifest.json", "sek.manifest.json", "chen.manifest.json", "xul.manifest.json", "programs.manifest.json", "scxq2.manifest.json", "sco.manifest.json", "game.manifest.json", "website.manifest.json", "xjson.manifest.json", "xcfe.manifest.json", "xjson-kuhul-autonomous-ai-runtime.manifest.json", "grammar.manifest.json", "classes.manifest.json", "ir.manifest.json", "steamboat-willie-vector-character.manifest.json"],
+      "launch": "./json_runtime.exe --manifest manifest.json --sidecar <bundle>.manifest.json",
+      "purpose": "Every JSON app/game/program/website/RPC pack/MCP pack/network/API client pack/GPU pack/.NET/Roslyn compiler pack/Windows script host pack/native build pack/user pack/session pack/database pack/project pack/action pack/command pack/tool pack/bot pack/Micronaut pack/model pack/BSON data pack/agent pack/batch pack/thread pack/process pack/skill pack/log pack/event pack/parser pack/validator pack/compiler pack/generator pack/glyph pack/fold pack/node pack/phase pack/program pack may ship its own manifest sidecar that declares static REST/API routes, localhost ports, RPC methods, MCP tools/resources, HTTP clients, curl transfers, GPU providers, compiler tools, Windows scripting hosts, CMake/CTest/CPack tools, Visual Studio developer shells, users, sessions, databases, projects, commands, tools, bots, models, GGUF/MGGUF artifacts, BSON documents, schemas, DI bindings, schedules, logs, events, parsers, validators, compilers, generators, agents, batches, threads, processes, skills, glyphs, lanes, opcodes, phases, folds, nodes, programs, and UI/assets. Loading it mounts those declarations as executable XCFE/KUHUL nodes.",
+      "required_blocks": ["@sidecar"],
+      "recommended_blocks": ["@routes", "@ports", "@schema", "@ops", "@entry", "@assets", "@rpc", "@jsonrpc", "@methods", "@mcp", "@resources", "@prompts", "@network", "@http", "@api_client", "@curl", "@requests", "@downloads", "@headers", "@auth", "@endpoints", "@gpu", "@d3d9", "@d3d10", "@d3d11", "@d3d11_1", "@d3d12", "@d3dconfig", "@direct3d", "@direct2d", "@d2d1", "@direct3d_core", "@direct3d_debug_layer", "@warp", "@d3d11on12", "@app_overrides", "@d3dcompiler", "@d3dx", "@dxc", "@dxcompiler", "@dxil", "@shader_model_6", "@shader_compilers", "@graphics_dlls", "@webgpu", "@webgl2", "@threejs", "@three_js", "@orbit_controls", "@web_graphics_assets", "@opencl", "@compute", "@kernels", "@dotnet", "@dotnet_cli", "@sdk_manifests", "@shared_frameworks", "@windows_desktop", "@wpf", "@winforms", "@webview2", "@wwahost", "@uwp", "@windows_web_app_host", "@apphost", "@cmd", "@command_prompt", "@batch_files", "@py_launcher", "@python", "@python_scripts", "@cscript", "@wscript", "@windows_script_host", "@vbscript", "@jscript", "@script_files", "@workloads", "@workload_manifests", "@workload_families", "@emscripten", "@mono_toolchain", "@android", "@ios", "@maccatalyst", "@macos", "@maui", "@tvos", "@localize", "@roslyn", "@csc", "@vbc", "@vbcscompiler", "@dotnet_format", "@msbuild", "@analyzers", "@source_generators", "@cmake", "@ctest", "@cpack", "@cmake_gui", "@cmcldeps", "@visual_studio_tools", "@vcvars", "@msvc", "@native_tools", "@cross_tools", "@toolchain", "@generator", "@build_presets", "@test_presets", "@package_presets", "@user", "@users", "@identity", "@memory", "@permissions", "@session", "@sessions", "@conversation", "@history", "@database", "@databases", "@tables", "@indexes", "@queries", "@projects", "@project", "@workspace", "@workspaces", "@actions", "@commands", "@tools", "@bots", "@bot_helpers", "@native_bots", "@bots_cpp", "@micronaut", "@beans", "@schedules", "@events", "@event", "@logs", "@log", "@trace", "@audit", "@parse", "@parser", "@ast", "@kast", "@validate", "@validator", "@rules", "@compile", "@compiler", "@targets", "@generate", "@generator", "@templates", "@models", "@model", "@gguf", "@mgguf", "@model_server", "@adapters", "@providers", "@bson", "@documents", "@collections", "@binary", "@codec", "@agents", "@agent", "@batches", "@batch", "@threads", "@thread", "@processes", "@process", "@skills", "@skill", "@glyphs", "@symbols", "@lanes", "@opcodes", "@phases", "@folds", "@nodes", "@program", "@programs", "@scxq2", "@sco", "@xjson", "@xcfe", "@surface_syntax", "@lowering", "@canonical_ast", "@canonical_json", "@static_verifier", "@runtime_walk", "@stdlib", "@pack_manifest", "@proof_envelope", "@signature", "@policy", "@crypto_pack", "@session_binding", "@scx_chain", "@grammar", "@grammars", "@classes", "@class", "@ir", "@kimd", "@linalg", "@core_types", "@scalar", "@vector", "@matrix", "@tensor", "@geometry", "@surface", "@cluster", "@ir_grammar", "@replay_log", "@svg_tessellation", "@render_kernel", "@d3d11_submission", "@tiny_character_loop", "@screen_vector_graphics", "@vector_surface", "@visual_substrate", "@svg_nodes", "@tensor_surfaces", "@glyph_ops", "@json_columns", "@tensor_io", "@native_projection_roots", "@role_reversal", "@projection", "@modules", "@crown_matrix", "@actor_matrix", "@personality_matrix", "@api_brain_layers", "@api_brain_services", "@cheese_reward_policy", "@test_vectors", "@expr_blocks", "@declarative_blocks", "@flow_operator", "@capabilities", "@determinism"],
+      "route_rule": "Ports and localhost route names must be declared in JSON before execution. Multiple app manifests can be mounted independently; no app depends on server.manifest.json specifically.",
+      "phase_bundle_rule": "Individual phase bundles such as pop.manifest.json and sek.manifest.json can be mounted alone, but must still declare their phase id, inputs, outputs, legal nodes, and guards.",
+      "bot_rule": "bots.manifest.json declares bot categories, helper methods, pipeline shapes, and localhost endpoints. bots.cpp is the native adapter layer that turns those declarations into deterministic bot-helper payloads.",
+      "rpc_rule": "rpc.manifest.json declares JSON-RPC methods, params, result schemas, and route bindings. It should map method names onto actions, tools, sidecar calls, or XCFE programs.",
+      "mcp_rule": "mcp.manifest.json declares MCP server identity, tools, resources, prompts, transports, and permissions. MCP manifests expose tool contracts; they do not bypass local route admission.",
+      "network_rule": "network.manifest.json, http.manifest.json, and api-client.manifest.json declare HTTP/API clients, curl.exe, request templates, headers, auth policy, endpoints, downloads, and transfer rules. Network tools are admitted per route and should not bypass manifest allowlists.",
+      "gpu_rule": "gpu.manifest.json declares universal graphics and compute providers such as Direct2D/d2d1, Direct3D 9/10/11/12, D3D12Core, d3dconfig.exe, Direct3D debug layer, WARP/software rendering, d3d11on12 compatibility for D3D11-over-D3D12, D3DCompiler/D3DX legacy shader/helper libraries, DXC/dxcompiler/dxil Shader Model 6 lanes for native D3D12/DXIL shaders, app overrides, webgpu, webgl2, Three.js, OrbitControls, web graphics assets, opencl, CPU fallback, kernels, lanes, feature gates, and dispatch policy. It declares available compute/assets; XCFE/KUHUL still decides when a node may use them.",
+      "dotnet_roslyn_rule": "dotnet.manifest.json and roslyn.manifest.json declare .NET compiler tools such as dotnet.exe, csc.exe, vbc.exe, VBCSCompiler.exe, dotnet-format.exe, MSBuild, analyzers, source generators, SDK workload manifests, localized WorkloadManifest.*.json files, and toolchain capability indexes. Workload families include Emscripten, Mono toolchain, Android, iOS, Mac Catalyst, macOS, MAUI, and tvOS. They are tool declarations for parse/validate/compile/generate manifests, not mandatory runtime dependencies.",
+      "windows_desktop_rule": "windows-desktop.manifest.json declares Microsoft.WindowsDesktop.App runtime paths, WPF, WinForms, WebView2, WWAHost/UWP HTML-CSS-JS host surfaces, apphost, desktop packaging, terminal panels, game shells, and local desktop app builder capabilities.",
+      "windows_script_host_rule": "windows-script-host.manifest.json and scripts.manifest.json declare cmd.exe for Command Prompt and .bat/.cmd execution, py.exe as the Windows Python Launcher for version-selected Python scripts, cscript.exe for terminal text-mode Windows Script Host execution, wscript.exe for windowed script execution, VBScript/JScript files, script arguments, stdout/stderr handling, and sandbox/admission policy.",
+      "native_build_rule": "cmake.manifest.json, visual-studio-tools.manifest.json, and native-build.manifest.json declare CMake, CTest, CPack, cmake-gui, cmcldeps, MSVC toolchains, Visual Studio Developer Command Prompt shortcuts, generators, toolchain files, presets, tests, and package commands. They are native build tool declarations; XCFE decides when to invoke them.",
+      "user_rule": "user.manifest.json declares user identity, preferences, scoped memory, permissions, and retention policy. User history remains user-scoped.",
+      "session_rule": "session.manifest.json declares conversation/session identity, history pointers, current working state, runtime mounts, and replay retention.",
+      "database_rule": "database.manifest.json declares database providers, tables, indexes, queries, migrations, and BSON/SCXQ2 storage policy.",
+      "project_rule": "projects.manifest.json declares project/workspace roots, project-scoped agents, file-manager policy, routes, and mount permissions.",
+      "logs_events_rule": "logs.manifest.json and events.manifest.json declare trace, audit, notification, replay, and event-stream contracts.",
+      "parse_validate_compile_generate_rule": "parse.manifest.json, validate.manifest.json, compile.manifest.json, and generate.manifest.json declare lifecycle tools for AST/KAST construction, admission checks, build targets, and artifact generation.",
+      "glyph_rule": "glyphs.manifest.json declares surface forms and typed symbol bindings. Glyphs, lanes, and opcodes are equivalent only after the opcode resolver binds a glyph to an executable lane inside a legal phase.",
+      "bson_rule": "bson.manifest.json declares BSON collections/documents and their decode/index/cache policy. SCXQ2 remains the ASX binary format; BSON manifests may use SCXQ2 lanes for compression, transport, storage, replay, and binary execution envelopes.",
+      "agent_rule": "agents.manifest.json declares executable agent objects and their allowed actions, tools, routes, folds, and memory scope.",
+      "model_rule": "models.manifest.json declares model identities such as OSS, LFM, Gemma, local GGUF/MGGUF artifact paths, model-server routes, adapters, providers, and fold/node load policies. GGUF is the universal local model artifact format; the manifest decides what is allowed to mount and when.",
+      "batch_thread_process_rule": "batches.manifest.json, threads.manifest.json, and processes.manifest.json declare scheduling and execution topology. They mount runnable units; they do not bypass XCFE admission.",
+      "skill_rule": "skills.manifest.json declares reusable capability contracts and maps them to actions, tools, bots, agents, or sidecar calls.",
+      "xjson_xcfe_rule": "xjson.manifest.json and xcfe.manifest.json declare the split-authority language surface, canonical AST, static verifier, runtime walk, standard @verb library, pack schema, canonical JSON hashing, proof envelope, policy law, and optional crypto/SCX chain packs. XJSON declares visible existence and expression boundaries; XCFE is the only execution authority.",
+      "grammar_rule": "grammar.manifest.json declares lexical tokens, block syntax, expression boundaries, labels, indentation lowering, AST paths, canonicalization, and deterministic parser test vectors. Grammar mounts notation; it does not execute by itself.",
+      "class_rule": "classes.manifest.json declares type/class/object contracts for @class, @new, @array, @map, @object, fields, constructors, invariants, and schema links. Classes are state/type contracts until admitted by XCFE verbs.",
+      "ir_rule": "ir.manifest.json declares the frozen KIMD x K'UHUL x SVG unified IR, screen vector graphics surface law, pure opcode set, replay log format, SVG tessellation mapping, D3D11_1 matrix-rendering projection, tiny-character loop, animated cartoon character rigs, and local native projection roots. It is an authority-plane contract until admitted by XCFE/KUHUL execution.",
+      "animated_character_demo_rule": "Animated character demos such as steamboat-willie-vector-character.manifest.json must use procedural vectors/tensors and public-domain-safe references. They must not embed copied frames, protected branding, or later character designs."
+    },
+    "math_ext": { "path": "sco/sidecars/math_ext.json" },
+    "brain":    { "path": "sco/sidecars/brain.json" },
+    "server":   { "path": "server.manifest.json" },
+    "rpc":      { "path": "rpc.manifest.json" },
+    "mcp":      { "path": "mcp.manifest.json" },
+    "gpu":      { "path": "gpu.manifest.json" },
+    "dotnet":   { "path": "dotnet.manifest.json" },
+    "roslyn":   { "path": "roslyn.manifest.json" },
+    "actions":  { "path": "actions.manifest.json" },
+    "experts":  { "path": "experts.manifest.json" },
+    "evolution": { "path": "evolution.manifest.json" },
+    "commands": { "path": "commands.manifest.json" },
+    "tools":    { "path": "tools.manifest.json" },
+    "coder":    { "path": "coder.manifest.json" },
+    "para_graph": { "path": "..\\assets\\asx-manager.para-graph.json" },
+    "mx2lm_compiler": { "path": "mx2lm-compiler.manifest.json" },
+    "mx2lm_runtime": { "path": "mx2lm-runtime.manifest.json" },
+    "micronaut_brains": { "path": "micronaut-brains.manifest.json" },
+    "chat_hive": { "path": "chat-hive.manifest.json" },
+    "primeos_agent_spawner": { "path": "primeos-agent-spawner.manifest.json" },
+    "asx_nnc": { "path": "asx-nnc.manifest.json" },
+    "gravity_semantic_wells": { "path": "gravity-semantic-wells.manifest.json" },
+    "kuhul_xsd_grammar": { "path": "kuhul-xsd-grammar.manifest.json" },
+    "nnc_xsd_neural_grammar": { "path": "nnc-xsd-neural-grammar.manifest.json" },
+    "crown_matrix": { "path": "crown-matrix.manifest.json" },
+    "actor_matrix": { "path": "actor-matrix.manifest.json" },
+    "personality_matrix": { "path": "personality-matrix.manifest.json" },
+    "mathml_nnc_xsd_neural_grammar": { "path": "mathml-nnc-xsd-neural-grammar.manifest.json" },
+    "xcfe_js_surfaces": { "path": "xcfe-js-surfaces.manifest.json" },
+    "kuhul_math_engine": { "path": "kuhul-math-engine.manifest.json" },
+    "agl_xjson_contracts": { "path": "agl-xjson-contracts.manifest.json" },
+    "xjson_kuhul_autonomous_ai_runtime": { "path": "xjson-kuhul-autonomous-ai-runtime.manifest.json" },
+    "kuhul_pi_virtual_cluster": { "path": "kuhul-pi-virtual-cluster.manifest.json" },
+    "kuhul_cluster_analytics": { "path": "kuhul-cluster-analytics.manifest.json" },
+    "kuhul_character_engine": { "path": "kuhul-character-engine.manifest.json" },
+    "kuhul_learning_browser": { "path": "kuhul-learning-browser.manifest.json" },
+    "kuhul_auto_coder": { "path": "kuhul-auto-coder.manifest.json" },
+    "ai_specialists_team": { "path": "ai-specialists-team.manifest.json" },
+    "mx2lm_runtime_boot": { "path": "mx2lm-runtime-boot.manifest.json" },
+    "mx2lm_api_brain": { "path": "mx2lm-api-brain.manifest.json" },
+    "bots": { "path": "bots.manifest.json" },
+    "supernaut_contracts": { "path": "supernaut-contracts.manifest.json" },
+    "micronaut": { "path": "micronaut.manifest.json" },
+    "agents":   { "path": "agents.manifest.json" },
+    "models":   { "path": "models.manifest.json" },
+    "processes": { "path": "processes.manifest.json" },
+    "logs":     { "path": "logs.manifest.json" },
+    "events":   { "path": "events.manifest.json" },
+    "parse":    { "path": "parse.manifest.json" },
+    "validate": { "path": "validate.manifest.json" },
+    "compile":  { "path": "compile.manifest.json" },
+    "generate": { "path": "generate.manifest.json" },
+    "glyphs":   { "path": "glyphs.manifest.json" },
+    "angles":   { "path": "angles.manifest.json" },
+    "lanes":    { "path": "lanes.manifest.json" },
+    "phases":   { "path": "phases.manifest.json" },
+    "folds":    { "path": "folds.manifest.json" },
+    "nodes":    { "path": "nodes.manifest.json" },
+    "programs": { "path": "programs.manifest.json" },
+    "scxq2":    { "path": "scxq2.manifest.json" },
+    "sco":      { "path": "sco.manifest.json" },
+    "xjson":    { "path": "xjson.manifest.json" },
+    "xcfe":     { "path": "xcfe.manifest.json" },
+    "grammar":  { "path": "grammar.manifest.json" },
+    "classes":  { "path": "classes.manifest.json" },
+    "threads":  { "path": "threads.manifest.json" },
+    "batches":  { "path": "batches.manifest.json" },
+    "ir":       { "path": "ir.manifest.json" },
+    "steamboat_willie_demo": { "path": "demos/steamboat-willie-vector-character.manifest.json" }
+  },
+
+  "@discovery": {
+    "enabled": true,
+    "ports": [11434, 3180, 6001, 7860, 8000, 3000]
+  },
+
+  "@server": {
+    "enabled": true,
+    "port_ref": "json_runtime_object_server",
+    "host_directory": "$root",
+    "http_file_path": "$host_directory",
+    "http_file_rule": "The HTTP object server resolves /api/file paths under $http_file_path. $http_file_path may alias $host_directory, $manifest_directory, $root, or a manifest-relative directory. Request paths stay relative and are traversal-guarded.",
+    "sandbox": true
+  },
+
+  "@runtime": {
+    "mode":      "self-hosting",
+    "split": {
+      "authority_half": {
+        "source": "src/runtime_authority.cpp",
+        "owns": ["manifest contracts", "sidecar examples", "phase contracts", "sidecar role classification", "XJSON/XCFE/class/grammar authority vocabulary", "model/micronaut backend declarations"]
+      },
+      "execution_half": {
+        "source": "src/runtime.cpp",
+        "owns": ["boot", "XCFE execution", "SCO registry", "sidecar loading/calls", "file manager", "HTTP object server", "HTTP host directory file root", "discovery", "admitted model adapter calls"]
+      },
+      "rule": "Authority declares and classifies what may exist; execution hosts and runs admitted runtime actions.",
+      "micronaut_model_rule": "models.manifest.json, micronaut model xjson, GGUF/SCXQDDS/API backend records, tools, and registry entries remain authority-plane declarations until an admitted XCFE/model adapter call enters the execution half."
+    },
+    "scheduler": "basic",
+    "gpu":       "dx12_stub",
+    "primitives": 5
+  }
+}

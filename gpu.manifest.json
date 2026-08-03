@@ -1,0 +1,8 @@
+{
+  "@sidecar": {"id":"asx.runtime.gpu.v1","kind":"gpu_manifest","status":"draft","role":"gpu_provider_contracts"},
+  "@gpu": {"policy":"D3D11_1/WebGL2/WebGPU/OpenCL providers are declared, measured, then admitted by XCFE/KUHUL.","fallback":"cpu"},
+  "@d3d11_1": {"primary":true,"shader_model":"cs_5_0"},
+  "@webgpu": {"optional":true},
+  "@webgl2": {"optional":true},
+  "@opencl": {"optional":true}
+}

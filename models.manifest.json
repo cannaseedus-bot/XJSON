@@ -1,0 +1,10 @@
+{
+  "@sidecar": {"id":"asx.runtime.models.v1","kind":"model_manifest","status":"draft","role":"model_mount_registry"},
+  "@models": {
+    "definition": "Models are local GGUF/MGGUF/SCXQDDS or cloud/API inference surfaces selected by policy and fold complexity.",
+    "universal_local_format": "gguf",
+    "rule": "Models declare identity, route, artifact, and allowed load policy before any inference call."
+  },
+  "@model_server": {"default_url":"http://127.0.0.1:9080","compatibility":"llama.cpp_or_openai_compatible"},
+  "@schema": {"model":{"id":"string","family":"string","format":"gguf|mgguf|scxqdds|api","path":"string","url":"string","capabilities":"array","load_policy":"string"}}
+}

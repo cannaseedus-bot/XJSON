@@ -1,0 +1,5 @@
+{
+  "@sidecar": {"id":"asx.runtime.compile.v1","kind":"compile_manifest","status":"draft","role":"compiler_target_contracts"},
+  "@compile": {"definition":"Compile routes lower admitted AST/KAST/IR into target artifacts such as C++, HLSL, WGSL, JS, WASM, or SCXQ2.","rule":"Compilation emits artifacts; execution remains a separate admitted phase."},
+  "@targets": ["cpp","hlsl_cs5","wgsl","javascript","wasm","scxq2","xjson_ast"]
+}

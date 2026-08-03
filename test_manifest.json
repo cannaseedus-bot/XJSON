@@ -1,0 +1,39 @@
+{
+    "@app":  "json-runtime",
+    "@version":  "2.0.0",
+    "@entry":  "programs/main.json",
+    "@paths":  {
+                   "root":  "./",
+                   "programs":  "./programs/",
+                   "models":  "./models/",
+                   "assets":  "./assets/",
+                   "lib":  "./lib/"
+               },
+    "@sco":  {
+                 "registry":  "sco/registry.json"
+             },
+    "@sidecars":  {
+
+                  },
+    "@discovery":  {
+                       "enabled":  false,
+                       "ports":  [
+                                     11434,
+                                     6001,
+                                     7860,
+                                     8000,
+                                     3000
+                                 ]
+                   },
+    "@server":  {
+                    "enabled":  false,
+                    "port":  8080,
+                    "sandbox":  true
+                },
+    "@runtime":  {
+                     "mode":  "self-hosting",
+                     "scheduler":  "basic",
+                     "gpu":  "dx12_stub",
+                     "primitives":  5
+                 }
+}

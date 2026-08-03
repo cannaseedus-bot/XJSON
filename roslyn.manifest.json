@@ -1,0 +1,7 @@
+{
+  "@sidecar": {"id":"asx.runtime.roslyn.v1","kind":"roslyn_manifest","status":"draft","role":"roslyn_compiler_contracts"},
+  "@roslyn": {"rule":"Roslyn owns semantic C#/VB AST and code generation; Tree-sitter remains shallow/fault-tolerant parse support."},
+  "@csc": "C:/Program Files/dotnet/sdk/10.0.300/Roslyn/bincore/csc.exe",
+  "@vbc": "C:/Program Files/dotnet/sdk/10.0.300/Roslyn/bincore/vbc.exe",
+  "@dotnet_format": "C:/Program Files/dotnet/sdk/10.0.300/DotnetTools/dotnet-format/dotnet-format.exe"
+}

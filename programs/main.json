@@ -1,0 +1,39 @@
+{
+  "@program": "demo",
+
+  "@state": {
+    "a": 5,
+    "b": 7,
+    "flag": true,
+    "nums": [1, 2, 3, 4, 5]
+  },
+
+  "@control": [
+    { "@op": "ADD",  "@in": ["a", "b"],  "@out": "c" },
+    { "@op": "MUL",  "@in": ["a", "b"],  "@out": "d" },
+    { "@op": "SUB",  "@in": ["d", "c"],  "@out": "e" },
+    { "@op": "SQRT", "@in": ["d"],       "@out": "sq" },
+
+    { "@op": "GT", "@args": ["$c", 10], "@out": "c_big" },
+
+    { "@op": "IF",
+      "@cond": "$c_big",
+      "@then": { "@op": "LOG", "@fn": "log", "@args": ["c is big"] },
+      "@else": { "@op": "LOG", "@fn": "log", "@args": ["c is small"] }
+    },
+
+    { "@op": "DEFINE_OP",
+      "@name": "SQUARE",
+      "@definition": {
+        "@type": "pure",
+        "@in":  ["n"],
+        "@out": "n2",
+        "@exec": { "@op": "MUL", "@args": ["$n", "$n"] }
+      }
+    },
+
+    { "@op": "LOG", "@fn": "log", "@args": ["c"] },
+    { "@op": "LOG", "@fn": "log", "@args": ["d"] },
+    { "@op": "LOG", "@fn": "log", "@args": ["sq"] }
+  ]
+}

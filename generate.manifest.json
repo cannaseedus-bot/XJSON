@@ -1,0 +1,5 @@
+{
+  "@sidecar": {"id":"asx.runtime.generate.v1","kind":"generate_manifest","status":"draft","role":"artifact_generator_contracts"},
+  "@generate": {"definition":"Generate routes create files, apps, tests, manifests, code, docs, or UI surfaces from admitted templates and schemas.","rule":"Generators must declare output paths and may write only through approved file-manager or project routes."},
+  "@templates": ["manifest","sidecar","program","test","webview2_panel","vector_screen_demo"]
+}

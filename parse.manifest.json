@@ -1,0 +1,5 @@
+{
+  "@sidecar": {"id":"asx.runtime.parse.v1","kind":"parse_manifest","status":"draft","role":"parse_ast_kast_contracts"},
+  "@parse": {"definition":"Parse routes convert source surfaces into JSON AST, KAST, XCFE AST, Roslyn AST, Tree-sitter AST, or CodeWASM module metadata.","rule":"Parsing is structural; it does not execute."},
+  "@ast": {"targets":["json_ast","xcfe_ast","kast","roslyn_ast","tree_sitter_ast","codewasm_module"]}
+}

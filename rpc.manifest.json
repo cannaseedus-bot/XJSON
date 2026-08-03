@@ -1,0 +1,5 @@
+{
+  "@sidecar": {"id":"asx.runtime.rpc.v1","kind":"rpc_manifest","status":"draft","role":"json_rpc_contracts"},
+  "@rpc": {"version":"2.0","endpoint":"/api/rpc","rule":"RPC methods map to actions, sidecar calls, SCO aliases, tools, or XCFE programs."},
+  "@methods": {"sidecar.describe":{"params":["name"]},"sidecar.call":{"params":["name","op","scope"]},"program.run":{"params":["program"]}}
+}

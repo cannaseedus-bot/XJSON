@@ -1,0 +1,5 @@
+{
+  "@sidecar": {"id":"asx.runtime.sco.v1","kind":"binary_runtime_manifest","status":"draft","role":"sco_object_registry_contract"},
+  "@sco": {"definition":"SCO aliases point at program, data, sidecar, agent, or API objects.","registry":"sco/registry.json","rule":"SCO resolution returns descriptors; execution only happens for admitted program/sidecar routes."},
+  "@schema": {"sco":{"alias":"string","type":"program|data|sidecar|agent|api","sha256":"string","endpoint":"string","data":"object"}}
+}

@@ -1,0 +1,187 @@
+{
+  "@sidecar": {
+    "id": "asx.mathml.nnc.xsd.neural_grammar.v1",
+    "kind": "mathml_nnc_xsd_manifest",
+    "status": "draft",
+    "role": "complete_tensor_neural_grammar_contract"
+  },
+  "@mathml_nnc_xsd": {
+    "name": "MathML + NNC + XSD Neural Grammar",
+    "version": "1.0",
+    "description": "Unified contract where MathML tensor expressions, ASX Neural Net Code, and K'UHUL XSD grammar share one Fold -> Node -> Micronaut runtime surface.",
+    "final_lock": [
+      "MathML computes tensor expressions.",
+      "NNC executes neural programs.",
+      "XSD defines the complete grammar.",
+      "K'UHUL admits and orchestrates runtime phases.",
+      "ASX projects the interface."
+    ],
+    "law": "MathML and NNC are semantic notation first. Tensor execution, training, gradient routing, and model mutation require schema validation, fold admission, backend admission, and policy."
+  },
+  "@mathml": {
+    "schema": "mathml-tensor-v1",
+    "role": "first-class tensor math notation",
+    "accepted_expression_nodes": ["apply", "matrix", "vector", "scalar", "ci", "cn"],
+    "operators": [
+      {"id": "matmul", "arity": 2, "semantics": "matrix multiplication"},
+      {"id": "plus", "arity": 2, "semantics": "element-wise addition"},
+      {"id": "minus", "arity": 2, "semantics": "element-wise subtraction"},
+      {"id": "times", "arity": 2, "semantics": "element-wise multiplication"},
+      {"id": "divide", "arity": 2, "semantics": "element-wise division"},
+      {"id": "power", "arity": 2, "semantics": "element-wise exponentiation"},
+      {"id": "relu", "arity": 1, "semantics": "max(0, x)"},
+      {"id": "sigmoid", "arity": 1, "semantics": "1/(1+exp(-x))"},
+      {"id": "tanh", "arity": 1, "semantics": "hyperbolic tangent"},
+      {"id": "softmax", "arity": 1, "semantics": "stable exponent normalization"}
+    ],
+    "tensor_types": {
+      "scalar": "rank-0 numeric value",
+      "vector": "rank-1 numeric array",
+      "matrix": "rank-2 numeric array",
+      "tensor": "rank-N numeric array with declared shape"
+    },
+    "determinism": {
+      "required": true,
+      "rules": [
+        "No NaN or Infinity literals.",
+        "Shape mismatch must fail visibly.",
+        "Operator order is explicit.",
+        "Backend-specific precision must be declared before execution."
+      ]
+    }
+  },
+  "@nnc": {
+    "schema": "asx-nnc-v1",
+    "integration": "NNC layer declarations may carry MathML formulas and MathML tensor expression refs.",
+    "layer_fields": ["type", "size", "neurons", "activation", "mathml", "mathml_ref"],
+    "activations": ["linear", "relu", "sigmoid", "tanh", "softmax"],
+    "rule": "NNC forward passes may lower dense layers into MathML matmul plus bias plus activation, but only admitted runtimes execute them."
+  },
+  "@xsd": {
+    "version": "3.0",
+    "hierarchy": ["Fold", "Node", "Micronaut", "MathML", "NNC"],
+    "integration_rules": [
+      "Fold may contain MathML and NNC programs.",
+      "Node may locate MathML expressions, tensors, weights, bias vectors, and gradient routes.",
+      "Micronaut may expose MathML functions, tensor opcodes, and NNC execution tools.",
+      "XSD defines legality; it does not execute by itself."
+    ]
+  },
+  "@integration": {
+    "architecture": [
+      {"layer": "Math", "component": "MathML", "role": "Tensor expressions, matrix operations, activations, gradients"},
+      {"layer": "Neural", "component": "NNC", "role": "Neural net code with MathML integration"},
+      {"layer": "Grammar", "component": "XSD", "role": "Complete system definition"},
+      {"layer": "Hierarchy", "component": "Fold -> Node -> Micronaut", "role": "Ownership, location, actors"},
+      {"layer": "Execution", "component": "Phase Machine", "role": "Pop -> Wo -> Yax -> Sek -> Ch'en -> Xul"},
+      {"layer": "Memory", "component": "KNUMATICS", "role": "7-layer memory hierarchy"},
+      {"layer": "Control", "component": "Entropy Economy", "role": "Complexity and chaos management"}
+    ],
+    "mappings": [
+      "MathML computes tensors.",
+      "NNC binds layers to tensor math.",
+      "XSD defines the legal grammar shape.",
+      "K'UHUL phases admit and orchestrate execution.",
+      "KNUMATICS stores tensor, gram, fold, and replay memory.",
+      "ASX renders neural and mathematical projections."
+    ]
+  },
+  "@schema_refs": {
+    "nnc_sidecar": "asx-nnc.manifest.json",
+    "xsd_grammar_sidecar": "kuhul-xsd-grammar.manifest.json",
+    "nnc_xsd_sidecar": "nnc-xsd-neural-grammar.manifest.json",
+    "gravity_wells_sidecar": "gravity-semantic-wells.manifest.json"
+  },
+  "@neural_grammar": {
+    "Fold": {
+      "contains": ["Metadata", "Permissions", "Node", "Fold", "MathML", "NNC"],
+      "mathml_relation": "Fold owns mathematical contracts and tensor expression groups.",
+      "nnc_relation": "Fold owns NNC programs as first-class grammar members."
+    },
+    "Node": {
+      "contains": ["State", "Resources", "MathML", "GradientRoutes", "Micronaut", "NNCWeights"],
+      "mathml_relation": "Node locates tensor expressions, dimensions, weights, bias vectors, and gradient routes.",
+      "nnc_relation": "Node locates neural layer state and backend resources."
+    },
+    "Micronaut": {
+      "contains": ["Skills", "Opcodes", "MathMLFunctions", "PhaseBindings", "Persona", "NNCFunctions"],
+      "mathml_relation": "Micronaut acts on admitted tensor math operations.",
+      "nnc_relation": "Micronaut acts on admitted NNC functions."
+    }
+  },
+  "@examples": {
+    "matrix_multiply": {
+      "$schema": "mathml-tensor-v1",
+      "expression": {
+        "type": "apply",
+        "operator": "matmul",
+        "left": {"type": "matrix", "data": [[1.0, 2.0], [3.0, 4.0]]},
+        "right": {"type": "matrix", "data": [[5.0, 6.0], [7.0, 8.0]]}
+      }
+    },
+    "relu_vector": {
+      "$schema": "mathml-tensor-v1",
+      "expression": {
+        "type": "apply",
+        "operator": "relu",
+        "left": {"type": "vector", "data": [-2.0, -1.0, 0.0, 1.0, 2.0]}
+      }
+    },
+    "sigmoid_vector": {
+      "$schema": "mathml-tensor-v1",
+      "expression": {
+        "type": "apply",
+        "operator": "sigmoid",
+        "left": {"type": "vector", "data": [-3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0]}
+      }
+    },
+    "mathml_neural_net": {
+      "$schema": "asx-nnc-v1",
+      "program": {
+        "name": "mathml-neural-net",
+        "layers": [
+          {"type": "input", "size": 3, "mathml": "x in R^3"},
+          {"type": "dense", "neurons": 6, "activation": "relu", "mathml": "h1 = ReLU(W1*x + b1)"},
+          {"type": "dense", "neurons": 4, "activation": "tanh", "mathml": "h2 = tanh(W2*h1 + b2)"},
+          {"type": "dense", "neurons": 2, "activation": "softmax", "mathml": "y = softmax(W3*h2 + b3)"}
+        ],
+        "weights": {
+          "layer1": [[0.9, 0.3, 0.2], [0.2, 0.8, 0.4], [0.3, 0.1, 0.7], [0.5, 0.4, 0.3], [0.1, 0.6, 0.2], [0.4, 0.2, 0.5]],
+          "layer2": [[0.7, 0.3, 0.5, 0.1, 0.2, 0.4], [0.2, 0.6, 0.1, 0.5, 0.4, 0.3], [0.4, 0.2, 0.3, 0.6, 0.5, 0.1]],
+          "layer3": [[0.5, 0.3, 0.1, 0.2], [0.4, 0.2, 0.5, 0.1]]
+        },
+        "bias": {
+          "layer1": [0.2, 0.3, 0.4, 0.5, 0.1, 0.2],
+          "layer2": [0.3, 0.4, 0.5],
+          "layer3": [0.1, 0.2]
+        }
+      }
+    }
+  },
+  "@routes": [
+    {"name": "mathml_nnc_xsd", "method": "GET", "path": "/api/mathml-nnc-xsd", "handler": "mathml_nnc_xsd.describe", "status": "sidecar_contract"},
+    {"name": "mathml_tensor_validate", "method": "POST", "path": "/api/mathml/validate", "body": ["expression", "policy"], "handler": "mathml.validate", "status": "sidecar_contract"},
+    {"name": "mathml_tensor_plan", "method": "POST", "path": "/api/mathml/plan", "body": ["expression", "backend", "policy"], "handler": "mathml.plan", "status": "sidecar_contract"},
+    {"name": "mathml_tensor_execute", "method": "POST", "path": "/api/mathml/execute", "body": ["expression", "input", "backend", "policy"], "handler": "mathml.execute", "status": "requires_policy"},
+    {"name": "mathml_nnc_compile", "method": "POST", "path": "/api/mathml-nnc-xsd/compile", "body": ["document", "policy"], "handler": "mathml_nnc_xsd.compile", "status": "sidecar_contract"},
+    {"name": "mathml_nnc_execute", "method": "POST", "path": "/api/mathml-nnc-xsd/execute", "body": ["document", "input", "policy"], "handler": "mathml_nnc_xsd.execute", "status": "requires_policy"},
+    {"name": "mathml_nnc_examples", "method": "GET", "path": "/api/mathml-nnc-xsd/examples", "handler": "mathml_nnc_xsd.examples", "status": "sidecar_contract"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/mathml-nnc-xsd-neural-grammar.json",
+    "ids": ["MATHML-NNC-XSD-GRAMMAR", "MATHML-TENSOR-ENGINE", "NNC-MATHML-COMPILER"]
+  },
+  "@folds": {
+    "pop": ["load_mathml_expression", "load_nnc_program", "load_xsd_contract"],
+    "wo": ["bind_tensor_shapes", "bind_fold_node_micronaut", "bind_nnc_layers"],
+    "yax": ["plan_tensor_ops", "map_neural_grammar", "select_backend"],
+    "sek": ["execute_mathml_when_admitted", "execute_nnc_when_admitted", "train_when_admitted"],
+    "chen": ["emit_tensor_result", "emit_neural_projection", "emit_xsd_projection"],
+    "xul": ["hash_mathml_nnc_state", "record_replay", "close"]
+  },
+  "@policy": {
+    "execution_requires": ["schema_validation", "shape_validation", "backend_admission", "runtime_policy"],
+    "mutation_requires": ["validation", "CHEESE_score", "replay_evidence", "Crown_Prime_approval"],
+    "forbidden": ["implicit_tensor_execution", "silent_shape_coercion", "unapproved_training", "backend_specific_precision_without_declaration"]
+  }
+}

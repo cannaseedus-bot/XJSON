@@ -1,0 +1,1 @@
+{"@entry":"programs/main.json","@discovery":{"enabled":true,"ports":[8081]},"@sidecars":{},"@server":{"enabled":false},"@sco":{"registry":"sco/registry.json"}}

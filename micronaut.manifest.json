@@ -1,0 +1,64 @@
+{
+  "@sidecar": {
+    "id": "asx.runtime.micronaut.v1",
+    "kind": "micronaut_manifest",
+    "status": "draft",
+    "role": "ASX Manager Micronaut factory and worker host contract"
+  },
+  "@micronaut": {
+    "definition": "Micronaut sidecars declare factory and worker host binaries as local executable contracts. Runtime admission still routes through XCFE/KUHUL phases; cross-micronaut communication uses HTTP, not direct cross-stack paths.",
+    "factory": "bin/micronaut_factory.exe",
+    "worker_host": "bin/Micronaut.Worker.Host.exe",
+    "http_worker_host": "bin/Micronaut.Worker.Host.Http.exe",
+    "data_root": "micronauts",
+    "install_rule": "Micronauts can be installed per project like ASX MEMORY. Required assets should be copied into the project or ASX Manager data area instead of linking to another skill."
+  },
+  "@factory": {
+    "pipeline": {
+      "name": "micronaut_factory_to_bson",
+      "formula": "micronaut factory -> micronaut.json -> SCXQ2 packer -> bson.micronaut.json",
+      "steps": [
+        {"id": "factory_create", "phase": "Sek", "lane": "generate", "input": "micronaut_spec", "output": "micronaut.json"},
+        {"id": "validate_manifest", "phase": "Yax", "lane": "validate", "input": "micronaut.json", "output": "admitted_micronaut"},
+        {"id": "scxq2_pack", "phase": "Xul", "lane": "storage", "input": "admitted_micronaut", "output": "scxq2_envelope"},
+        {"id": "bson_bind", "phase": "Xul", "lane": "storage", "input": "scxq2_envelope", "output": "bson.micronaut.json"}
+      ],
+      "key_formula": "semantic_key = glyph + lane + binary_runtime_array",
+      "rule": "Factory output is a candidate until validation, SCXQ2 packing, BSON checksum, and Crown policy admission complete."
+    },
+    "commands": {
+      "create": {"argv":["create","<manifest>"],"phase":"Sek","description":"Create or update a micronaut from a manifest."},
+      "validate": {"argv":["validate","<manifest>"],"phase":"Yax","description":"Validate a micronaut manifest before execution."},
+      "package": {"argv":["package","<manifest>"],"phase":"Ch'en","description":"Emit a portable micronaut bundle."},
+      "pack_scxq2": {"argv":["pack-scxq2","<manifest>"],"phase":"Xul","description":"Pack an admitted micronaut manifest into an SCXQ2 envelope."},
+      "bind_bson": {"argv":["bind-bson","<scxq2-envelope>"],"phase":"Xul","description":"Bind an SCXQ2 envelope into bson.micronaut.json using glyph + lane + binary runtime array."}
+    }
+  },
+  "@workers": {
+    "console": {
+      "path": "bin/Micronaut.Worker.Host.exe",
+      "transport": "stdio",
+      "role": "local worker host for admitted micronaut jobs"
+    },
+    "http": {
+      "path": "bin/Micronaut.Worker.Host.Http.exe",
+      "transport": "http",
+      "role": "localhost worker host for route-mounted micronaut jobs"
+    }
+  },
+  "@routes": [
+    {"name":"micronaut_factory","method":"POST","path":"/api/micronaut/factory","status":"proxy_contract","body":["command","manifest","args"],"handler":"micronaut.factory"},
+    {"name":"micronaut_worker_run","method":"POST","path":"/api/micronaut/worker/run","status":"proxy_contract","body":["job","manifest","args"],"handler":"micronaut.worker"},
+    {"name":"micronaut_http_run","method":"POST","path":"/api/micronaut/http/run","status":"proxy_contract","body":["route","payload"],"handler":"micronaut.worker_http"},
+    {"name":"micronaut_factory_pack_scxq2","method":"POST","path":"/api/micronaut/factory/pack-scxq2","status":"requires_policy","body":["manifest","glyph","lane","policy"],"handler":"micronaut.factory.pack_scxq2"},
+    {"name":"micronaut_factory_bind_bson","method":"POST","path":"/api/micronaut/factory/bind-bson","status":"requires_policy","body":["scxq2_envelope","glyph","lane","policy"],"handler":"micronaut.factory.bind_bson"}
+  ],
+  "@folds": {
+    "pop": "read micronaut manifest and local binary availability",
+    "wo": "bind factory command, worker transport, routes, and project data root",
+    "yax": "validate manifest, worker policy, paths, and route admission",
+    "sek": "invoke admitted factory or worker host command",
+    "chen": "emit package, worker result, route response, or notification",
+    "xul": "record bundle hash, replay metadata, and installation provenance"
+  }
+}

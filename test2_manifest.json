@@ -1,0 +1,1 @@
+{"@app":"json-runtime","@version":"2.0","@entry":"programs/main.json","@discovery":{"enabled":false},"@sidecars":{},"@server":{"enabled":true,"port":8080},"@sco":{"registry":"sco/registry.json"}}

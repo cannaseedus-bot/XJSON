@@ -1,0 +1,63 @@
+{
+  "@sidecar": {
+    "id": "asx.kuhul.math_engine.v1",
+    "kind": "kuhul_math_engine_manifest",
+    "status": "draft",
+    "role": "javascript_native_math_execution_contract"
+  },
+  "@kuhul_math_engine": {
+    "schema": "xjson://schema/kuhul.math_engine/v1",
+    "authority": "KUHUL_XCFE",
+    "description": "JSON contract for the K'UHUL Math Engine HTML surface: glyph registry, expression parser, AST builder, JavaScript-native math executor, and phase pipeline.",
+    "runtime": "javascript",
+    "tagline": "No Python required for admitted scalar math operations.",
+    "pipeline": [
+      {"phase": "Pop", "stage": "parse_expression", "output": "tokens"},
+      {"phase": "Wo", "stage": "build_ast", "output": "ast"},
+      {"phase": "Sek", "stage": "compile_to_js", "output": "js_expression"},
+      {"phase": "Sek", "stage": "execute_js_math", "output": "number"},
+      {"phase": "Ch'en", "stage": "render_result", "output": "projection"},
+      {"phase": "Xul", "stage": "record_metrics", "output": "replay_event"}
+    ]
+  },
+  "@glyph_registry": {
+    "arithmetic": [
+      {"glyph": "+", "op": "add"},
+      {"glyph": "-", "op": "subtract"},
+      {"glyph": "*", "op": "multiply"},
+      {"glyph": "/", "op": "divide"},
+      {"glyph": "^", "op": "power"},
+      {"glyph": "%", "op": "mod"}
+    ],
+    "calculus": [
+      {"glyph": "∫", "op": "integrate", "method": "simpson"},
+      {"glyph": "∂", "op": "derivative", "method": "central_difference"},
+      {"glyph": "lim", "op": "limit", "method": "numeric_approximation"},
+      {"glyph": "∑", "op": "summation"},
+      {"glyph": "∏", "op": "product"}
+    ],
+    "functions": ["sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh", "exp", "log", "ln", "log2", "sqrt", "cbrt", "abs", "floor", "ceil", "round", "trunc", "sign", "max", "min"],
+    "constants": {
+      "π": 3.141592653589793,
+      "e": 2.718281828459045,
+      "φ": 1.618033988749895,
+      "∞": "Infinity"
+    }
+  },
+  "@executor_policy": {
+    "safe_codegen": true,
+    "allowed_runtime": "Math namespace plus declared calculus functions",
+    "forbidden": ["raw_eval", "unbounded_Function_constructor", "global_object_access", "network_access", "dom_mutation", "file_access"],
+    "execution_requires": ["token_validation", "ast_validation", "operator_allowlist", "numeric_bounds", "policy_admission"]
+  },
+  "@routes": [
+    {"name": "kuhul_math_engine", "method": "GET", "path": "/api/kuhul/math-engine", "status": "sidecar_contract", "handler": "kuhul_math_engine.describe"},
+    {"name": "kuhul_math_parse", "method": "POST", "path": "/api/kuhul/math-engine/parse", "status": "sidecar_contract", "body": ["expression", "policy"], "handler": "kuhul_math_engine.parse"},
+    {"name": "kuhul_math_compile", "method": "POST", "path": "/api/kuhul/math-engine/compile", "status": "sidecar_contract", "body": ["expression", "policy"], "handler": "kuhul_math_engine.compile"},
+    {"name": "kuhul_math_execute", "method": "POST", "path": "/api/kuhul/math-engine/execute", "status": "requires_policy", "body": ["expression", "precision", "policy"], "handler": "kuhul_math_engine.execute"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/kuhul-math-engine.json",
+    "ids": ["KUHUL-MATH-ENGINE", "MATH-GLYPH-REGISTRY", "JS-MATH-EXECUTOR"]
+  }
+}

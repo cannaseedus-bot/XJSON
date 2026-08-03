@@ -1,0 +1,9 @@
+{
+  "@sidecar": {"id":"asx.runtime.nodes.v1","kind":"semantic_graph_manifest","status":"draft","role":"node_contract_registry"},
+  "@nodes": {
+    "definition": "Nodes are executable or declarative units in the XCFE/KUHUL graph.",
+    "types": ["pure","io","model","sidecar","sco","gpu","ui","file","batch","thread"],
+    "rule": "Nodes become executable only when bound to a known op, route, sidecar, SCO alias, or model adapter."
+  },
+  "@schema": {"node":{"id":"string","type":"string","phase":"string","op":"string","inputs":"object","outputs":"object","guards":"array"}}
+}

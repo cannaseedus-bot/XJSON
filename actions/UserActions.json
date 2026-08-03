@@ -1,0 +1,26 @@
+{
+  "class": "UserActions",
+  "methods": {
+    "getUser": {
+      "params": ["id"],
+      "body": [
+        { "op": "load", "from": "data/users.json", "into": "users" },
+        { "op": "find", "array": "$users", "where": { "id": "$id" }, "into": "user" },
+        { "op": "json", "value": "$user" },
+        { "op": "return", "value": "$user" }
+      ]
+    },
+    "createUser": {
+      "params": ["user"],
+      "body": [
+        { "op": "load", "from": "data/users.json", "into": "users" },
+        { "op": "push", "array": "$users", "value": "$user" },
+        { "op": "save", "to": "data/users.json", "value": "$users" },
+        { "op": "status", "value": 201 },
+        { "op": "json", "value": "$user" },
+        { "op": "return", "value": "$user" }
+      ]
+    }
+  }
+}
+

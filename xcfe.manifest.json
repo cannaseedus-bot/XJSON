@@ -1,0 +1,87 @@
+{
+  "@sidecar": {
+    "id": "asx.xcfe.authority.v1",
+    "kind": "runtime_authority_contract",
+    "status": "frozen",
+    "role": "verifier_runtime_policy"
+  },
+  "@xcfe": {
+    "stdlib": "xcfe://stdlib/v1",
+    "runtime_walk": "xcfe://spec/runtime-walk/v1",
+    "verifier": "xcfe://spec/static-verifier/v1",
+    "ast_schema": "xcfe://schema/ast-node/v1",
+    "pack_manifest_schema": "xcfe://schema/pack-manifest/v1",
+    "policy_schema": "xcfe://schema/policy/v1",
+    "proof_envelope": "xcfe://schema/proof-envelope/v1"
+  },
+  "@stdlib": {
+    "core": ["@seq", "@par", "@if", "@switch", "@for", "@while", "@try", "@catch", "@finally", "@throw", "@halt"],
+    "async": ["@await", "@spawn", "@join", "@sleep", "@cancel"],
+    "state": ["@var", "@const", "@get", "@set", "@unset", "@push", "@pop", "@merge"],
+    "type": ["@array", "@map", "@object", "@class", "@new", "@typeof"],
+    "math": ["@calc", "@hash", "@encode", "@decode", "@rand"],
+    "log": ["@log", "@trace", "@metric"],
+    "import": ["@import", "@cap.list", "@cap.require", "@cap.revoke"],
+    "net": ["@http.get", "@http.post", "@http.request", "@ipc.pipe", "@ipc.write", "@ipc.read", "@ws.connect", "@ws.send", "@ws.close", "@on"],
+    "io": ["@file.read", "@file.write", "@dir.list", "@kv.get", "@kv.set", "@idb.query"],
+    "ui": ["@window", "@dom.set", "@css.var.set", "@ui.emit"],
+    "gpu": ["@gpu.dispatch", "@gpu.buffer.write", "@gpu.buffer.read"],
+    "ai": ["@ai.infer", "@ai.embed", "@ai.image.infer"]
+  },
+  "@static_verifier": {
+    "input": ["program_text", "stdlib", "installed_packs", "runtime_policy", "environment_target"],
+    "output": ["PASS", "FAIL", "diagnostics", "conformance_hash"],
+    "rules": ["known_verbs_only", "capability_binding", "schema_params", "bounded_loops", "bounded_concurrency", "seeded_nondet", "expr_no_at_verbs", "pack_eval_false"]
+  },
+  "@runtime_walk": {
+    "precondition": "verified_ast_pass",
+    "execute": "exec_nodes_only",
+    "state_spaces": ["state", "store", "caps", "tasks", "events"],
+    "scheduler": "deterministic_source_order_round_robin_for_tasks"
+  },
+  "@pack_manifest": {
+    "schema": "xcfe://schema/pack-manifest/v1",
+    "law": "A pack declares verbs and capabilities. It does not execute at import time.",
+    "capabilities": ["network", "filesystem", "gpu", "process", "eval", "crypto", "dom"],
+    "eval": false
+  },
+  "@policy": {
+    "schema": "xcfe://schema/policy/v1",
+    "default": "deny",
+    "grants": ["network", "filesystem", "process", "gpu", "crypto", "dom", "ipc", "ui", "audio", "video"],
+    "limits": ["max_concurrency", "max_tasks", "max_recursion", "timeout_ms", "cpu_ms", "gpu_ms", "max_expr_bytes"]
+  },
+  "@proof_envelope": {
+    "schema": "xcfe://schema/proof-envelope/v1",
+    "signs": ["program_hash", "ast_hash", "stdlib_hash", "pack_hashes", "policy_hash", "intent", "kid", "alg"],
+    "primary_alg": "ed25519",
+    "scope": ["program", "program+snapshot"]
+  },
+  "@crypto_pack": {
+    "id": "xcfe://pack/crypto_scx_auth/v1",
+    "optional": true,
+    "verbs": ["@crypto.session.bind", "@crypto.kdf.derive", "@crypto.sign", "@crypto.verify", "@crypto.encrypt", "@crypto.decrypt", "@crypto.hash", "@scx.chain.init", "@scx.chain.append", "@scx.chain.prove", "@scx.chain.verify", "@securolink.env.load", "@oauth.session.assert"],
+    "secret_rule": "No secrets in program text; only handles or session-bound references."
+  },
+  "@session_binding": {
+    "schema": "xcfe://schema/session-binding/v1",
+    "modes": ["oauth", "securolink"],
+    "hash_rule": "sha256(canonical_json(session_binding_without_raw_token))"
+  },
+  "@scx_chain": {
+    "schema": "xcfe://schema/scx-chain/v1",
+    "mode": "sequential",
+    "event_hash_rule": "hash body_scx, bind prev/program/policy/session, sign event_hash",
+    "append_only": true
+  },
+  "@capabilities": {
+    "default": "deny",
+    "unknown_verb": "reject",
+    "capability_mismatch": "reject",
+    "nondet_without_seed": "reject"
+  },
+  "@determinism": {
+    "classes": ["pure", "io", "nondet"],
+    "strict_replay": "requires externalized time/network/nondet inputs"
+  }
+}

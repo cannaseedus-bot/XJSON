@@ -1,0 +1,17 @@
+{
+  "@sidecar": {"id":"asx.runtime.scxq2.v1","kind":"binary_runtime_manifest","status":"draft","role":"scxq2_binary_container_contract"},
+  "@scxq2": {
+    "definition":"SCXQ2 is the ASX binary format for compressed symbolic/tensor/runtime envelopes.",
+    "rule":"SCXQ2 manifests declare layout, dictionary, lanes, validation, and replay rules before load.",
+    "factory_pipeline": "micronaut.json -> scxq2_envelope -> bson.micronaut.json"
+  },
+  "@binary": {"container":"scxq2","uses":["compression","transport","storage","replay","binary_execution_envelope"]},
+  "@packer": {
+    "input": "micronaut.json",
+    "output": "scxq2_envelope",
+    "next": "bson.micronaut.json",
+    "key_formula": "semantic_key = glyph + lane + binary_runtime_array",
+    "requires": ["glyph", "lane", "phase", "checksum", "policy"],
+    "forbidden": ["pack_unvalidated_manifest", "drop_provenance", "execute_packed_bytes"]
+  }
+}

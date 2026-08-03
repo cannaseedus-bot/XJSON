@@ -1,0 +1,170 @@
+{
+  "@sidecar": {
+    "id": "asx.runtime.lanes.v1",
+    "kind": "lane_manifest",
+    "status": "draft",
+    "role": "runtime_dispatch_lane_contract"
+  },
+  "@lanes": {
+    "definition": "Lanes are concrete dispatch domains inside a phase-angle cell. They bind glyphs, tools, models, APIs, math engines, NNC runtimes, storage codecs, and evidence handlers.",
+    "axis": "cell_inner",
+    "pairs_with": ["phases.manifest.json", "angles.manifest.json"],
+    "cell_address": "phase.angle.lane",
+    "position_notation": {
+      "format": "λlane",
+      "readable_cell_format": "Fold[Angle:Lane]",
+      "compact_cell_format": "Φy.αx.λlane",
+      "examples": {
+        "λnnc": "nnc",
+        "λmath_engine": "math_engine",
+        "λbson": "bson",
+        "λbot": "bot",
+        "λpolicy": "policy",
+        "λevidence": "evidence"
+      }
+    },
+    "rule": "A lane may route to a runtime only after phase and angle admission. Lanes do not bypass Crown, policy, or XCFE verification.",
+    "canonical": [
+      "contract",
+      "manifest",
+      "schema",
+      "xjson",
+      "glyph",
+      "kuhul",
+      "parser",
+      "nnc",
+      "nnc_runtime",
+      "math",
+      "math_engine",
+      "tensor",
+      "geometry",
+      "scxq2",
+      "bson",
+      "model",
+      "api",
+      "tool",
+      "agent",
+      "micronaut",
+      "bot",
+      "native",
+      "gpu",
+      "ui",
+      "file",
+      "event",
+      "policy",
+      "crown",
+      "actor",
+      "validator",
+      "evidence",
+      "replay",
+      "logs",
+      "memory"
+    ]
+  },
+  "@lane_contracts": {
+    "nnc": {
+      "purpose": "Neural Net Code notation, semantic tree construction, and layer planning.",
+      "angles": ["symbolic", "tensor", "admission"],
+      "phases": ["Wo", "Yax"],
+      "sidecars": ["asx-nnc.manifest.json", "nnc-xsd-neural-grammar.manifest.json"]
+    },
+    "nnc_runtime": {
+      "purpose": "Admitted NNC forward-pass or compressed NNC execution.",
+      "angles": ["runtime", "tensor"],
+      "phases": ["Sek"],
+      "routes": ["/api/nnc/execute", "/api/nnc/decompress-execute"]
+    },
+    "math": {
+      "purpose": "Mathematical notation, constants, glyphs, and expression binding.",
+      "angles": ["symbolic", "tensor", "geometry"],
+      "phases": ["Wo", "Sek"],
+      "sidecars": ["kuhul-math-engine.manifest.json", "mathml-nnc-xsd-neural-grammar.manifest.json"]
+    },
+    "math_engine": {
+      "purpose": "Admitted scalar/vector/math execution and geometry math projection.",
+      "angles": ["runtime", "geometry", "projection"],
+      "phases": ["Sek", "Ch'en"],
+      "routes": ["/api/kuhul/math-engine/parse", "/api/kuhul/math-engine/compile", "/api/kuhul/math-engine/execute"]
+    },
+    "tensor": {
+      "purpose": "Vectors, matrices, weights, binary runtime arrays, and typed tensor surfaces.",
+      "angles": ["tensor"],
+      "phases": ["Wo", "Sek", "Xul"],
+      "requires": ["dtype", "shape", "checksum"]
+    },
+    "geometry": {
+      "purpose": "SVG/vector screen, 3D, spatial graph, and render-kernel dispatch.",
+      "angles": ["geometry", "projection"],
+      "phases": ["Sek", "Ch'en"],
+      "sidecars": ["ir.manifest.json", "mx2lm-api-brain.manifest.json"]
+    },
+    "scxq2": {
+      "purpose": "SCXQ2 packing, compression, transport, replay, and binary envelopes.",
+      "angles": ["tensor", "runtime", "evidence"],
+      "phases": ["Sek", "Xul"],
+      "sidecars": ["scxq2.manifest.json"]
+    },
+    "bson": {
+      "purpose": "BSON micronaut documents keyed by glyph + lane + binary runtime array.",
+      "angles": ["tensor", "evidence"],
+      "phases": ["Sek", "Xul"],
+      "routes": ["/api/bson-micronaut", "/api/bson-micronaut/admit", "/api/bson-micronaut/decode"]
+    },
+    "bot": {
+      "purpose": "Research micronaut creation, scrape admission, evidence packaging, and answer synthesis.",
+      "angles": ["capability", "runtime", "evidence"],
+      "phases": ["Yax", "Sek", "Xul"],
+      "sidecars": ["bots.manifest.json"],
+      "native_adapter": "src/bots.cpp"
+    },
+    "micronaut": {
+      "purpose": "Micronaut factory, SCXQ2 packer, BSON binding, and worker/job dispatch.",
+      "angles": ["contract", "capability", "runtime"],
+      "phases": ["Pop", "Yax", "Sek"],
+      "routes": ["/api/micronaut/factory", "/api/micronaut/factory/pack-scxq2", "/api/micronaut/factory/bind-bson"]
+    },
+    "policy": {
+      "purpose": "Admission, capability gating, Crown clamp, and permission checks.",
+      "angles": ["admission"],
+      "phases": ["Yax"],
+      "sidecars": ["crown-matrix.manifest.json", "actor-matrix.manifest.json"]
+    },
+    "evidence": {
+      "purpose": "Proofs, source provenance, replay records, route decisions, hashes, and validation reports.",
+      "angles": ["evidence"],
+      "phases": ["Xul"],
+      "sidecars": ["logs.manifest.json", "events.manifest.json", "bots.manifest.json"]
+    }
+  },
+  "@glyph_binding": {
+    "source": "glyphs.manifest.json",
+    "rule": "Glyphs become executable only after symbol resolution binds glyph -> lane -> opcode inside a legal phase-angle cell."
+  },
+  "@routes": [
+    {
+      "name": "lanes_manifest",
+      "method": "GET",
+      "path": "/api/lanes",
+      "status": "sidecar_contract",
+      "handler": "lanes.describe"
+    },
+    {
+      "name": "lane_resolve",
+      "method": "POST",
+      "path": "/api/lanes/resolve",
+      "status": "sidecar_contract",
+      "body": ["phase", "angle", "lane", "glyph", "policy"],
+      "handler": "lanes.resolve"
+    }
+  ],
+  "@schema": {
+    "lane": {
+      "id": "string",
+      "purpose": "string",
+      "angles": "array",
+      "phases": "array",
+      "routes": "array",
+      "sidecars": "array"
+    }
+  }
+}

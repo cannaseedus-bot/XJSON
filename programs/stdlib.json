@@ -1,0 +1,166 @@
+{
+  "_comment": "json-runtime stdlib v2 -- all ops route to 5 native primitives",
+  "_primitives": ["native.READ","native.WRITE","native.STACK","native.PROGRAM","native.PHASE","native.EVAL","native.HASH","native.CALL"],
+
+  "@ops": {
+    "_comment_state": "── State ops (native.READ / native.WRITE) ──────────────────────────",
+
+    "GET":    { "@type": "primitive", "@impl": "native.READ",  "@fn": "read"   },
+    "SET":    { "@type": "primitive", "@impl": "native.WRITE", "@fn": "write"  },
+    "STORE":  { "@type": "primitive", "@impl": "native.WRITE", "@fn": "write"  },
+    "EXISTS": { "@type": "primitive", "@impl": "native.READ",  "@fn": "exists" },
+    "DELETE": { "@type": "primitive", "@impl": "native.WRITE", "@fn": "delete" },
+    "KEYS":   { "@type": "primitive", "@impl": "native.READ",  "@fn": "keys"   },
+    "VALUES": { "@type": "primitive", "@impl": "native.READ",  "@fn": "values" },
+    "SIZE":   { "@type": "primitive", "@impl": "native.READ",  "@fn": "size"   },
+
+    "_comment_math": "── Math ops (native.EVAL) ───────────────────────────────────────────",
+
+    "ADD":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "add"   },
+    "SUB":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "sub"   },
+    "MUL":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "mul"   },
+    "DIV":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "div"   },
+    "MOD":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "mod"   },
+    "POW":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "pow"   },
+    "MIN":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "min"   },
+    "MAX":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "max"   },
+    "ABS":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "abs"   },
+    "FLOOR": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "floor" },
+    "CEIL":  { "@type": "primitive", "@impl": "native.EVAL", "@fn": "ceil"  },
+    "SQRT":  { "@type": "primitive", "@impl": "native.EVAL", "@fn": "sqrt"  },
+    "CLAMP": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "clamp" },
+
+    "_comment_logic": "── Logic ops (native.EVAL) ──────────────────────────────────────────",
+
+    "EQ":    { "@type": "primitive", "@impl": "native.EVAL", "@fn": "eq"  },
+    "NEQ":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "neq" },
+    "GT":    { "@type": "primitive", "@impl": "native.EVAL", "@fn": "gt"  },
+    "LT":    { "@type": "primitive", "@impl": "native.EVAL", "@fn": "lt"  },
+    "GTE":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "gte" },
+    "LTE":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "lte" },
+    "AND":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "and" },
+    "OR":    { "@type": "primitive", "@impl": "native.EVAL", "@fn": "or"  },
+    "NOT":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "not" },
+    "XOR":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "xor" },
+
+    "_comment_bit": "── Bitwise ops (native.EVAL) ────────────────────────────────────────",
+
+    "BIT_AND": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "band" },
+    "BIT_OR":  { "@type": "primitive", "@impl": "native.EVAL", "@fn": "bor"  },
+    "BIT_XOR": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "bxor" },
+    "BIT_SHL": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "shl"  },
+    "BIT_SHR": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "shr"  },
+
+    "_comment_flow": "── Flow control (native.EVAL) ───────────────────────────────────────",
+
+    "IF":     { "@type": "primitive", "@impl": "native.EVAL", "@fn": "if"     },
+    "LOOP":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "loop"   },
+    "MAP":    { "@type": "primitive", "@impl": "native.EVAL", "@fn": "map"    },
+    "FILTER": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "filter" },
+    "REDUCE": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "reduce" },
+
+    "_comment_io": "── IO (native.EVAL) ─────────────────────────────────────────────────",
+
+    "LOG":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "log" },
+    "PRINT": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "log" },
+
+    "_comment_meta": "── Meta / reflection (native.EVAL) ─────────────────────────────────",
+
+    "DEFINE_OP": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "define"    },
+    "DELETE_OP": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "undef"     },
+    "LIST_OPS":  { "@type": "primitive", "@impl": "native.EVAL", "@fn": "list"      },
+    "EVAL":      { "@type": "primitive", "@impl": "native.EVAL", "@fn": "eval"      },
+    "NEGOTIATE": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "negotiate" },
+
+    "_comment_hash": "── Content hashing (native.HASH) ───────────────────────────────────",
+
+    "HASH":    { "@type": "primitive", "@impl": "native.HASH" },
+    "SHA256":  { "@type": "primitive", "@impl": "native.HASH" },
+
+    "_comment_call": "── External dispatch (native.CALL) ─────────────────────────────────",
+
+    "CALL":         { "@type": "primitive", "@impl": "native.CALL" },
+    "LOAD_SIDECAR": { "@type": "primitive", "@impl": "native.CALL", "@target": "sidecar://loader/load" },
+    "GPU_DISPATCH": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "dispatch" },
+    "FUNCTION_CALL": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "function_call" },
+    "TENSOR_ALLOC":  { "@type": "primitive", "@impl": "native.EVAL", "@fn": "alloc" },
+    "TENSOR_COPY":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "copy" },
+    "TENSOR_REGISTER": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "tensor_register" },
+    "TENSOR_GET":    { "@type": "primitive", "@impl": "native.EVAL", "@fn": "tensor_get" },
+    "TENSOR_EXISTS": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "tensor_exists" },
+    "TENSOR_REMOVE": { "@type": "primitive", "@impl": "native.EVAL", "@fn": "tensor_remove" },
+    "TENSOR_LIST":   { "@type": "primitive", "@impl": "native.EVAL", "@fn": "tensor_list" },
+    "MATMUL":        { "@type": "primitive", "@impl": "native.EVAL", "@fn": "matmul" },
+    "GEMM":          { "@type": "primitive", "@impl": "native.EVAL", "@fn": "matmul" },
+    "RELU":          { "@type": "primitive", "@impl": "native.EVAL", "@fn": "relu" },
+    "SOFTMAX":       { "@type": "primitive", "@impl": "native.EVAL", "@fn": "softmax" },
+    "PUSH":         { "@type": "primitive", "@impl": "native.STACK", "@fn": "push" },
+    "POP":          { "@type": "primitive", "@impl": "native.STACK", "@fn": "pop" },
+    "EXEC":         { "@type": "primitive", "@impl": "native.PROGRAM", "@fn": "exec" },
+    "PHASE":        { "@type": "primitive", "@impl": "native.PHASE", "@fn": "phase" },
+    "FOLD":         { "@type": "primitive", "@impl": "native.PHASE", "@fn": "fold" },
+    "TRANSITION":   { "@type": "primitive", "@impl": "native.PHASE", "@fn": "transition" },
+    "PHASE_MANIFOLD": { "@type": "primitive", "@impl": "native.PHASE", "@fn": "manifold" },
+
+    "_comment_delta": "── Delta stream (XCFE apply_delta) ─────────────────────────────────",
+
+    "FRAME": {
+      "@type": "composed",
+      "@exec": { "@op": "EVAL", "@fn": "eval" }
+    },
+
+    "_comment_sco": "── SCO ops (native.CALL with sco:// URIs) ─────────────────────────",
+
+    "SCO_LOAD": {
+      "@type": "composed",
+      "@in":   ["ref"],
+      "@out":  "sco_result",
+      "@exec": { "@op": "CALL", "@target": "$ref" }
+    },
+
+    "SCO_HASH": {
+      "@type": "composed",
+      "@in":   ["value"],
+      "@out":  "sco_id",
+      "@exec": { "@op": "HASH", "@in": ["$value"] }
+    },
+
+    "_comment_composed": "── Example composed ops (pure JSON, no C++) ────────────────────────",
+
+    "SQUARE": {
+      "@type": "composed",
+      "@in":   ["n"],
+      "@out":  "n2",
+      "@exec": { "@op": "MUL", "@in": ["$n", "$n"] }
+    },
+
+    "CUBE": {
+      "@type": "composed",
+      "@in":   ["n"],
+      "@out":  "n3",
+      "@exec": { "@op": "MUL", "@in": ["$n", "$n"] }
+    },
+
+    "NEG": {
+      "@type": "composed",
+      "@in":   ["x"],
+      "@out":  "result",
+      "@exec": { "@op": "SUB", "@in": ["0", "$x"] }
+    },
+
+    "SIGN": {
+      "@type": "composed",
+      "@in":   ["x"],
+      "@out":  "result",
+      "@exec": {
+        "@op": "IF",
+        "@cond": { "@op": "GT", "@args": ["$x", 0] },
+        "@then": 1,
+        "@else": { "@op": "IF",
+                   "@cond": { "@op": "LT", "@args": ["$x", 0] },
+                   "@then": -1,
+                   "@else": 0 }
+      }
+    }
+  }
+}

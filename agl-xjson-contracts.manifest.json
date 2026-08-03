@@ -1,0 +1,74 @@
+{
+  "@sidecar": {
+    "id": "asx.agl.xjson.contracts.v1",
+    "kind": "agl_xjson_contract_manifest",
+    "status": "draft",
+    "role": "xjson_contract_layer_for_agl_glyph_execution"
+  },
+  "@agl_xjson_contracts": {
+    "schema": "agl://contracts/v1",
+    "authority": "XJSON_XCFE",
+    "description": "XJSON contract registry that makes AGL glyphs typed, validated, phase-bound, and executable through admitted K'UHUL phases.",
+    "equation": "AGL = XJSON(contracts) + K'UHUL(phases) + JavaScript(runtime)",
+    "principle": "XJSON is valid JSON with reserved @ keys. A glyph becomes executable only after its XJSON contract validates inputs, phase, output, runtime, and policy."
+  },
+  "@reserved_keys": {
+    "@glyph": "Defines the AGL symbol.",
+    "@type": "Type annotation.",
+    "@schema": "Input/output schema definition.",
+    "@execute": "Execution configuration.",
+    "@if": "Conditional guard.",
+    "@then": "Conditional true branch.",
+    "@else": "Conditional false branch.",
+    "@for": "Iteration source.",
+    "@render": "Render projection.",
+    "@bind": "Data binding.",
+    "@component": "Component definition.",
+    "@kuhul": "K'UHUL phase reference.",
+    "@validate": "Input validation rules."
+  },
+  "@contracts": {
+    "control": {
+      "⟁": {"@name": "block", "@description": "Execution boundary marker", "@phase": "Pop"},
+      "Pop": {"@name": "activate", "@description": "Initialize execution phase"},
+      "Wo": {"@name": "intention", "@description": "Declare intent and bind input"},
+      "Yax": {"@name": "store", "@description": "Persist to memory or route plan"},
+      "Sek": {"@name": "execute", "@description": "Perform computation or operation", "@async": true},
+      "Ch'en": {"@name": "render", "@description": "Output to DOM or response"},
+      "Xul": {"@name": "complete", "@description": "End execution boundary"}
+    },
+    "math": {
+      "∫": {"@name": "integrate", "@category": "calculus", "@input": {"expr": "string", "lower": "number", "upper": "number"}, "@output": {"@type": "number"}, "@method": "simpson", "@phase": "Sek"},
+      "∂": {"@name": "derivative", "@category": "calculus", "@input": {"expr": "string", "at": "number"}, "@output": {"@type": "number"}, "@method": "central_difference", "@phase": "Sek"},
+      "∑": {"@name": "summation", "@category": "calculus", "@input": {"expr": "string", "start": "integer", "end": "integer"}, "@output": {"@type": "number"}, "@phase": "Sek"},
+      "∏": {"@name": "product", "@category": "calculus", "@input": {"expr": "string", "start": "integer", "end": "integer"}, "@output": {"@type": "number"}, "@phase": "Sek"},
+      "√": {"@name": "sqrt", "@category": "math", "@input": {"@type": "number"}, "@output": {"@type": "number"}, "@phase": "Sek"},
+      "π": {"@name": "pi", "@type": "constant", "@value": 3.141592653589793},
+      "e": {"@name": "euler", "@type": "constant", "@value": 2.718281828459045},
+      "∞": {"@name": "infinity", "@type": "constant", "@value": "Infinity"}
+    },
+    "dom": {
+      "◇": {"@name": "element", "@category": "dom", "@input": {"tag": "string", "attrs": "object", "children": "array"}, "@output": {"@type": "HTMLElement"}, "@phase": "Ch'en"},
+      "⬢": {"@name": "render", "@category": "dom", "@input": {"@type": "any"}, "@output": {"@type": "void"}, "@phase": "Ch'en"}
+    },
+    "api": {
+      "⚡": {"@name": "fetch", "@category": "api", "@input": {"method": "string", "url": "string", "body": "any?"}, "@output": {"@type": "Response"}, "@phase": "Sek", "@async": true},
+      "↓": {"@name": "get", "@category": "api", "@input": {"@type": "string"}, "@output": {"@type": "any"}, "@phase": "Sek", "@async": true},
+      "↑": {"@name": "post", "@category": "api", "@input": {"url": "string", "data": "any"}, "@output": {"@type": "any"}, "@phase": "Sek", "@async": true}
+    }
+  },
+  "@routes": [
+    {"name": "agl_xjson_contracts", "method": "GET", "path": "/api/agl-xjson/contracts", "status": "sidecar_contract", "handler": "agl_xjson.contracts"},
+    {"name": "agl_xjson_resolve", "method": "POST", "path": "/api/agl-xjson/resolve", "status": "sidecar_contract", "body": ["glyph", "expression", "policy"], "handler": "agl_xjson.resolve"},
+    {"name": "agl_xjson_validate", "method": "POST", "path": "/api/agl-xjson/validate", "status": "sidecar_contract", "body": ["contract", "input", "policy"], "handler": "agl_xjson.validate"},
+    {"name": "agl_xjson_execute", "method": "POST", "path": "/api/agl-xjson/execute", "status": "requires_policy", "body": ["glyph", "input", "runtime", "policy"], "handler": "agl_xjson.execute"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/agl-xjson-contracts.json",
+    "ids": ["AGL-XJSON-CONTRACTS", "AGL-GLYPH-RESOLVER", "XJSON-CONTRACT-VALIDATOR"]
+  },
+  "@policy": {
+    "execution_requires": ["contract_lookup", "schema_validation", "phase_admission", "runtime_allowlist", "policy"],
+    "forbidden": ["uncontracted_glyph_execution", "secret_in_public_contracts", "network_without_route_admission"]
+  }
+}

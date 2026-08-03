@@ -1,0 +1,8 @@
+{
+  "@sidecar": {"id":"asx.runtime.processes.v1","kind":"process_manifest","status":"draft","role":"process_topology_registry"},
+  "@processes": {
+    "definition": "Processes are OS or runtime tasks started only through explicit native-build/script/tool admission.",
+    "rule": "Process manifests declare allowed executable paths and arguments; they do not grant execution by themselves."
+  },
+  "@schema": {"process":{"id":"string","exe":"string","args":"array","cwd":"string","env":"object","timeout_ms":"integer","policy":"object"}}
+}

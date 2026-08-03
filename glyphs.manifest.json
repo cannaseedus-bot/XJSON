@@ -1,0 +1,52 @@
+{
+  "@sidecar": {"id":"asx.runtime.glyphs.v1","kind":"glyph_opcode_manifest","status":"draft","role":"glyph_lane_opcode_registry"},
+  "@glyphs": {
+    "definition": "Glyphs are surface symbols that may bind to folds, lanes, and opcodes after symbol resolution.",
+    "rule": "Glyphs, lanes, and opcodes become equivalent only inside legal fold, angle, and phase-manifold admission."
+  },
+  "@canonical_glyph_registry": {
+    "folds": {
+      "Pop": {"meaning":"Load / Perceive","glyph":"◉","phase":0,"angle":"0","radians":0},
+      "Wo": {"meaning":"Represent / Build","glyph":"⬢","phase":1,"angle":"π/3","radians":1.0471975511965976},
+      "Yax": {"meaning":"Plan / Predict","glyph":"△","phase":2,"angle":"2π/3","radians":2.0943951023931953},
+      "Sek": {"meaning":"Execute / Transform","glyph":"✦","phase":3,"angle":"π","radians":3.141592653589793},
+      "Ch'en": {"meaning":"Project / Reflect","glyph":"◇","phase":4,"angle":"4π/3","radians":4.1887902047863905},
+      "Xul": {"meaning":"Collapse / Replay","glyph":"⬡","phase":5,"angle":"5π/3","radians":5.235987755982989}
+    },
+    "structural": {
+      "⟁": "System Fold",
+      "⨀": "Tensor Core",
+      "⨗": "Compression",
+      "⨕": "Fold Gate",
+      "⤸": "Golden Spiral",
+      "⥀": "Recursive Learning",
+      "⧉": "Fibonacci Window"
+    },
+    "geometry": {
+      "∼": "Similarity",
+      "≅": "Geometric Similarity",
+      "↻": "Rotation",
+      "↔": "Reflection",
+      "⟿": "Flow"
+    },
+    "constants": {
+      "π": "Phase Manifold",
+      "φ": "Golden Ratio"
+    }
+  },
+  "@fold_op_notation": {
+    "readable": "Fold[Angle:Lane]",
+    "compact": "Φn.αn.λlane",
+    "glyph_compact": "Glyph[Angle:Lane]",
+    "examples": {
+      "◉[contract:manifest]": "Pop[contract:manifest]",
+      "⬢[symbolic:nnc]": "Wo[symbolic:nnc]",
+      "△[admission:policy]": "Yax[admission:policy]",
+      "✦[runtime:math_engine]": "Sek[runtime:math_engine]",
+      "◇[projection:ui]": "Ch'en[projection:ui]",
+      "⬡[evidence:archive]": "Xul[evidence:archive]"
+    }
+  },
+  "@lanes": ["phase","memory","tensor","gpu","agent","model","file","event"],
+  "@opcodes": ["Pop","Wo","Yax","Sek","Ch'en","Xul","PHASE","FOLD","TRANSITION"]
+}

@@ -1,0 +1,47 @@
+{
+  "@sidecar": {
+    "id": "asx.kuhul.cluster_analytics.v1",
+    "kind": "kuhul_cluster_analytics_manifest",
+    "status": "draft",
+    "role": "character_ecosystem_cluster_analytics_contract"
+  },
+  "@kuhul_cluster_analytics": {
+    "schema": "xjson://schema/kuhul.cluster_analytics/v1",
+    "authority": "KUHUL_XCFE",
+    "description": "JSON contract for the K'UHUL pi Cluster Analytics Engine: character ecosystem metrics, archetype distribution, connection graph, memory timeline, optimization recommendations, and predictive simulations.",
+    "dataset_shape": {
+      "characters": ["id", "archetype", "position", "traits", "connections", "memory"],
+      "clusters": ["id", "characterCount", "cognitivePattern"],
+      "metrics": ["totalCharacters", "totalRuntimes", "cognitiveCycles", "totalConnections"]
+    }
+  },
+  "@archetypes": {
+    "Analyst": {"symbol": "pi", "color": "#16f2aa", "traits": ["logical", "precise", "calculating"]},
+    "Creator": {"symbol": "phi", "color": "#a78bfa", "traits": ["imaginative", "synthetic", "expressive"]},
+    "Guardian": {"symbol": "sigma", "color": "#fbbf24", "traits": ["stable", "protective", "maintaining"]},
+    "Explorer": {"symbol": "infinity", "color": "#22d3ee", "traits": ["curious", "probing", "expansive"]},
+    "Synthesizer": {"symbol": "oplus", "color": "#ff3366", "traits": ["integrative", "bridging", "composing"]}
+  },
+  "@analytics": {
+    "passes": ["analyze_archetypes", "analyze_connections", "analyze_memory", "analyze_clusters", "generate_insights", "generate_optimizations"],
+    "metrics": ["connection_density", "average_degree", "isolated_nodes", "hub_nodes", "memory_distribution", "cluster_density", "archetype_centrality"],
+    "optimization_types": ["connection", "balance", "cluster", "bridge"]
+  },
+  "@routes": [
+    {"name": "kuhul_cluster_analytics", "method": "GET", "path": "/api/kuhul/cluster-analytics", "status": "sidecar_contract", "handler": "kuhul_cluster_analytics.describe"},
+    {"name": "kuhul_cluster_analyze", "method": "POST", "path": "/api/kuhul/cluster-analytics/analyze", "status": "sidecar_contract", "body": ["ecosystem", "policy"], "handler": "kuhul_cluster_analytics.analyze"},
+    {"name": "kuhul_cluster_optimize", "method": "POST", "path": "/api/kuhul/cluster-analytics/optimize", "status": "requires_policy", "body": ["ecosystem", "strategy", "policy"], "handler": "kuhul_cluster_analytics.optimize"},
+    {"name": "kuhul_cluster_simulate", "method": "POST", "path": "/api/kuhul/cluster-analytics/simulate", "status": "requires_policy", "body": ["ecosystem", "cycles", "policy"], "handler": "kuhul_cluster_analytics.simulate"},
+    {"name": "kuhul_cluster_export", "method": "POST", "path": "/api/kuhul/cluster-analytics/export", "status": "requires_policy", "body": ["ecosystem", "analytics", "target", "policy"], "handler": "kuhul_cluster_analytics.export"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/kuhul-cluster-analytics.json",
+    "ids": ["KUHUL-CLUSTER-ANALYTICS", "ARCHETYPE-GRAPH-ANALYST", "CLUSTER-OPTIMIZER"]
+  },
+  "@policy": {
+    "analysis_is_read_only": true,
+    "optimization_requires": ["explicit_policy", "diff_preview", "replay_event"],
+    "export_requires": ["target_scope", "policy"],
+    "forbidden": ["implicit_dataset_mutation", "silent_download", "browser_alert_as_authority"]
+  }
+}

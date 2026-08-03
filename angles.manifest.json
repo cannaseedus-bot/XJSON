@@ -1,0 +1,176 @@
+{
+  "@sidecar": {
+    "id": "asx.runtime.angles.v1",
+    "kind": "angle_manifest",
+    "status": "draft",
+    "role": "horizontal_semantic_axis_contract"
+  },
+  "@angles": {
+    "definition": "Angles are the horizontal semantic views where data unfolds across a fold's phase coordinate. They are not folds, not phases, and do not grant execution.",
+    "axis": "x",
+    "pairs_with": "phases.manifest.json",
+    "cell_address": "phase.angle.lane",
+    "position_notation": {
+      "format": "αx",
+      "base": {
+        "α0": "contract",
+        "α1": "symbolic",
+        "α2": "tensor",
+        "α3": "geometry",
+        "α4": "admission",
+        "α5": "capability",
+        "α6": "projection",
+        "α7": "runtime",
+        "α8": "evidence"
+      },
+      "readable_cell_format": "Fold[Angle:Lane]",
+      "compact_cell_format": "Φy.αx.λlane",
+      "examples": {
+        "Φ0.α0.λmanifest": "Pop[contract:manifest]",
+        "Φ1.α1.λnnc": "Wo[symbolic:nnc]",
+        "Φ2.α4.λpolicy": "Yax[admission:policy]",
+        "Φ3.α7.λmath_engine": "Sek[runtime:math_engine]",
+        "Φ3.α2.λbson": "Sek[tensor:bson]",
+        "Φ4.α6.λui": "Ch'en[projection:ui]",
+        "Φ5.α8.λevidence": "Xul[evidence:evidence]"
+      }
+    },
+    "canonical": [
+      "contract",
+      "symbolic",
+      "tensor",
+      "geometry",
+      "admission",
+      "capability",
+      "projection",
+      "runtime",
+      "evidence"
+    ],
+    "rule": "Fold answers the current semantic state; phase answers its manifold position; angle answers from what semantic side; lane answers which runtime or specialist handles it."
+  },
+  "@axis": {
+    "y": {
+      "name": "phase",
+      "source": "phases.manifest.json",
+      "values": ["Pop", "Wo", "Yax", "Sek", "Ch'en", "Xul"]
+    },
+    "x": {
+      "name": "angle",
+      "source": "angles.manifest.json",
+      "values": [
+        "contract",
+        "symbolic",
+        "tensor",
+        "geometry",
+        "admission",
+        "capability",
+        "projection",
+        "runtime",
+        "evidence"
+      ]
+    },
+    "inside_cell": {
+      "name": "lane",
+      "source": "lanes.manifest.json"
+    }
+  },
+  "@angle_contracts": {
+    "contract": {
+      "purpose": "Manifest, schema, module, and role-reversal authority declarations.",
+      "typical_phases": ["Pop", "Wo"],
+      "lanes": ["contract", "manifest", "schema", "xjson"]
+    },
+    "symbolic": {
+      "purpose": "Glyph, opcode, NNC notation, parser token, and semantic IR binding.",
+      "typical_phases": ["Wo", "Yax"],
+      "lanes": ["glyph", "nnc", "parser", "kuhul"]
+    },
+    "tensor": {
+      "purpose": "Binary runtime arrays, weights, vectors, matrices, and BSON/SCXQ2 tensor envelopes.",
+      "typical_phases": ["Wo", "Sek", "Xul"],
+      "lanes": ["tensor", "scxq2", "bson", "model"]
+    },
+    "geometry": {
+      "purpose": "SVG, vector screen, spatial math, and render-kernel projections.",
+      "typical_phases": ["Sek", "Ch'en"],
+      "lanes": ["geometry", "math", "ui"]
+    },
+    "admission": {
+      "purpose": "Policy, Crown, Actor Matrix, permission, capability, and safety checks.",
+      "typical_phases": ["Yax"],
+      "lanes": ["policy", "crown", "actor", "validator"]
+    },
+    "capability": {
+      "purpose": "Tool, model, API, native, GPU, and specialist capability selection.",
+      "typical_phases": ["Yax", "Sek"],
+      "lanes": ["tool", "model", "api", "gpu", "agent"]
+    },
+    "projection": {
+      "purpose": "DOM, terminal, JSON response, SVG, WPF, and sidecar panel outputs.",
+      "typical_phases": ["Ch'en"],
+      "lanes": ["ui", "api", "event", "file"]
+    },
+    "runtime": {
+      "purpose": "Actual admitted execution surface, native adapter, JS surface, model backend, or worker.",
+      "typical_phases": ["Sek"],
+      "lanes": ["nnc_runtime", "math_engine", "micronaut", "bot", "native"]
+    },
+    "evidence": {
+      "purpose": "Proof, replay, logs, scrape provenance, hash, cache, CHEESE score, and memory consolidation.",
+      "typical_phases": ["Xul"],
+      "lanes": ["evidence", "replay", "logs", "memory", "bot"]
+    }
+  },
+  "@nnc_angles": {
+    "rule": "NNC unfolds horizontally through symbolic, tensor, admission, runtime, projection, and evidence angles while remaining inside the legal phase cycle.",
+    "examples": [
+      "Wo.symbolic.nnc",
+      "Yax.admission.policy",
+      "Sek.tensor.scxq2",
+      "Sek.runtime.nnc_runtime",
+      "Ch'en.projection.ui",
+      "Xul.evidence.replay"
+    ]
+  },
+  "@math_angles": {
+    "rule": "Math engines occupy symbolic, tensor, geometry, runtime, and projection angles without becoming new phases.",
+    "examples": [
+      "Wo.symbolic.math",
+      "Sek.tensor.tensor",
+      "Sek.geometry.math_engine",
+      "Sek.runtime.math_engine",
+      "Ch'en.projection.svg"
+    ]
+  },
+  "@routes": [
+    {
+      "name": "angles_manifest",
+      "method": "GET",
+      "path": "/api/angles",
+      "status": "sidecar_contract",
+      "handler": "angles.describe"
+    },
+    {
+      "name": "angle_cell_resolve",
+      "method": "POST",
+      "path": "/api/angles/cell",
+      "status": "sidecar_contract",
+      "body": ["phase", "angle", "lane", "policy"],
+      "handler": "angles.cell.resolve"
+    }
+  ],
+  "@schema": {
+    "angle": {
+      "id": "string",
+      "purpose": "string",
+      "typical_phases": "array",
+      "lanes": "array"
+    },
+    "cell": {
+      "phase": "string",
+      "angle": "string",
+      "lane": "string",
+      "authority": "object"
+    }
+  }
+}

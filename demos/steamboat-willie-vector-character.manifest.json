@@ -1,0 +1,130 @@
+{
+  "@sidecar": {
+    "id": "asx.demo.steamboat_willie_1928_vector_character.v1",
+    "kind": "animated_character_demo_manifest",
+    "status": "draft_demo",
+    "role": "public_domain_1928_vector_character_ir_demo"
+  },
+  "@demo": {
+    "name": "Steamboat Willie Vector Character Demo",
+    "source_reference": "1928 Steamboat Willie public-domain expression",
+    "asset_policy": "procedural_vectors_only",
+    "runnable_surface": "C:/Users/canna/.ASX.cpp/www/steamboat-willie-vector-demo.html",
+    "not_included": ["film frames", "audio", "copied stills", "Disney logos", "modern Mickey designs"],
+    "trademark_guard": "Use descriptive public-domain reference only. Do not imply Disney affiliation, sponsorship, or endorsement."
+  },
+  "@animated_characters": {
+    "definition": "Animated cartoon characters are live geometric tensors rendered through the unified KIMD x K'UHUL x SVG x D3D11_1 IR.",
+    "animation_law": "Animate geometry, not pixels. Each frame is phase-driven tensor transformation plus deterministic surface render.",
+    "character_types": ["vector_outline", "multi_part_rig", "procedural_glyph_character", "json_driven_motion"]
+  },
+  "@cartoon_character": {
+    "id": "char_steamboat_1928",
+    "style": "monochrome_1928_rubber_hose_reference",
+    "parts": ["head", "ears", "body", "arm_l", "arm_r", "leg_l", "leg_r", "boat_wheel"],
+    "palette": {
+      "ink": "#111111",
+      "paper": "#f3f0e8",
+      "shadow": "#5f5a52",
+      "highlight": "#ffffff"
+    },
+    "shape_rule": "All visible parts are SVG/tensor outlines or filled procedural paths. No raster source art."
+  },
+  "@symbol_table": {
+    "100": "t_head",
+    "101": "t_ear_l",
+    "102": "t_ear_r",
+    "110": "t_body",
+    "120": "t_arm_l",
+    "121": "t_arm_r",
+    "130": "t_leg_l",
+    "131": "t_leg_r",
+    "200": "p_char",
+    "300": "s_char",
+    "400": "backbuffer"
+  },
+  "@tensor_surfaces": {
+    "t_head": { "shape": [64, 2], "phase": "0pi", "source": "procedural_circle_outline" },
+    "t_ear_l": { "shape": [32, 2], "phase": "0pi", "source": "procedural_circle_outline" },
+    "t_ear_r": { "shape": [32, 2], "phase": "0pi", "source": "procedural_circle_outline" },
+    "t_body": { "shape": [96, 2], "phase": "0pi", "source": "procedural_body_outline" },
+    "t_arm_l": { "shape": [48, 2], "phase": "0pi", "source": "rubber_hose_curve" },
+    "t_arm_r": { "shape": [48, 2], "phase": "0pi", "source": "rubber_hose_curve" },
+    "t_leg_l": { "shape": [48, 2], "phase": "0pi", "source": "rubber_hose_curve" },
+    "t_leg_r": { "shape": [48, 2], "phase": "0pi", "source": "rubber_hose_curve" },
+    "t_boat_wheel": { "shape": [128, 2], "phase": "0pi", "source": "procedural_wheel_spokes" }
+  },
+  "@character_rig": {
+    "id": "rig_steamboat_1928",
+    "cluster": "SVGTensorCluster",
+    "plane": "xy",
+    "center": [0.0, 0.0, 0.0],
+    "relationship": "similarity",
+    "parts": {
+      "head": { "tensor": "t_head", "parent": "body", "pivot": [0.0, 0.72] },
+      "ear_l": { "tensor": "t_ear_l", "parent": "head", "pivot": [-0.22, 0.88] },
+      "ear_r": { "tensor": "t_ear_r", "parent": "head", "pivot": [0.22, 0.88] },
+      "body": { "tensor": "t_body", "parent": null, "pivot": [0.0, 0.0] },
+      "arm_l": { "tensor": "t_arm_l", "parent": "body", "pivot": [-0.28, 0.34] },
+      "arm_r": { "tensor": "t_arm_r", "parent": "body", "pivot": [0.28, 0.34] },
+      "leg_l": { "tensor": "t_leg_l", "parent": "body", "pivot": [-0.12, -0.44] },
+      "leg_r": { "tensor": "t_leg_r", "parent": "body", "pivot": [0.12, -0.44] },
+      "boat_wheel": { "tensor": "t_boat_wheel", "parent": null, "pivot": [0.55, 0.12] }
+    }
+  },
+  "@motion": {
+    "phase_delta": "0.01pi",
+    "clips": {
+      "idle_bob": [
+        "scale(t_body, 1.0 + 0.015*sin(phase) -> t_body_bob)",
+        "rotate(t_head, 0.015pi*sin(phase) -> t_head_nod)"
+      ],
+      "wheel_turn": [
+        "rotate(t_boat_wheel, phase -> t_boat_wheel_rot)"
+      ],
+      "rubber_hose_wave": [
+        "shear(t_arm_l, x, 0.02*sin(phase) -> t_arm_l_wave)",
+        "shear(t_arm_r, x, -0.02*sin(phase) -> t_arm_r_wave)"
+      ],
+      "walk_cycle": [
+        "rotate(t_leg_l, 0.05pi*sin(phase) -> t_leg_l_walk)",
+        "rotate(t_leg_r, -0.05pi*sin(phase) -> t_leg_r_walk)"
+      ]
+    }
+  },
+  "@animation_loop": {
+    "frame_rule": "phase = frame_index * 0.01pi",
+    "ops": [
+      "path_from_tensor(t_head_nod -> p_head)",
+      "path_from_tensor(t_body_bob -> p_body)",
+      "path_from_tensor(t_arm_l_wave -> p_arm_l)",
+      "path_from_tensor(t_arm_r_wave -> p_arm_r)",
+      "path_from_tensor(t_leg_l_walk -> p_leg_l)",
+      "path_from_tensor(t_leg_r_walk -> p_leg_r)",
+      "path_from_tensor(t_boat_wheel_rot -> p_boat_wheel)",
+      "surface_compose(s_char, [t_head_nod, t_body_bob, t_arm_l_wave, t_arm_r_wave, t_leg_l_walk, t_leg_r_walk, t_boat_wheel_rot] -> s_char)",
+      "render(s_char -> backbuffer)"
+    ],
+    "replay": {
+      "log": "demos/steamboat-willie-vector-character.irlog",
+      "hash_rule": "sha256(canonical_inputs_outputs_per_frame)"
+    }
+  },
+  "@vector_screen": {
+    "target": "screen.vector.character_demo",
+    "surface": "s_char",
+    "www_demo": "C:/Users/canna/.ASX.cpp/www/steamboat-willie-vector-demo.html",
+    "background": "procedural_steamboat_deck",
+    "render_mode": "monochrome_vector",
+    "debug_overlay": ["phase", "active_clip", "tensor_count", "op_trace", "hash_out"],
+    "rule": "The demo displays the character as vector-screen tensor state, not as copied raster animation."
+  },
+  "@folds": {
+    "pop": "load procedural character tensors and public-domain guard",
+    "wo": "bind symbol table, rig parts, motion clips, and vector-screen target",
+    "yax": "validate tensor shapes, rig pivots, phase law, and trademark guard",
+    "sek": "execute phase-driven transform ops for current frame",
+    "chen": "compose character surface and emit vector-screen/backbuffer state",
+    "xul": "append deterministic animation replay log and verify hash_out"
+  }
+}

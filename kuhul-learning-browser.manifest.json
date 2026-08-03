@@ -1,0 +1,56 @@
+{
+  "@sidecar": {
+    "id": "asx.kuhul.learning_browser.v3",
+    "kind": "kuhul_learning_browser_manifest",
+    "status": "draft",
+    "role": "browser_native_learning_graph_contract"
+  },
+  "@kuhul_learning_browser": {
+    "schema": "xjson://schema/kuhul.learning_browser/v3",
+    "authority": "CROWN_XCFE",
+    "description": "JSON contract for the K'UHUL Learning Browser v3.0: browser-native knowledge graph, attention network, prediction engine, reinforcement learner, 3D knowledge visualization, local brain-state persistence, and learning-path optimization.",
+    "runtime": "browser",
+    "projection": {"language": "html_javascript_css", "surface": "learning_browser_ui"},
+    "rule": "Learning browser state is local/session memory unless Crown admits replay, export, or training dataset promotion."
+  },
+  "@learning_brain": {
+    "entities": ["knowledgeGraph", "learningHistory", "attentionNetwork", "predictiveEngine", "reinforcementLearner", "visualizationEngine"],
+    "metrics": ["knowledgeNodes", "connections", "learningRate", "attention", "sessionTime"],
+    "modes": ["deep", "exploratory", "reinforcement", "creative"],
+    "state_store": {
+      "browser_key": "kuhul-brain-state",
+      "retention": "last_1000_history_entries",
+      "rule": "localStorage is a small local persistence projection, not sealed project memory."
+    }
+  },
+  "@knowledge_graph": {
+    "node_shape": ["id", "topic", "strength", "connections", "metadata", "position"],
+    "connection_shape": ["node", "strength"],
+    "topic_extraction": "frequency_filtered_terms",
+    "similarity": "shared_terms_ratio",
+    "visual_projection": "3d_absolute_dom_nodes"
+  },
+  "@attention_network": {
+    "signals": ["mousemove", "scroll", "click"],
+    "derived_metrics": ["attentionPoints", "attentionLevel", "scrollSpeed", "interest"],
+    "privacy_rule": "Signals remain session-local unless explicitly exported under policy."
+  },
+  "@routes": [
+    {"name": "kuhul_learning_browser", "method": "GET", "path": "/api/kuhul/learning-browser", "status": "sidecar_contract", "handler": "kuhul_learning_browser.describe"},
+    {"name": "kuhul_learning_session", "method": "POST", "path": "/api/kuhul/learning-browser/session", "status": "sidecar_contract", "body": ["topic", "mode", "policy"], "handler": "kuhul_learning_browser.session"},
+    {"name": "kuhul_learning_map", "method": "POST", "path": "/api/kuhul/learning-browser/map", "status": "sidecar_contract", "body": ["content", "policy"], "handler": "kuhul_learning_browser.map"},
+    {"name": "kuhul_learning_predict", "method": "POST", "path": "/api/kuhul/learning-browser/predict", "status": "sidecar_contract", "body": ["history", "knowledgeGraph", "policy"], "handler": "kuhul_learning_browser.predict"},
+    {"name": "kuhul_learning_optimize", "method": "POST", "path": "/api/kuhul/learning-browser/optimize", "status": "requires_policy", "body": ["knowledgeGraph", "goal", "policy"], "handler": "kuhul_learning_browser.optimize"},
+    {"name": "kuhul_learning_export", "method": "POST", "path": "/api/kuhul/learning-browser/export", "status": "requires_policy", "body": ["state", "target", "policy"], "handler": "kuhul_learning_browser.export"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/kuhul-learning-browser.json",
+    "ids": ["KUHUL-LEARNING-BROWSER", "KNOWLEDGE-GRAPH-BRAIN", "ATTENTION-PREDICTOR"]
+  },
+  "@policy": {
+    "session_analysis_is_local": true,
+    "export_requires": ["target_scope", "user_intent", "policy"],
+    "training_promotion_requires": ["dataset_contract", "privacy_review", "crown_admission"],
+    "forbidden": ["silent_history_upload", "implicit_training", "unbounded_localStorage_growth"]
+  }
+}

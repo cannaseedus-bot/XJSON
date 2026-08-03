@@ -1,0 +1,55 @@
+{
+  "@sidecar": {
+    "id": "asx.kuhul.auto_coder.v2",
+    "kind": "kuhul_auto_coder_manifest",
+    "status": "draft",
+    "role": "neural_code_generation_and_preference_learning_contract"
+  },
+  "@kuhul_auto_coder": {
+    "schema": "xjson://schema/kuhul.auto_coder/v2",
+    "authority": "CROWN_XCFE",
+    "description": "JSON contract for K'UHUL Auto-Coder v2.0: pattern recognition, code prediction, template generation, preference learning, local pattern persistence, and code export.",
+    "runtime": "browser",
+    "projection": {"language": "html_javascript_css", "surface": "auto_coder_ui"},
+    "role_reversal": "Code generation is admitted from a contract; generated code is a proposed artifact until file-manager policy accepts it."
+  },
+  "@models": {
+    "patternRecognizer": {
+      "signals": ["function_definition", "variable_declaration", "class_definition", "import_statement", "export_statement", "arrow_function", "async_function", "await_call", "try_catch", "console_log", "return_statement", "control_flow_block"],
+      "output": "pattern_counts"
+    },
+    "codeGenerator": {
+      "templates": ["function_definition", "arrow_function", "async_function", "class_definition", "if_statement", "for_loop", "import_statement", "console_log", "try_catch", "return_statement", "export_statement", "async_await", "array_method", "object_destructuring", "template_literal"],
+      "output": "prediction_candidates"
+    },
+    "preferenceModel": {
+      "signals": ["accepted_prediction", "generated_code", "pattern_match_accuracy"],
+      "output": "confidence_by_prediction_type"
+    }
+  },
+  "@state": {
+    "browser_key": "kuhul-autocoder-patterns",
+    "fields": ["patterns", "language", "timestamp"],
+    "autosave_interval_ms": 30000,
+    "rule": "Local learned patterns are session-local hints. Promotion to project memory or training data requires explicit policy."
+  },
+  "@routes": [
+    {"name": "kuhul_auto_coder", "method": "GET", "path": "/api/kuhul/auto-coder", "status": "sidecar_contract", "handler": "kuhul_auto_coder.describe"},
+    {"name": "kuhul_auto_coder_analyze", "method": "POST", "path": "/api/kuhul/auto-coder/analyze", "status": "sidecar_contract", "body": ["code", "language", "policy"], "handler": "kuhul_auto_coder.analyze"},
+    {"name": "kuhul_auto_coder_predict", "method": "POST", "path": "/api/kuhul/auto-coder/predict", "status": "sidecar_contract", "body": ["context", "patterns", "policy"], "handler": "kuhul_auto_coder.predict"},
+    {"name": "kuhul_auto_coder_generate", "method": "POST", "path": "/api/kuhul/auto-coder/generate", "status": "requires_policy", "body": ["context", "patterns", "target", "policy"], "handler": "kuhul_auto_coder.generate"},
+    {"name": "kuhul_auto_coder_teach", "method": "POST", "path": "/api/kuhul/auto-coder/teach", "status": "requires_policy", "body": ["pattern", "weight", "policy"], "handler": "kuhul_auto_coder.teach"},
+    {"name": "kuhul_auto_coder_export", "method": "POST", "path": "/api/kuhul/auto-coder/export", "status": "requires_policy", "body": ["code", "target", "policy"], "handler": "kuhul_auto_coder.export"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/kuhul-auto-coder.json",
+    "ids": ["KUHUL-AUTO-CODER", "CODE-PATTERN-RECOGNIZER", "CODE-PREFERENCE-MODEL"]
+  },
+  "@policy": {
+    "prediction_is_non_mutating": true,
+    "generation_requires": ["user_intent", "target_scope", "policy"],
+    "export_requires": ["file_manager_admission_or_download_scope", "policy"],
+    "training_promotion_requires": ["dataset_contract", "privacy_review", "crown_admission"],
+    "forbidden": ["silent_file_write", "implicit_repo_patch", "secret_capture", "unbounded_localStorage_growth"]
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "@sidecar": {
+    "id": "asx.xjson.language.v1",
+    "kind": "language_contract",
+    "status": "frozen",
+    "role": "split_authority_surface"
+  },
+  "@xjson": {
+    "schema": "xjson://schema/model/v1",
+    "status": "frozen",
+    "law": "XJSON is not ordinary JSON. It is a split-authority language where declarative shape and executable causality are separate.",
+    "one_file_one_mind": true,
+    "identity_rule": "One canonical XJSON model file equals one hash-addressable cognitive identity."
+  },
+  "@declarative_blocks": {
+    "surface": "[]",
+    "authority": "structural_only",
+    "may": ["exist", "bind", "declare", "label", "hold_literal_state"],
+    "must_not": ["execute", "mutate", "call", "hide_eval"]
+  },
+  "@expr_blocks": {
+    "surface": "{{ }}",
+    "authority": "pure_expression_only",
+    "rule": "Expression bodies are opaque to the declarative parser and must not contain @verbs.",
+    "max_bytes_default": 16384
+  },
+  "@flow_operator": {
+    "surface": "->",
+    "source_glyph": "→",
+    "meaning": "left_to_right_causality",
+    "lowering_v1": "reserved_for_v2_sugar",
+    "v1_equivalent": "@seq with ordered children"
+  },
+  "@surface_syntax": {
+    "line_driven": true,
+    "indentation": "containment_only",
+    "tabs": "forbidden",
+    "exec_line": "@verb only; no inline params in v1",
+    "param_line": "key: value under an exec node",
+    "labels": ["then", "else", "do", "case", "default", "on_error", "on_complete"]
+  },
+  "@lowering": {
+    "spec": "xcfe://spec/lowering/surface-to-ast/v1",
+    "pipeline": ["normalize", "strip_full_line_comments", "lex_lines", "build_indent_tree", "lower_to_ast", "assign_paths", "canonicalize_hash"],
+    "determinism": "same_source_same_ast_same_hash"
+  },
+  "@canonical_ast": {
+    "schema": "xcfe://schema/ast-node/v1",
+    "node_types": ["document", "exec", "param", "label", "object", "array", "literal", "expr", "ref", "comment"],
+    "execution_authority": "exec_nodes_only"
+  },
+  "@canonical_json": {
+    "spec": "xcfe://spec/canonical-json/v1",
+    "encoding": "utf-8",
+    "format": "single_line_compact_json",
+    "sort_keys": false,
+    "omit_null": false,
+    "hash": "sha256(utf8(canonical_json))"
+  },
+  "@test_vectors": {
+    "pack": "xcfe://tests/v1",
+    "cases": [
+      {"file": "t01_basic_exec.xjson", "status": "PASS", "ast_hash": "sha256:6c1cc680ccc42b796c7385f4d28d51d358cdddc018c2d12b82563855c88517ce"},
+      {"file": "t02_params_expr.xjson", "status": "PASS", "ast_hash": "sha256:1149d0ab6f5f8734d0df1e6d34c6890b0c26516daa8fc95b5a20ef7499a296fc"},
+      {"file": "t03_nested_labels_if.xjson", "status": "PASS", "ast_hash": "sha256:96eb014d5e5c4f50d7e291c85d26b6aceab6d982bf47b43dd857d28b04702168"},
+      {"file": "t04_multiline_object.xjson", "status": "PASS", "ast_hash": "sha256:362b4f8d37915b341ec91bb0092e4a24c2cc596ee985fb201c1d862eb39ed298"},
+      {"file": "t05_multiline_array.xjson", "status": "PASS", "ast_hash": "sha256:a4b9caf119f57818238ed9a7f2bcd374e6ee865cf13551734d87c9a6aa262acd"},
+      {"file": "t06_indent_errors.xjson", "status": "FAIL", "error_code": "E_PARSE_VERB"},
+      {"file": "t07_hash_stability.xjson", "status": "PASS", "ast_hash": "sha256:5b5f45b96c316c2f4266cf740ec80641e5610103ce972a4ba1b829462ae61373"}
+    ]
+  },
+  "@rules": {
+    "json_parser_not_enough": true,
+    "unknown_execution": "reject",
+    "hidden_eval": "reject",
+    "silent_reinterpretation": "reject"
+  }
+}

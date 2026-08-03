@@ -1,0 +1,152 @@
+{
+  "@sidecar": {"id":"asx.runtime.folds.v1","kind":"semantic_graph_manifest","status":"draft","role":"fold_contract_registry"},
+  "@folds": {
+    "definition": "Folds are the primary K'UHUL semantic runtime states. Phase is mathematical metadata attached to a fold, not a function-call namespace.",
+    "canonical": ["pop","wo","yax","sek","chen","xul"],
+    "local_extensions_allowed": true,
+    "rule": "A fold may schedule nodes but cannot execute outside XCFE/KUHUL admission. Runtime movement is XCFE rotation across the fold manifold."
+  },
+  "@fold_algebra": {
+    "definition": "Canonical fold registry with glyph, phase index, angle, radians, and semantic meaning.",
+    "cycle": ["Pop", "Wo", "Yax", "Sek", "Ch'en", "Xul"],
+    "folds": {
+      "Pop": {
+        "meaning": "Load / Perceive",
+        "glyph": "◉",
+        "phase": 0,
+        "angle": "0",
+        "radians": 0
+      },
+      "Wo": {
+        "meaning": "Represent / Build",
+        "glyph": "⬢",
+        "phase": 1,
+        "angle": "π/3",
+        "radians": 1.0471975511965976
+      },
+      "Yax": {
+        "meaning": "Plan / Predict",
+        "glyph": "△",
+        "phase": 2,
+        "angle": "2π/3",
+        "radians": 2.0943951023931953
+      },
+      "Sek": {
+        "meaning": "Execute / Transform",
+        "glyph": "✦",
+        "phase": 3,
+        "angle": "π",
+        "radians": 3.141592653589793
+      },
+      "Ch'en": {
+        "meaning": "Project / Reflect",
+        "glyph": "◇",
+        "phase": 4,
+        "angle": "4π/3",
+        "radians": 4.1887902047863905
+      },
+      "Xul": {
+        "meaning": "Collapse / Replay",
+        "glyph": "⬡",
+        "phase": 5,
+        "angle": "5π/3",
+        "radians": 5.235987755982989
+      }
+    },
+    "op_notation": {
+      "fold_glyph": "Glyph",
+      "phase_index": "Φn",
+      "angle_index": "αn",
+      "lane": "λlane",
+      "readable": "Fold[Angle:Lane]",
+      "compact": "Φn.αn.λlane",
+      "examples": {
+        "◉[contract:manifest]": "Pop[contract:manifest]",
+        "⬢[symbolic:nnc]": "Wo[symbolic:nnc]",
+        "△[admission:policy]": "Yax[admission:policy]",
+        "✦[runtime:math_engine]": "Sek[runtime:math_engine]",
+        "◇[projection:ui]": "Ch'en[projection:ui]",
+        "⬡[evidence:replay]": "Xul[evidence:replay]"
+      }
+    }
+  },
+  "@xcfe": {
+    "definition": "XCFE is the control-flow algebra that determines legal rotation between folds on the phase manifold.",
+    "current_fold": "Pop",
+    "legal_transitions": {
+      "Pop": ["Wo"],
+      "Wo": ["Yax"],
+      "Yax": ["Sek"],
+      "Sek": ["Ch'en"],
+      "Ch'en": ["Xul"],
+      "Xul": ["Pop"]
+    },
+    "movement_rule": "The runtime does not call fold functions. It rotates from current_fold to the next legal fold, activates that fold's nodes, then emits a proof or replay state."
+  },
+  "@nodes": {
+    "definition": "Nodes are transformations active while their owning fold is current.",
+    "by_fold": {
+      "Pop": ["Parse", "Import", "Resolve", "SemanticGraph"],
+      "Wo": ["TensorLayout", "Shapes", "Quantization"],
+      "Yax": ["Planner", "Scheduler", "Dependency"],
+      "Sek": ["Compute", "Attention", "MatMul"],
+      "Ch'en": ["Projection", "Normalization", "Emit"],
+      "Xul": ["Replay", "Memory", "Archive"]
+    }
+  },
+  "@gravity_wells": {
+    "definition": "Gravity wells are deterministic attraction fields that bias nodes, tools, models, sidecars, and batches toward the fold that best fits current context.",
+    "unit": "fold.gravity.v1",
+    "scoring": "score = mass * affinity - repulsion - saturation_penalty",
+    "collapse_rule": "The highest legal score selects the active fold. Ties resolve by canonical phase order: pop, wo, yax, sek, chen, xul.",
+    "wells": {
+      "pop": {
+        "mass": 0.85,
+        "radius": "context_ingress",
+        "attracts": ["input", "manifest", "sidecar", "file", "sco", "session", "user"],
+        "repels": ["mutation", "write", "model_infer", "process_spawn"],
+        "collapse": "load_or_classify"
+      },
+      "wo": {
+        "mass": 0.9,
+        "radius": "binding",
+        "attracts": ["symbols", "routes", "schemas", "classes", "tools", "models", "threads"],
+        "repels": ["unbound_execute", "unknown_capability"],
+        "collapse": "bind_representation"
+      },
+      "yax": {
+        "mass": 0.95,
+        "radius": "planning",
+        "attracts": ["schedule", "rank", "guard", "batch", "dependencies", "admission"],
+        "repels": ["unguarded_parallelism", "unbounded_loop"],
+        "collapse": "select_legal_path"
+      },
+      "sek": {
+        "mass": 1.0,
+        "radius": "execution",
+        "attracts": ["compute", "sidecar_call", "model_infer", "compile", "generate", "gpu_dispatch"],
+        "repels": ["missing_policy", "missing_input", "illegal_transition"],
+        "collapse": "execute_admitted_node"
+      },
+      "chen": {
+        "mass": 0.88,
+        "radius": "projection",
+        "attracts": ["response", "artifact", "ui_emit", "vector_screen", "file_output", "event"],
+        "repels": ["raw_unverified_state", "private_trace"],
+        "collapse": "emit_projected_state"
+      },
+      "xul": {
+        "mass": 0.92,
+        "radius": "consolidation",
+        "attracts": ["hash", "replay", "cache", "memory", "proof", "cheese_score", "close"],
+        "repels": ["dangling_thread", "unreduced_batch", "uncommitted_artifact"],
+        "collapse": "record_and_close_or_reenter"
+      }
+    },
+    "agent_rule": "Agents should use gravity wells to choose a fold before selecting a tool or model. Gravity chooses the phase; XCFE still verifies the action."
+  },
+  "@schema": {
+    "fold": {"id":"string","phase":"string","nodes":"array","guards":"array","merge_policy":"string","replay":"object","gravity":"object"},
+    "gravity": {"mass":"number","radius":"string","attracts":"array","repels":"array","collapse":"string"}
+  }
+}

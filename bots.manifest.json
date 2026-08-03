@@ -1,0 +1,61 @@
+{
+  "@sidecar": {
+    "id": "asx.runtime.bots.v1",
+    "kind": "bot_manifest",
+    "status": "draft",
+    "role": "bot_research_micronaut_factory_contract"
+  },
+  "@bots": {
+    "schema": "xjson://schema/asx.bots/v1",
+    "authority": "CROWN_XCFE",
+    "definition": "Bots answer questions and prompts by creating bounded research micronauts. A bot may request web data only through declared scraping routes and provenance policy.",
+    "pipeline": "prompt -> research_plan -> micronaut.json -> admitted_web_scrape -> evidence_pack -> SCXQ2 -> bson.micronaut.json -> answer",
+    "native_adapter": "src/bots.cpp",
+    "native_header": "src/bots.hpp",
+    "adapter_rule": "bots.cpp builds payloads for declared bot helpers. It is an implementation projection; bots.manifest.json owns bot pipeline authority.",
+    "rule": "Bots do not scrape directly, write files silently, or invent data. They create micronauts that declare what data they need, where it may come from, and how provenance is recorded."
+  },
+  "@bots_cpp": {
+    "contract_method": "BotRuntime::contract",
+    "detector": "BotRuntime::is_bot_manifest",
+    "payload_builder": "BotRuntime::build_payload",
+    "helper_endpoint": "http://127.0.0.1:5780/run",
+    "categories": ["code", "data", "comm", "automation", "learning", "research"],
+    "pipeline_patterns": ["pipeline", "parallel", "conditional", "ensemble", "research_micronaut_factory"]
+  },
+  "@web_scrape_micronauts": {
+    "factory_chain": [
+      {"step": "bot_payload", "input": "prompt", "output": "BotRuntime::build_payload"},
+      {"step": "micronaut_factory", "input": "research_spec", "output": "micronaut.json"},
+      {"step": "web_scrape_admission", "input": "micronaut.json", "output": "scrape_plan"},
+      {"step": "scrape_execute", "input": "scrape_plan", "output": "raw_evidence"},
+      {"step": "evidence_normalize", "input": "raw_evidence", "output": "evidence_pack"},
+      {"step": "scxq2_pack", "input": "evidence_pack", "output": "scxq2_envelope"},
+      {"step": "bson_bind", "input": "scxq2_envelope", "output": "bson.micronaut.json"},
+      {"step": "answer_emit", "input": "bson_semantic_key", "output": "grounded_answer"}
+    ],
+    "required_fields": ["question", "allowed_domains", "max_pages", "citation_policy", "freshness", "policy"],
+    "provenance": ["url", "retrieved_at", "content_hash", "extract_hash", "license_hint", "citation"],
+    "limits": {"max_pages_default": 5, "max_pages_hard": 25, "timeout_ms": 15000},
+    "forbidden": ["secret_collection", "login_bypass", "robots_bypass", "unbounded_crawl", "scrape_without_policy", "answer_without_evidence_when_evidence_required"]
+  },
+  "@routes": [
+    {"name": "bots_manifest", "method": "GET", "path": "/api/bots", "status": "sidecar_contract", "handler": "bots.describe"},
+    {"name": "bots_answer", "method": "POST", "path": "/api/bots/answer", "status": "requires_policy", "body": ["question", "context", "policy"], "handler": "bots.answer"},
+    {"name": "bots_create_research_micronaut", "method": "POST", "path": "/api/bots/research-micronaut", "status": "requires_policy", "body": ["question", "allowed_domains", "max_pages", "freshness", "policy"], "handler": "bots.research_micronaut.create"},
+    {"name": "bots_scrape_plan", "method": "POST", "path": "/api/bots/scrape-plan", "status": "requires_policy", "body": ["micronaut", "policy"], "handler": "bots.scrape.plan"},
+    {"name": "bots_evidence_pack", "method": "POST", "path": "/api/bots/evidence-pack", "status": "requires_policy", "body": ["evidence", "policy"], "handler": "bots.evidence.pack"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/bot-research-micronaut.json",
+    "ids": ["BOT-RESEARCH-MICRONAUT", "WEB-SCRAPE-ADMISSION-BOT", "EVIDENCE-SCXQ2-PACKER"]
+  },
+  "@folds": {
+    "pop": ["read_prompt", "load_user_policy", "identify_evidence_need"],
+    "wo": ["bind_question", "bind_allowed_sources", "draft_micronaut_json"],
+    "yax": ["admit_scrape_plan", "rank_sources", "set_limits"],
+    "sek": ["execute_admitted_scrape", "normalize_evidence"],
+    "chen": ["emit_grounded_answer", "emit_citations"],
+    "xul": ["pack_scxq2", "bind_bson_key", "record_provenance"]
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "@sidecar": {
+    "id": "asx.xcfe.classes.v1",
+    "kind": "classes_manifest",
+    "status": "frozen",
+    "role": "type_class_object_contract"
+  },
+  "@classes": {
+    "authority": "state_and_type_contract",
+    "rule": "Classes declare legal object shape and construction rules. They execute only through admitted XCFE verbs such as @class and @new.",
+    "verbs": ["@class", "@new", "@typeof", "@object", "@array", "@map"]
+  },
+  "@class": {
+    "required_fields": ["name", "fields"],
+    "optional_fields": ["schema", "invariants", "constructors", "methods", "version", "hash"],
+    "field_rule": "Fields define object shape; methods are inert declarations unless mapped to known @verbs by a pack or stdlib handler."
+  },
+  "@object": {
+    "canonical_node": "object",
+    "entries_preserve_order": true,
+    "keys": "strings_only"
+  },
+  "@array": {
+    "canonical_node": "array",
+    "items_preserve_order": true
+  },
+  "@schema": {
+    "links": ["xjson://schema/model/v1", "xcfe://schema/ast-node/v1", "xcfe://schema/policy/v1"],
+    "validation": "before construction and before runtime mutation"
+  },
+  "@rules": {
+    "unknown_class": "reject_on_new",
+    "const_mutation": "reject",
+    "missing_required_field": "reject",
+    "silent_field_coercion": "reject"
+  }
+}

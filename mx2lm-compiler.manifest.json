@@ -1,0 +1,49 @@
+{
+  "@sidecar": {
+    "id": "asx.mx2lm.compiler.v1",
+    "kind": "mx2lm_compiler_micronaut",
+    "status": "draft",
+    "role": "MX2LM grammar parser emitter app-agent micronaut"
+  },
+  "@mx2lm": {
+    "root": "mx2lm/compiler",
+    "definition": "MX2LM compiler is a separate app/agent/micronaut surface. It owns MX-2 grammar families, KUHUL-ES parsing/runtime, ASX AST emission, KPI binary emission, and Node/browser compiler entrypoints.",
+    "boundary": "This is not the limited micronaut_coder helper. It is a compiler micronaut for notation, KAST/AST, KPI, replay, and runtime bridge work."
+  },
+  "@grammar": {
+    "mx2": "mx2lm/compiler/mx2_grammar.ebnf",
+    "authority": "MX2\u27c1\u2623",
+    "families": ["atomic", "agl", "flux", "native", "verify", "rotation", "epoch", "scxq2", "stream", "dds_adapter"]
+  },
+  "@compiler": {
+    "parser": "mx2lm/compiler/parser.ts",
+    "asx_emitter": "mx2lm/compiler/emit_asx.ts.js",
+    "kpi_emitter": "mx2lm/compiler/asx_to_kpi.ts.js",
+    "runtime_node": "mx2lm/compiler/node.js",
+    "kuhul_es_cli": "mx2lm/compiler/kuhul-es.js",
+    "browser_entry": "mx2lm/compiler/browser.js",
+    "server_entry": "mx2lm/compiler/kuhul-server.js"
+  },
+  "@routes": [
+    {"name":"mx2lm_compiler_manifest","method":"GET","path":"/api/mx2lm/compiler","status":"proxy_contract","handler":"mx2lm.compiler.manifest"},
+    {"name":"mx2lm_parse","method":"POST","path":"/api/mx2lm/parse","status":"proxy_contract","body":["source","filename","mode"],"handler":"mx2lm.compiler.parse"},
+    {"name":"mx2lm_emit_asx","method":"POST","path":"/api/mx2lm/emit-asx","status":"proxy_contract","body":["ast","options"],"handler":"mx2lm.compiler.emit_asx"},
+    {"name":"mx2lm_emit_kpi","method":"POST","path":"/api/mx2lm/emit-kpi","status":"proxy_contract","body":["asx_ast","options"],"handler":"mx2lm.compiler.emit_kpi"},
+    {"name":"mx2lm_run_kuhul_es","method":"POST","path":"/api/mx2lm/run","status":"proxy_contract","body":["file","source","record","replay"],"handler":"mx2lm.compiler.run"}
+  ],
+  "@agents": [
+    {"id":"MX2-GRAMMAR","role":"MX-2 EBNF and authority block maintainer","phase":"Wo"},
+    {"id":"MX2-PARSER","role":"KUHUL-ES and TypeScript parser bridge","phase":"Sek"},
+    {"id":"MX2-ASX-EMITTER","role":"Emit canonical ASX AST JSON","phase":"Ch'en"},
+    {"id":"MX2-KPI-EMITTER","role":"Emit KPI1 binary opcode stream","phase":"Ch'en"},
+    {"id":"MX2-RUNTIME-NODE","role":"Run KUHUL glyph queue and hash chain in Node","phase":"Sek"}
+  ],
+  "@folds": {
+    "pop": "read source, grammar, compiler file, and requested target",
+    "wo": "bind grammar family, parser mode, output target, and authority token",
+    "yax": "plan parse/lower/emit/run sequence with replay and safety guards",
+    "sek": "run admitted parser/emitter/runtime command",
+    "chen": "emit ASX AST, KPI bytes, trace, diagnostics, or route response",
+    "xul": "record hashes, compiler version, replay metadata, and output paths"
+  }
+}

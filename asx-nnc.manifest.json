@@ -1,0 +1,143 @@
+{
+  "@sidecar": {
+    "id": "asx.nnc.runtime.v1",
+    "kind": "asx_nnc_manifest",
+    "status": "draft",
+    "role": "neural_net_code_semantic_notation_contract"
+  },
+  "@nnc": {
+    "name": "ASX NNC Runtime",
+    "version": "1.0",
+    "description": "Neural Net Code contract where JSON is treated as JavaScript Semantic Notation and may lower into an executable semantic tree after schema and policy admission.",
+    "law": "JSON is notation first. It becomes executable NNC only after XJSON parsing, schema validation, XCFE/KUHUL admission, and declared runtime dispatch.",
+    "schema": "asx-nnc-v1",
+    "accepted_roots": ["program", "semantic_wells"]
+  },
+  "@xjson_runtime": {
+    "parse": "JSON string or object -> semantic AST",
+    "semantic_tree": {
+      "type": "program",
+      "fields": ["layers", "weights", "bias", "operations"]
+    },
+    "operation_extraction": {
+      "source": "program.layers",
+      "fields": ["layer", "type", "neurons", "activation"]
+    }
+  },
+  "@kuhul_engine": {
+    "execute": "semantic AST -> neural layer outputs",
+    "forward_pass": {
+      "operation": "matrix row dot input plus bias then activation",
+      "activations": ["linear", "relu", "sigmoid", "softmax_declared"]
+    },
+    "rule": "Demo forward-pass math is a contract for deterministic execution. Production kernels must use admitted tensor/model backends."
+  },
+  "@scx_compressor": {
+    "role": "symbolic compression for neural weights and NNC artifacts",
+    "demo_codec": "numeric_decimal_rounding",
+    "production_codecs": ["scxq2", "scx2", "bson", "custom_pack"],
+    "rule": "Compression must preserve declared decode semantics and emit hash/proof records."
+  },
+  "@klh_backend": {
+    "role": "layer orchestration and port/lane assignment",
+    "port_base": 61680,
+    "layer_status": "active",
+    "rule": "Ports are example lane ids unless bound by @ports or route policy."
+  },
+  "@asx_runtime": {
+    "role": "NNC layer visualization and runtime projection",
+    "glyphs": {
+      "input": "input_glyph",
+      "dense": "dense_glyph",
+      "activation": "activation_glyph",
+      "output": "output_glyph",
+      "default": "activation_glyph"
+    },
+    "projection_targets": ["terminal", "dom", "svg", "vector_screen"]
+  },
+  "@examples": {
+    "neural_adder": {
+      "$schema": "asx-nnc-v1",
+      "program": {
+        "name": "neural-adder",
+        "layers": [
+          {"type": "input", "size": 2},
+          {"type": "dense", "neurons": 4, "activation": "relu"},
+          {"type": "dense", "neurons": 1, "activation": "linear"}
+        ],
+        "weights": {
+          "layer1": [[0.5, 0.3], [0.2, 0.8], [0.1, 0.6], [0.4, 0.2]],
+          "layer2": [[0.7, 0.3, 0.5, 0.1]]
+        },
+        "bias": {
+          "layer1": [0.1, 0.2, 0.3, 0.4],
+          "layer2": [0.5]
+        }
+      }
+    },
+    "compressed_network": {
+      "$schema": "asx-nnc-v1",
+      "program": {
+        "name": "compressed-network",
+        "layers": [
+          {"type": "input", "size": 784},
+          {"type": "dense", "neurons": 256, "activation": "relu"},
+          {"type": "dense", "neurons": 128, "activation": "relu"},
+          {"type": "dense", "neurons": 10, "activation": "softmax"}
+        ],
+        "weights": {
+          "layer1": [[0.123456, 0.234567], [0.345678, 0.456789]],
+          "layer2": [[0.56789, 0.678901]],
+          "layer3": [[0.789012, 0.890123]]
+        },
+        "compression": "scx-symbolic"
+      }
+    },
+    "json_executable_function": {
+      "$type": "function",
+      "name": "calculate",
+      "params": ["a", "b"],
+      "body": {
+        "$op": "add",
+        "left": {"$ref": "a"},
+        "right": {"$ref": "b"}
+      }
+    },
+    "semantic_wells_minimal": {
+      "$schema": "asx-nnc-v1",
+      "semantic_wells": {
+        "cosmos": {
+          "weight": 0.9,
+          "temperature": 0.2,
+          "bigrams": [
+            {"pair": "space time", "weight": 0.95},
+            {"pair": "dark matter", "weight": 0.88}
+          ],
+          "semantics": {
+            "gravity": "fundamental force of attraction",
+            "entropy": "measure of disorder"
+          }
+        }
+      }
+    }
+  },
+  "@routes": [
+    {"name": "nnc_manifest", "method": "GET", "path": "/api/nnc", "handler": "nnc.manifest", "status": "sidecar_contract"},
+    {"name": "nnc_compile", "method": "POST", "path": "/api/nnc/compile", "body": ["json", "policy"], "handler": "nnc.compile", "status": "sidecar_contract"},
+    {"name": "nnc_execute", "method": "POST", "path": "/api/nnc/execute", "body": ["program", "input", "policy"], "handler": "nnc.execute", "status": "requires_policy"},
+    {"name": "nnc_decompress_execute", "method": "POST", "path": "/api/nnc/decompress-execute", "body": ["compressed", "input", "policy"], "handler": "nnc.decompress_execute", "status": "requires_policy"},
+    {"name": "nnc_examples", "method": "GET", "path": "/api/nnc/examples", "handler": "nnc.examples", "status": "sidecar_contract"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/asx-nnc.json",
+    "ids": ["ASX-NNC-RUNTIME", "NNC-COMPILER", "NNC-VISUALIZER"]
+  },
+  "@folds": {
+    "pop": ["read_json_program", "validate_schema"],
+    "wo": ["build_semantic_tree", "extract_operations"],
+    "yax": ["plan_layers", "bind_klh_lanes"],
+    "sek": ["execute_forward_pass_when_admitted", "compress_weights"],
+    "chen": ["render_visualization", "emit_outputs"],
+    "xul": ["hash_nnc", "record_replay", "close"]
+  }
+}

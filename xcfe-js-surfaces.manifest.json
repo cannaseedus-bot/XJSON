@@ -1,0 +1,48 @@
+{
+  "@sidecar": {
+    "id": "asx.xcfe.js_surfaces.v1",
+    "kind": "xcfe_js_surface_manifest",
+    "status": "draft",
+    "role": "json_contract_projection_for_xcfe_javascript_surfaces"
+  },
+  "@xcfe_js_surfaces": {
+    "schema": "xjson://schema/xcfe.js_surfaces/v1",
+    "authority": "XCFE",
+    "mutation": "contract_only",
+    "description": "ASX Manager copy of the XCFE JavaScript surface contract. JavaScript modules are implementation projections; JSON declares lanes, phases, routes, and admission.",
+    "source_contract": "C:\\Users\\canna\\.ASX.cpp\\xcfe-js-surfaces.manifest.json",
+    "rule": "Do not execute a JS module because it is listed. Execution requires route admission, schema validation, and project policy."
+  },
+  "@role_reversal": {
+    "principle": "Contract defines architecture; code implements the contract.",
+    "hierarchy": ["Fold", "Node", "Micronaut", "Surface", "Projection"],
+    "phase_lane_rule": "Phase schedules lifecycle. Lane dispatches capability. Projection selects implementation."
+  },
+  "@phases": ["Pop", "Wo", "Yax", "Sek", "Ch'en", "Xul"],
+  "@lanes": ["parse", "compile", "validate", "io", "math", "geometry", "ml", "model", "api", "generate"],
+  "@modules": {
+    "lexer": {"kind": "surface", "phase": "Pop", "lane": "parse", "capabilities": ["tokenize", "scan"], "requires": [], "produces": ["tokens"], "projection": {"language": "javascript", "entry": "xcfe_lexer.js"}},
+    "parser": {"kind": "surface", "phase": "Wo", "lane": "parse", "capabilities": ["parse", "ast"], "requires": ["lexer"], "produces": ["syntax_tree"], "projection": {"language": "javascript", "entry": "xcfe_parser.js"}},
+    "compiler": {"kind": "surface", "phase": "Yax", "lane": "compile", "capabilities": ["compile", "link"], "requires": ["parser"], "produces": ["compiled_graph"], "projection": {"language": "javascript", "entry": "xcfe_compiler.js"}},
+    "validator": {"kind": "surface", "phase": "Yax", "lane": "validate", "capabilities": ["validate", "guard"], "requires": ["parser"], "produces": ["validation_report"], "projection": {"language": "javascript", "entry": "xcfe_validator.js"}},
+    "reader": {"kind": "surface", "phase": "Pop", "lane": "io", "capabilities": ["read", "decode"], "requires": [], "produces": ["input_document"], "projection": {"language": "javascript", "entry": "xcfe_reader.js"}},
+    "writer": {"kind": "surface", "phase": "Ch'en", "lane": "io", "capabilities": ["write", "emit"], "requires": ["validator"], "produces": ["artifact"], "projection": {"language": "javascript", "entry": "xcfe_writer.js"}},
+    "patcher": {"kind": "surface", "phase": "Sek", "lane": "io", "capabilities": ["patch", "edit"], "requires": ["reader", "validator"], "produces": ["patch_artifact"], "projection": {"language": "javascript", "entry": "xcfe_patcher.js"}},
+    "math_engine": {"kind": "surface", "phase": "Sek", "lane": "math", "capabilities": ["evaluate_math", "tensor_math"], "requires": ["parser", "validator"], "produces": ["math_result"], "projection": {"language": "javascript", "entry": "xcfe_math_engine.js"}},
+    "geometry_engine": {"kind": "surface", "phase": "Sek", "lane": "geometry", "capabilities": ["geometry_eval", "svg_tensor_project"], "requires": ["math_engine"], "produces": ["geometry_surface"], "projection": {"language": "javascript", "entry": "xcfe_geometry_engine.js"}},
+    "ml_engine": {"kind": "surface", "phase": "Sek", "lane": "ml", "capabilities": ["forward", "train_plan"], "requires": ["math_engine"], "produces": ["ml_result"], "projection": {"language": "javascript", "entry": "xcfe_ml_engine.js"}},
+    "local_inference_engine": {"kind": "surface", "phase": "Sek", "lane": "model", "capabilities": ["local_infer", "model_route"], "requires": ["parser"], "produces": ["model_output"], "projection": {"language": "javascript", "entry": "xcfe_local_inference_engine.js"}},
+    "api_suite": {"kind": "surface", "phase": "Yax", "lane": "api", "capabilities": ["declare_routes", "bind_clients"], "requires": ["validator"], "produces": ["api_contracts"], "projection": {"language": "javascript", "entry": "xcfe_api_suite.js"}},
+    "codegen": {"kind": "surface", "phase": "Ch'en", "lane": "generate", "capabilities": ["generate_code", "emit_artifact"], "requires": ["compiler", "validator"], "produces": ["generated_artifact"], "projection": {"language": "javascript", "entry": "xcfe_codegen.js"}}
+  },
+  "@routes": [
+    {"name": "xcfe_js_surfaces", "method": "GET", "path": "/api/xcfe/js-surfaces", "status": "sidecar_contract", "handler": "xcfe.js_surfaces.describe"},
+    {"name": "xcfe_js_surface_profile", "method": "GET", "path": "/api/xcfe/js-surfaces/profile", "status": "sidecar_contract", "args": ["module"], "handler": "xcfe.js_surfaces.profile"},
+    {"name": "xcfe_js_surface_plan", "method": "POST", "path": "/api/xcfe/js-surfaces/plan", "status": "sidecar_contract", "body": ["module", "op", "input", "policy"], "handler": "xcfe.js_surfaces.plan"},
+    {"name": "xcfe_js_surface_admit", "method": "POST", "path": "/api/xcfe/js-surfaces/admit", "status": "requires_policy", "body": ["module", "op", "plan", "policy"], "handler": "xcfe.js_surfaces.admit"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/xcfe-js-surfaces.json",
+    "ids": ["XCFE-JS-SURFACES", "XCFE-MODULE-ROUTER", "XCFE-JS-ADMISSION"]
+  }
+}

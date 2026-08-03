@@ -1,0 +1,5 @@
+{
+  "@sidecar": {"id":"asx.runtime.events.v1","kind":"event_manifest","status":"draft","role":"event_stream_contracts"},
+  "@events": {"definition":"Events are JSONL-compatible runtime facts emitted by agents, sidecars, files, UI, or model routes.","rule":"Every meaningful state mutation should be representable as one event object."},
+  "@event": {"schema":{"op":"string","table":"string","key":"string","value":"object","path":"string","reason":"string","time":"string"}}
+}

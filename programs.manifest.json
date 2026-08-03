@@ -1,0 +1,9 @@
+{
+  "@sidecar": {"id":"asx.runtime.programs.v1","kind":"program_manifest","status":"draft","role":"json_program_contracts"},
+  "@programs": {
+    "entry": "programs/main.json",
+    "styles": ["@control/@op","instructions/op"],
+    "rule": "Programs are JSON control graphs. Inline instructions are normalized to @control steps before XCFE execution."
+  },
+  "@program": {"schema":{"name":"string","@state":"object","@ops":"object","@control":"array","instructions":"array","functions":"object"}}
+}

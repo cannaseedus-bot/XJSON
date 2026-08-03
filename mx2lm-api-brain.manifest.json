@@ -1,0 +1,97 @@
+{
+  "@sidecar": {
+    "id": "asx.mx2lm.api.brain.v1",
+    "kind": "mx2lm_api_brain_manifest",
+    "status": "draft",
+    "role": "semantic_api_brain_matrix_contract"
+  },
+  "@mx2lm_api_brain": {
+    "schema": "xjson://schema/mx2lm.api.brain/v1",
+    "authority": "CROWN_XCFE",
+    "description": "API Brain contract for MX2LM. The SVG grid is a compact projection of callable brain services, not the architecture itself and not a decorative visual.",
+    "role_reversal": "API Brain service contracts own meaning. SVG groups are addressable projections of those contracts.",
+    "projection": {
+      "language": "svg",
+      "entry": "mx2lm-api-brain.svg",
+      "role": "semantic_icon_sheet_projection",
+      "visual_authority": false
+    }
+  },
+  "@api_brain_layers": {
+    "meta_cognition": ["introspection", "uncertainty", "goal_alignment", "mode_switching"],
+    "core_transformer": ["tokenization", "context", "attention", "reasoning"],
+    "operational": ["routing", "execution", "compression", "memory"],
+    "safety_generative": ["safety", "generation", "self_correction", "knowledge"],
+    "learning_adaptation": ["curriculum_phases", "skill_acquisition", "symbolic_compression", "feedback_integration"],
+    "execution_environment": ["tool_interfaces", "sandbox_simulation", "state_persistence", "mesh_awareness"],
+    "identity_ritual": ["splash_boot_ritual", "cognitive_fingerprint", "runtime_persona", "node_heraldry"]
+  },
+  "@api_brain_services": {
+    "service_count": 28,
+    "cell_size": 64,
+    "columns": 4,
+    "rows": 7,
+    "route_shape": "/api/mx2lm/brain/<service>",
+    "services": [
+      {"id": "brain-introspect", "service": "introspection", "phase": "Pop", "lane": "validate"},
+      {"id": "brain-uncertainty", "service": "uncertainty", "phase": "Pop", "lane": "validate"},
+      {"id": "brain-goal", "service": "goal_alignment", "phase": "Wo", "lane": "validate"},
+      {"id": "brain-mode", "service": "mode_switching", "phase": "Yax", "lane": "route"},
+      {"id": "brain-tokenize", "service": "tokenization", "phase": "Wo", "lane": "parse"},
+      {"id": "brain-context", "service": "context", "phase": "Wo", "lane": "model"},
+      {"id": "brain-attention", "service": "attention", "phase": "Sek", "lane": "model"},
+      {"id": "brain-reason", "service": "reasoning", "phase": "Yax", "lane": "model"},
+      {"id": "brain-routing", "service": "routing", "phase": "Yax", "lane": "route"},
+      {"id": "brain-exec", "service": "execution", "phase": "Sek", "lane": "execute"},
+      {"id": "brain-compress", "service": "compression", "phase": "Xul", "lane": "model"},
+      {"id": "brain-memory", "service": "memory", "phase": "Xul", "lane": "model"},
+      {"id": "brain-safety", "service": "safety", "phase": "Yax", "lane": "validate"},
+      {"id": "brain-generate", "service": "generation", "phase": "Sek", "lane": "generate"},
+      {"id": "brain-correct", "service": "self_correction", "phase": "Ch'en", "lane": "validate"},
+      {"id": "brain-knowledge", "service": "knowledge", "phase": "Wo", "lane": "model"},
+      {"id": "brain-curriculum", "service": "curriculum_phases", "phase": "Yax", "lane": "generate"},
+      {"id": "brain-skill", "service": "skill_acquisition", "phase": "Xul", "lane": "generate"},
+      {"id": "brain-symbolic", "service": "symbolic_compression", "phase": "Xul", "lane": "parse"},
+      {"id": "brain-feedback", "service": "feedback_integration", "phase": "Xul", "lane": "validate"},
+      {"id": "brain-tools", "service": "tool_interfaces", "phase": "Wo", "lane": "api"},
+      {"id": "brain-sandbox", "service": "sandbox_simulation", "phase": "Sek", "lane": "validate"},
+      {"id": "brain-state", "service": "state_persistence", "phase": "Xul", "lane": "io"},
+      {"id": "brain-mesh", "service": "mesh_awareness", "phase": "Yax", "lane": "route"},
+      {"id": "brain-splash", "service": "splash_boot_ritual", "phase": "Pop", "lane": "generate"},
+      {"id": "brain-fingerprint", "service": "cognitive_fingerprint", "phase": "Wo", "lane": "model"},
+      {"id": "brain-persona", "service": "runtime_persona", "phase": "Wo", "lane": "model"},
+      {"id": "brain-heraldry", "service": "node_heraldry", "phase": "Ch'en", "lane": "generate"}
+    ]
+  },
+  "@atomic_cluster_spec": {
+    "source": "svg_metadata",
+    "cluster_id": "mx2lm-atomic-block-studio",
+    "protocol": "kuhul-pi-v1",
+    "nodes": 4,
+    "capabilities": ["mathematical_regeneration", "webrtc_mesh", "crdt_sync", "auto_recovery", "real_time_inference"],
+    "constants": {"pi": 3.141592653589793, "e": 2.718281828459045, "phi": 1.618033988749895, "tau": 6.283185307179586},
+    "regeneration": {
+      "formula": "w_i = sin(x * pi) * cos(x * e) * (1 + phi * tanh(x))",
+      "cache_size": 1000,
+      "normalization": "l2_norm",
+      "tolerance": 0.000001
+    },
+    "rule": "Embedded SVG metadata may seed API Brain contracts only after validation. Inline SVG scripts are projection behavior, not authority."
+  },
+  "@routes": [
+    {"name": "mx2lm_api_brain", "method": "GET", "path": "/api/mx2lm/brain", "status": "sidecar_contract", "handler": "mx2lm.api_brain.describe"},
+    {"name": "mx2lm_api_brain_service", "method": "POST", "path": "/api/mx2lm/brain/<service>", "status": "requires_policy", "args": ["service"], "body": ["input", "context", "policy"], "handler": "mx2lm.api_brain.service"},
+    {"name": "mx2lm_api_brain_cluster", "method": "GET", "path": "/api/mx2lm/brain/cluster-spec", "status": "sidecar_contract", "handler": "mx2lm.api_brain.cluster_spec"},
+    {"name": "mx2lm_api_brain_admit", "method": "POST", "path": "/api/mx2lm/brain/admit", "status": "requires_policy", "body": ["service", "input", "evidence", "policy"], "handler": "mx2lm.api_brain.admit"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/mx2lm-api-brain.json",
+    "ids": ["MX2LM-API-BRAIN", "API-BRAIN-SERVICE-ROUTER", "ATOMIC-CLUSTER-SPEC-VALIDATOR"]
+  },
+  "@policy": {
+    "visual_authority": false,
+    "svg_scripts_are_projection_only": true,
+    "service_calls_require_policy": true,
+    "forbidden": ["inline_script_authority", "unadmitted_webrtc_mesh", "silent_network_signaling", "weight_mutation_from_svg"]
+  }
+}

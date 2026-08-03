@@ -1,0 +1,68 @@
+{
+  "@sidecar": {"id":"asx.runtime.commands.v1","kind":"action_command_tool_manifest","status":"draft","role":"command_contract_registry"},
+  "@commands": {
+    "definition": "Commands are user or agent invocations that lower into actions or XCFE programs.",
+    "rule": "Commands are parsed and admitted; they do not directly call shell/process routes unless policy allows it.",
+    "phase_angle_lane": "Wo[contract:command]",
+    "entries": {
+      "$supernaut": {
+        "syntax": "$supernaut <prompt>",
+        "action": "supernaut.skill_trigger.route",
+        "phase": "Yax",
+        "lane": "workflow",
+        "requires": ["policy", "asx_manager_trigger"]
+      },
+      "sidecar.describe": {
+        "syntax": "sidecar describe <name>",
+        "action": "sidecar.describe",
+        "phase": "Wo",
+        "lane": "sidecar",
+        "requires": ["declared_sidecar"]
+      },
+      "sidecar.call": {
+        "syntax": "sidecar call <name> <op>",
+        "action": "sidecar.call",
+        "phase": "Sek",
+        "lane": "sidecar",
+        "requires": ["declared_op", "policy"]
+      }
+    }
+  },
+  "@ops": {
+    "DESCRIBE_COMMANDS": {
+      "@type": "composed",
+      "@out": "commands_contract",
+      "@exec": {
+        "@op": "SET",
+        "@key": "commands_contract",
+        "@value": {
+          "kind": "command_contract_registry",
+          "phase_angle_lane": "Wo[contract:command]",
+          "commands": ["$supernaut", "sidecar.describe", "sidecar.call"],
+          "rule": "Commands lower into declared actions or sidecar ops and require policy before effects."
+        }
+      }
+    },
+    "RESOLVE_COMMAND": {
+      "@type": "composed",
+      "@in": ["command"],
+      "@out": "command_resolution",
+      "@exec": {
+        "@op": "SET",
+        "@key": "command_resolution",
+        "@value": {
+          "kind": "command_resolution",
+          "input": "$command",
+          "phase": "Yax",
+          "lane": "command",
+          "rule": "Resolution is contract-only here; execution must enter an admitted action or sidecar route."
+        }
+      }
+    }
+  },
+  "@routes": [
+    {"name":"commands_manifest","method":"GET","path":"/api/commands","status":"sidecar_contract","handler":"commands.describe","sidecar":"commands","op":"DESCRIBE_COMMANDS"},
+    {"name":"command_resolve","method":"POST","path":"/api/commands/resolve","status":"sidecar_contract","body":["command","args","policy"],"handler":"commands.resolve","sidecar":"commands","op":"RESOLVE_COMMAND"}
+  ],
+  "@schema": {"command":{"name":"string","syntax":"string","action":"string","args":"array","phase":"string","requires":"array"}}
+}

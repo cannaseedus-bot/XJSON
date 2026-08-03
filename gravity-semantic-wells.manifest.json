@@ -1,0 +1,126 @@
+{
+  "@sidecar": {
+    "id": "asx.gravity.semantic_wells.v1",
+    "kind": "gravity_semantic_wells_manifest",
+    "status": "draft",
+    "role": "domain_bigram_gravity_codec_contract"
+  },
+  "@gravity_semantic_wells": {
+    "name": "Gravity Semantic Wells Codec",
+    "version": "1.0",
+    "description": "Domain-specific gravity wells that route questions through weighted bigrams, semantic definitions, temperature, confidence thresholds, and defer decisions.",
+    "temperature_default": 0.5,
+    "query_algorithm": ["tokenize", "match_bigrams", "calculate_relevance", "score_wells", "threshold_or_defer", "emit_semantic_response"],
+    "confidence_threshold": "0.6 - temperature * 0.3",
+    "rule": "Wells bias semantic routing and response shape. They do not create factual authority without evidence or model/tool verification."
+  },
+  "@wells": [
+    {
+      "id": "cosmos",
+      "name": "Cosmos",
+      "weight": 0.9,
+      "temperature": 0.2,
+      "domain": ["space", "physics", "astronomy", "cosmology"],
+      "bigrams": [
+        {"pair": "space time", "weight": 0.95},
+        {"pair": "dark matter", "weight": 0.88},
+        {"pair": "quantum gravity", "weight": 0.82},
+        {"pair": "black hole", "weight": 0.91},
+        {"pair": "big bang", "weight": 0.87}
+      ],
+      "semantics": {
+        "gravity": "fundamental force of attraction",
+        "entropy": "measure of disorder in system",
+        "singularity": "point of infinite density"
+      }
+    },
+    {
+      "id": "consciousness",
+      "name": "Consciousness",
+      "weight": 0.85,
+      "temperature": 0.35,
+      "domain": ["mind", "philosophy", "neuroscience", "psychology"],
+      "bigrams": [
+        {"pair": "conscious experience", "weight": 0.92},
+        {"pair": "neural correlate", "weight": 0.85},
+        {"pair": "free will", "weight": 0.78},
+        {"pair": "quantum mind", "weight": 0.73},
+        {"pair": "hard problem", "weight": 0.89}
+      ],
+      "semantics": {
+        "consciousness": "subjective experience of awareness",
+        "qualia": "phenomenal experience of sensations",
+        "cognition": "mental processes of knowing"
+      }
+    },
+    {
+      "id": "technology",
+      "name": "Technology",
+      "weight": 0.8,
+      "temperature": 0.4,
+      "domain": ["computing", "ai", "engineering", "systems"],
+      "bigrams": [
+        {"pair": "artificial intelligence", "weight": 0.94},
+        {"pair": "neural network", "weight": 0.89},
+        {"pair": "quantum computing", "weight": 0.82},
+        {"pair": "semantic web", "weight": 0.76},
+        {"pair": "asx runtime", "weight": 0.95}
+      ],
+      "semantics": {
+        "semantic": "meaning-based processing",
+        "neural": "inspired by brain structure",
+        "quantum": "using quantum mechanics principles"
+      }
+    },
+    {
+      "id": "philosophy",
+      "name": "Philosophy",
+      "weight": 0.7,
+      "temperature": 0.6,
+      "domain": ["logic", "ethics", "metaphysics", "epistemology"],
+      "bigrams": [
+        {"pair": "truth reality", "weight": 0.88},
+        {"pair": "existential meaning", "weight": 0.82},
+        {"pair": "moral philosophy", "weight": 0.79},
+        {"pair": "logic reasoning", "weight": 0.85},
+        {"pair": "being becoming", "weight": 0.76}
+      ],
+      "semantics": {
+        "ontology": "study of what exists",
+        "epistemology": "study of knowledge",
+        "axiology": "study of values"
+      }
+    }
+  ],
+  "@bigrams": {
+    "index_rule": "lowercase pair -> array of {well, weight}",
+    "match_rule": "A bigram matches when each bigram word overlaps at least one query token by contains relation.",
+    "relevance": "sum(match.weight) / match_count",
+    "well_score": "sum(matched_bigram_weight * (1 - temperature * 0.3)) + well.weight * (1 - temperature * 0.2)"
+  },
+  "@semantic_codec": {
+    "answer_shape": ["type", "response", "well", "confidence", "temperature", "semantics"],
+    "defer_shape": ["type", "response", "temperature", "suggestion"],
+    "defer_type": "deferred",
+    "answer_type": "answer"
+  },
+  "@routes": [
+    {"name": "gravity_wells", "method": "GET", "path": "/api/gravity-wells", "handler": "gravity_wells.list", "status": "sidecar_contract"},
+    {"name": "gravity_well", "method": "GET", "path": "/api/gravity-wells/<wellId>", "args": ["wellId"], "handler": "gravity_wells.get", "status": "sidecar_contract"},
+    {"name": "gravity_well_bigrams", "method": "GET", "path": "/api/gravity-wells/<wellId>/bigrams", "args": ["wellId"], "handler": "gravity_wells.bigrams", "status": "sidecar_contract"},
+    {"name": "gravity_wells_query", "method": "POST", "path": "/api/gravity-wells/query", "body": ["question", "temperature", "policy"], "handler": "gravity_wells.query", "status": "sidecar_contract"},
+    {"name": "gravity_wells_temperature", "method": "POST", "path": "/api/gravity-wells/temperature", "body": ["temperature"], "handler": "gravity_wells.temperature", "status": "sidecar_contract"}
+  ],
+  "@agents": {
+    "normal_agent_file": "../agents/gravity-semantic-wells.json",
+    "ids": ["GRAVITY-SEMANTIC-WELLS", "BIGRAM-WELL-ROUTER"]
+  },
+  "@folds": {
+    "pop": ["read_question", "tokenize"],
+    "wo": ["match_bigrams", "bind_semantics"],
+    "yax": ["score_wells", "apply_temperature"],
+    "sek": ["select_best_well", "defer_if_low_confidence"],
+    "chen": ["emit_answer_or_defer"],
+    "xul": ["record_query", "update_replay_hash"]
+  }
+}

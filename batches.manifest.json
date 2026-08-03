@@ -1,0 +1,58 @@
+{
+  "@sidecar": {
+    "id": "asx.runtime.batches.v1",
+    "kind": "batch_manifest",
+    "status": "draft",
+    "role": "batch_queue_and_execution_topology"
+  },
+  "@batches": {
+    "definition": "Batches are manifest-declared groups of jobs, prompts, files, sidecar calls, model routes, or tensor ops that execute under one bounded schedule.",
+    "authority": "JSON declares batch membership, ordering, retry, and proof policy; XCFE/KUHUL admits and executes each unit.",
+    "default_policy": {
+      "max_items": 1024,
+      "chunk_size": 32,
+      "retry": {
+        "max_attempts": 1,
+        "backoff_ms": 0
+      },
+      "halt_on_error": true,
+      "determinism": "stable_item_order"
+    }
+  },
+  "@batch": {
+    "schema": {
+      "id": "string",
+      "phase": "Pop|Wo|Yax|Sek|Ch'en|Xul",
+      "items": "array",
+      "item_schema": "object",
+      "map": "xcfe_program|sidecar_op|sco_alias|model_route",
+      "reduce": "none|append|merge|sum|max|hash_chain",
+      "outputs": "object",
+      "guards": "array"
+    }
+  },
+  "@scheduling": {
+    "fold_mapping": {
+      "pop": "load batch declaration and item stream",
+      "wo": "bind item schema, target route, and output contract",
+      "yax": "chunk items and select admitted execution lanes",
+      "sek": "execute batch chunks in deterministic order",
+      "chen": "reduce chunk outputs into the declared result shape",
+      "xul": "append replay log, hashes, and retry/error summary"
+    },
+    "rules": [
+      "Batch item order must be stable before execution.",
+      "Chunks may run in parallel only when the reducer is associative or explicitly marked deterministic.",
+      "Retries must be declared; no implicit retry loop exists.",
+      "Batch outputs must include count, ok_count, error_count, and result_hash when executed."
+    ]
+  },
+  "@routes": [
+    {
+      "name": "batch_manifest_describe",
+      "method": "GET",
+      "path": "/api/sidecars/batches",
+      "returns": "batch manifest capability and scheduling law"
+    }
+  ]
+}
