@@ -5,6 +5,7 @@
 #include "xcfe.hpp"
 #include "sco.hpp"
 #include "sidecar.hpp"
+#include "sw.hpp"
 #include "discovery.hpp"
 
 class Runtime {
@@ -18,6 +19,7 @@ public:
     XCFE           xcfe;
     SCORegistry    sco;
     SidecarLoader  sidecars;
+    SidecarStore   sidecar_store;   // external_exe sidecars (Quantum, ...); in-proc stay in `sidecars`
 
 private:
     nlohmann::json manifest;

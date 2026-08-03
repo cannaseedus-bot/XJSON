@@ -35,6 +35,13 @@ public:
     // Missing/unknown -> {status:"unavailable"|"unknown_sidecar"} (never throws).
     json call(const std::string& name, const std::string& op, const json& body) const;
 
+    // True if `name` is a registered external_exe sidecar (dispatched by this store,
+    // not by the in-process SidecarLoader).
+    bool is_external(const std::string& name) const {
+        auto it = store_.find(name);
+        return it != store_.end() && it->is_object() && it->value("kind", "") == "external_exe";
+    }
+
 private:
     json        store_;   // the @sidecars object
     std::string root_;    // directory of the manifest, for relative bin resolution

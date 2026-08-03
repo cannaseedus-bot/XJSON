@@ -345,6 +345,7 @@ json Runtime::execute_sidecar_api(const std::string& action, const std::string& 
             {"contract", contract},
             {"declared", declared},
             {"loaded", loaded},
+            {"store", sidecar_store.list()},
             {"routes", json::array({
                 "GET /api/sidecars",
                 "GET /api/sidecars/<name>",
@@ -356,6 +357,14 @@ json Runtime::execute_sidecar_api(const std::string& action, const std::string& 
 
     if (action == "describe") {
         if (name.empty()) return execute_sidecar_api("list", "", "", body);
+        if (sidecar_store.is_external(name)) {
+            return json{
+                {"@kind", "json_runtime.sidecar.bootstrap.v1"},
+                {"name", name}, {"loaded", true}, {"kind", "external_exe"},
+                {"store", sidecar_store.describe(name)},
+                {"phase_contract", phase_contract}
+            };
+        }
         if (!sidecars.has(name)) {
             json declared = nullptr;
             if (!name.empty() && name[0] != '_' &&
@@ -395,6 +404,16 @@ json Runtime::execute_sidecar_api(const std::string& action, const std::string& 
     if (action == "call") {
         if (name.empty()) return json{{"error","missing sidecar name"},{"status_code",400}};
         if (op.empty()) return json{{"error","missing sidecar op"},{"status_code",400}};
+        if (sidecar_store.is_external(name)) {
+            json result = sidecar_store.call(name, op, body);
+            std::string st = result.value("status", "");
+            if (st != "success" && st != "error") result["status_code"] = 404;
+            return json{
+                {"@kind", "json_runtime.sidecar.call_result.v1"},
+                {"sidecar", name}, {"op", op},
+                {"result", result}, {"phase", "sek"}
+            };
+        }
         if (!sidecars.has(name) && !load_declared_sidecar(name)) {
             return json{{"error","sidecar_not_found"},{"name",name},{"status_code",404}};
         }
@@ -457,6 +476,14 @@ void Runtime::load_sco_registry() {
 
 void Runtime::load_sidecars() {
     xcfe.sidecars = &sidecars;
+
+    // External-exe sidecar store (sidecars.manifest.json) -- optional. Dispatches
+    // compiled worker binaries (Quantum, ...) that speak JSON over stdin.
+    {
+        std::string store_path = resolve_manifest_path("sidecars.manifest.json");
+        if (sidecar_store.load(store_path))
+            std::cout << "[runtime] sidecar store loaded (" << store_path << ")\n";
+    }
 
     int override_index = 0;
     for (const auto& path : sidecar_overrides_) {
