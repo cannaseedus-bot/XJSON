@@ -32,3 +32,7 @@ node-manifest-output.txt
 # --- os ---
 .DS_Store
 Thumbs.db
+
+# sidecar store: build + deploy dirs (binaries live in windows-binaries.zip / rebuilt)
+/build-sw/
+/sidecars/

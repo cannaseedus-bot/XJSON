@@ -1,0 +1,81 @@
+{
+  "@sidecar": {
+    "id": "asx.runtime.sidecars.v1",
+    "kind": "sidecar_store",
+    "status": "draft",
+    "role": "sidecar_registry",
+    "version": "1.0.0"
+  },
+  "@doc": "Registry of sidecars -- candidate/compute-only workers that EMIT JSON and never collapse, judge, promote, or mutate the registry. Two kinds: 'external_exe' (a compiled binary spawned per call, JSON request on stdin -> JSON reply on stdout) and 'xcfe_manifest' (an in-process XCFE program loaded by SidecarLoader). sw.cpp resolves + dispatches the external_exe entries; xcfe_manifest entries are handled by the existing SidecarLoader.",
+
+  "@sidecars": {
+    "quantum_hybrid": {
+      "kind": "external_exe",
+      "repo": "github.com/cannaseedus-bot/Quantum.git",
+      "bin": "quantum_hybrid.exe",
+      "bin_paths": ["sidecars/quantum", "../../native/Quantum/build", "../Quantum/build", "../Quantum"],
+      "invoke": "stdin_json",
+      "ops": ["process", "analyze_code", "extract_relations", "extract_patterns"],
+      "authority": "candidate_only",
+      "phase": "Sek",
+      "lane": "code",
+      "emits": "code edges {source,relation,target} for the CHEESE/@flux feed",
+      "verified": true
+    },
+    "quantum_trinity": {
+      "kind": "external_exe",
+      "repo": "github.com/cannaseedus-bot/Quantum.git",
+      "bin": "quantum_trinity.exe",
+      "bin_paths": ["sidecars/quantum", "../../native/Quantum/build", "../Quantum/build", "../Quantum"],
+      "invoke": "stdin_json",
+      "ops": ["process"],
+      "authority": "candidate_only",
+      "phase": "Sek",
+      "lane": "research",
+      "verified": false
+    },
+    "quantum_personality": {
+      "kind": "external_exe",
+      "repo": "github.com/cannaseedus-bot/Quantum.git",
+      "bin": "quantum_personality.exe",
+      "bin_paths": ["sidecars/quantum", "../../native/Quantum/build", "../Quantum/build", "../Quantum"],
+      "invoke": "stdin_json",
+      "ops": ["process"],
+      "authority": "candidate_only",
+      "phase": "Sek",
+      "lane": "persona",
+      "verified": false
+    },
+    "quantum_microagents": {
+      "kind": "external_exe",
+      "repo": "github.com/cannaseedus-bot/Quantum.git",
+      "bin": "quantum_microagents.exe",
+      "bin_paths": ["sidecars/quantum", "../../native/Quantum/build", "../Quantum/build", "../Quantum"],
+      "invoke": "stdin_json",
+      "ops": ["process"],
+      "authority": "candidate_only",
+      "phase": "Sek",
+      "lane": "agents",
+      "verified": false
+    },
+
+    "actions": {
+      "kind": "xcfe_manifest",
+      "manifest": "actions.manifest.json",
+      "authority": "candidate_only",
+      "note": "in-process XCFE sidecar; dispatched by SidecarLoader, not sw.cpp"
+    }
+  },
+
+  "@routes": [
+    {"name": "sidecars_list",     "method": "GET",  "path": "/api/sidecars",                 "status": "sidecar_contract", "handler": "sw.list"},
+    {"name": "sidecar_describe",  "method": "GET",  "path": "/api/sidecars/<name>",          "status": "sidecar_contract", "args": ["name"], "handler": "sw.describe"},
+    {"name": "sidecar_call",      "method": "POST", "path": "/api/sidecars/<name>/call/<op>", "status": "requires_policy",  "args": ["name", "op"], "body": ["args", "policy"], "handler": "sw.call"}
+  ],
+
+  "@policy": {
+    "authority_invariant": "sidecars are candidate/compute-only: they emit JSON candidates; they never collapse, judge, promote, or mutate this registry",
+    "execution_requires": ["registry_lookup", "binary_resolution", "policy"],
+    "forbidden": ["registry_mutation_by_sidecar", "promotion_by_sidecar"]
+  }
+}

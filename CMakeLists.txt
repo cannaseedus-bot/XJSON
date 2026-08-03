@@ -20,6 +20,7 @@ set(XCFE_CORE
     src/file_system.cpp
     src/ops/op_add.cpp
     src/ops/op_print.cpp
+    src/sw.cpp
 )
 
 # ── json_runtime (full XCFE + HTTP server) ────────────────────────────────────
@@ -46,6 +47,7 @@ add_executable(sco_runtime
     src/file_system.cpp
     src/ops/op_add.cpp
     src/ops/op_print.cpp
+    src/sw.cpp
 )
 
 # ── scxq2_runtime (SCXQ2 codec CLI) ──────────────────────────────────────────
@@ -53,6 +55,13 @@ add_executable(sco_runtime
 add_executable(scxq2_runtime
     src/scxq2_main.cpp
     src/scxq2.cpp
+)
+
+# ── sw (Sidecar Store CLI; SidecarStore also linked into the runtimes above) ──
+
+add_executable(sw
+    src/sw_main.cpp
+    src/sw.cpp
 )
 
 # ── Windows link + defines ────────────────────────────────────────────────────
@@ -66,5 +75,7 @@ if(WIN32)
     target_link_libraries(sco_runtime   ws2_32 d3dcompiler)
     target_compile_definitions(sco_runtime   PRIVATE ${WIN_DEFS})
 
-    # scxq2_runtime is pure codec -- no sockets needed
+    target_compile_definitions(sw        PRIVATE ${WIN_DEFS})
+
+    # scxq2_runtime is pure codec -- no sockets needed; sw spawns via _popen (CRT)
 endif()
